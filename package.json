@@ -14,6 +14,7 @@
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "nedb-promises": "^6.2.3"
+    "nedb-promises": "^6.2.3",
+    "razorpay": "^2.9.6"
   }
 }
