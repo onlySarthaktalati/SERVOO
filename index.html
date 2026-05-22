@@ -3,110 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVO | Premium Local Utility Fleet Grid</title>
+    <title>SERVO | Premium Operational Grid | Matrix Interface v3.1</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         :root {
-            --pure-black: #000000;
-            --nike-dark: #0a0a0a;
-            --gray-card: #111111;
+            --black: #000000;
+            --dark-void: #050505;
+            --gray-card: #0c0c0c;
             --gray-border: #1a1a1a;
-            --accent-neon: #00f0ff;
+            
+            /* Enhanced Premium Accent - Tactical Cyan */
+            --accent-neon: #00e5ff;
+            --accent-admin: #ff0055;
             --text-primary: #ffffff;
-            --text-muted: #707070;
+            --text-muted: #555555;
+            --green-active: #00ffaa;
+            
+            /* Graphic Shadow & Glimmer Layers */
+            --box-shadow-neon: 0 0 15px rgba(0, 229, 255, 0.2);
+            --linear-gradient-card: linear-gradient(135deg, #0c0c0c 0%, #111 100%);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
-        body { background-color: var(--pure-black); color: var(--text-primary); letter-spacing: -0.03em; overflow-x: hidden; }
+        body { background-color: var(--black); color: var(--text-primary); letter-spacing: -0.02em; overflow: hidden; }
 
-        /* 🧭 Premium Monochromatic Navigation */
-        nav.sys-nav {
+        /* 📡 GRAPHIC HEADER MODULE */
+        header.sys-navbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 4%; height: 90px;
-            border-bottom: 1px solid var(--gray-border);
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
-            position: sticky; top: 0; z-index: 1000;
+            background: var(--black);
+            position: relative; z-index: 1000;
         }
-        .logo { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.06em; text-decoration: none; color: #fff; }
-        .logo span { color: var(--accent-neon); }
-        
-        .nav-links { display: flex; gap: 35px; align-items: center; }
-        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; }
-        .nav-links a:hover, .nav-links a.active { color: #fff; }
-        
-        .cta-btn { background: #fff; color: #000; padding: 12px 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; text-decoration: none; border: 1px solid #fff; transition: all 0.2s ease; }
-        .cta-btn:hover { background: #000; color: #fff; }
-
-        /* 🏎️ Cinematic Hero Segment */
-        section.hero-viewport {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; min-height: 70vh; padding: 0 20px;
-            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
+        /* Graphic Accent: Glowing line */
+        header.sys-navbar::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent-neon) 50%, transparent 100%);
+            box-shadow: 0 0 10px var(--accent-neon);
         }
-        .hero-viewport h1 { font-size: 72px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.95; margin-bottom: 20px; }
-        .hero-viewport p { color: var(--text-muted); font-size: 18px; max-width: 600px; line-height: 1.5; margin-bottom: 35px; }
 
-        /* 📋 Premium Grid Catalog Selection */
-        section.catalog-section { max-width: 1300px; margin: 0 auto 100px; padding: 0 4%; }
-        .section-header { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 30px; }
+        .left-controls { display: flex; align-items: center; gap: 30px; }
+        .logo { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.06em; text-decoration: none; color: white; }
+        .logo span { color: var(--accent-neon); transition: color 0.3s; }
+
+        /* 🎛️ Tactical Toggle Switch | Refined Graphics */
+        .toggle-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 10px; border-radius: 20px; transition: 0.2s; }
+        .toggle-wrapper:hover { background: rgba(255,255,255,0.03); }
+        .toggle-label { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); transition: color 0.3s; }
+        .toggle-label.active { color: white; }
         
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
-        .utility-premium-card { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 35px; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: border-color 0.3s; }
-        .utility-premium-card:hover { border-color: #333; }
+        .switch-track {
+            width: 54px; height: 28px;
+            background: #111; border: 1px solid var(--gray-border);
+            border-radius: 30px; position: relative; transition: all 0.3s ease;
+        }
+        .switch-thumb {
+            width: 20px; height: 20px;
+            background: white; border-radius: 50%;
+            position: absolute; top: 3px; left: 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 5px rgba(255,255,255,0.2);
+        }
         
-        .card-top h3 { font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
-        .card-top p { color: var(--accent-neon); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
-        .price-tag { font-size: 24px; font-weight: 900; }
-        .price-tag span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+        /* Graphic State: Admin Mode */
+        body.admin-mode-active .switch-track { background: rgba(255, 0, 85, 0.05); border-color: var(--accent-admin); box-shadow: 0 0 10px rgba(255, 0, 85, 0.2); }
+        body.admin-mode-active .switch-thumb { left: 28px; background: var(--accent-admin); box-shadow: 0 0 10px var(--accent-admin); }
+        body.admin-mode-active .logo span { color: var(--accent-admin); }
+
+        .nav-tabs { display: flex; gap: 20px; }
+        .nav-tabs button { background: transparent; border: none; color: var(--text-muted); font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
+        .nav-tabs button:hover, .nav-tabs button.active { color: white; }
+
+        /* 📋 PANE SYSTEM | Enhanced Spatial Distribution */
+        .view-pane { display: none; grid-template-columns: 1fr 440px; gap: 0; height: calc(100vh - 90px); }
+        .view-pane.active { display: grid; }
         
-        .book-now-trigger { background: transparent; border: 1px solid #333; color: white; padding: 12px 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; border-radius: 20px; }
-        .book-now-trigger:hover { background: white; color: black; border-color: white; }
+        /* Onboarding special full-page layout modifier */
+        .view-pane.onboard-layout { display: none; grid-template-columns: 1fr; align-items: center; justify-content: center; }
+        .view-pane.onboard-layout.active { display: flex; }
+
+        /* 🗺️ MAP GRID GRAPHICS MODIFIER */
+        .map-element { background: var(--dark-void); position: relative; }
+        
+        /* Map Tactical Overlay Graphic (Faint grid) */
+        .map-element::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#111 1px, transparent 1px);
+            background-size: 20px 20px; opacity: 0.4; z-index: 500; pointer-events: none;
+        }
+        
+        /* Modifying Leaflet Tiles | Inversion + Hue */
+        .leaflet-tile { filter: invert(100%) hue-rotate(190deg) brightness(95%) contrast(90%); }
+        .leaflet-control-attribution { display: none !important; }
+
+        /* 📡 RADAR SIDEBAR PANEL MODULE */
+        .sidebar-radar-panel {
+            background: var(--gray-card); border-left: 1px solid var(--gray-border);
+            padding: 25px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto;
+        }
+        
+        /* Advanced Graphics: Search Input Matrix Look */
+        .tactical-search {
+            width: 100%; background: var(--black); border: 1px solid var(--gray-border);
+            padding: 14px; color: white; font-size: 14px; border-radius: 4px;
+            outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .tactical-search:focus { border-color: var(--accent-neon); box-shadow: var(--box-shadow-neon); }
+
+        /* 📋 SERVICE CARD GRAPHICS MODULE */
+        .utility-matrix-card {
+            background: var(--gray-card); border: 1px solid var(--gray-border);
+            padding: 20px; border-radius: 4px;
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; transition: transform 0.2s, border-color 0.3s;
+            position: relative; overflow: hidden; /* For hover graphics */
+        }
+        
+        /* Graphic Hover Effect: Matrix Glimmer */
+        .utility-matrix-card:hover { transform: translateY(-3px); border-color: white; }
+        .utility-matrix-card::after {
+            content: ''; position: absolute; top: -100px; left: -100px; width: 200px; height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .utility-matrix-card:hover::after { opacity: 1; }
+
+        .card-left h3 { font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
+        .card-meta { font-size: 11px; font-weight: 700; color: var(--accent-neon); text-transform: uppercase; }
+        .card-right { text-align: right; font-size: 19px; font-weight: 900; }
+        .card-right span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+
+        /* 🚨 ADMIN TELEMETRY PIPELINE CARD MODIFIER */
+        .telemetry-card {
+            background: var(--gray-card); border: 1px solid var(--gray-border);
+            padding: 20px; margin-bottom: 15px; border-radius: 4px;
+            border-left: 3px solid var(--accent-admin);
+            position: relative;
+        }
+        .telemetry-card h4 { font-size: 16px; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .telemetry-card p { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 12px; }
+        .status-badge { background: rgba(0, 255, 170, 0.1); color: var(--green-active); padding: 2px 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; border-radius: 2px; }
+        .resolve-btn { background: transparent; border: 1px solid #333; color: #ff4444; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .resolve-btn:hover { background: #ff4444; color: white; border-color: #ff4444; }
+
+        /* 📋 ONBOARDING FLEET PANEL GRAPHICS MODIFIER */
+        .registry-panel {
+            background: var(--gray-card); border: 1px solid var(--gray-border);
+            padding: 50px; width: 100%; max-width: 550px; border-radius: 4px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        /* Graphic: Neon Cyan Border Glow */
+        .registry-panel::before {
+            content: ''; position: absolute; top: -1px; left: -1px; width: calc(100% + 2px); height: calc(100% + 2px);
+            border-radius: 4px; z-index: -1;
+            background: linear-gradient(135deg, var(--accent-neon), transparent 40%, var(--accent-neon) 100%);
+            opacity: 0.3;
+        }
+        
+        .registry-panel h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
+        .registry-panel p { color: #666; font-size: 14px; margin-bottom: 30px; line-height: 1.4; }
+
+        .input-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .input-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; letter-spacing: 0.05em; }
+        .input-group input, .input-group select { background: var(--black); border: 1px solid var(--gray-border); padding: 14px; color: white; font-size: 16px; border-radius: 4px; outline: none; }
+        .input-group input:focus, .input-group select:focus { border-color: var(--accent-neon); box-shadow: var(--box-shadow-neon); }
+        .input-group select { -webkit-appearance: none; appearance: none; }
+
+        /* Graphic Submit Button | Tactical Glow */
+        .submit-btn {
+            width: 100%; background: #fff; color: #000; border: none; padding: 16px;
+            font-size: 12px; font-weight: 800; text-transform: uppercase;
+            cursor: pointer; border-radius: 30px; transition: 0.3s;
+        }
+        .submit-btn:hover { background: var(--accent-neon); color: black; box-shadow: 0 0 20px var(--accent-neon); }
+
+        /* 📋 BOOKING PROMPT MODAL GRAPHICS MODIFIER */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
+        .modal-content { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 40px; width: 90%; max-width: 480px; position: relative; border-radius: 4px; }
+        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; font-size: 22px; transition: color 0.2s; }
+        .close-btn:hover { color: white; }
+
+        /* Graphic Radar Scan Overlay Module */
+        .radar-scan-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 6000; flex-direction: column; align-items: center; justify-content: center; }
+        .radar-scan-overlay h3 { font-size: 14px; font-weight: 800; color: var(--accent-neon); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.15em; }
+        .radar-scan-overlay p { color: var(--text-muted); font-size: 13px; font-family: monospace; }
+        
+        .graphic-radar-ring {
+            width: 120px; height: 120px; border: 2px solid var(--accent-neon);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            position: relative; margin-bottom: 40px;
+        }
+        .graphic-radar-ring::after {
+            content: ''; position: absolute; width: 100%; height: 100%;
+            border: 2px solid var(--accent-neon); border-radius: 50%;
+            animation: radarPulse 1.8s infinite linear;
+        }
+        @keyframes radarPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
     </style>
 </head>
 <body>
 
-    <nav class="sys-nav">
-        <a href="index.html" class="logo">SERVO<span>.</span></a>
-        <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="register.html">Fleet Registry</a>
-            <a href="login.html">Command Console</a>
-            <a href="dashboard.html" class="cta-btn">Book Now</a>
-        </div>
-    </nav>
-
-    <section class="hero-viewport">
-        <h1>Precision Logistics.<br>On Demand Matrix.</h1>
-        <p>Deploy tier-1 engineering professionals and computational field technicians straight to your dynamic grid location with zero latency latency.</p>
-        <a href="dashboard.html" class="cta-btn" style="padding: 16px 40px; font-size: 13px;">Initialize Booking Engine</a>
-    </section>
-
-    <section class="catalog-section">
-        <div class="section-header">Active Available Capabilities Catalog</div>
-        <div class="grid-container" id="landingGridCatalog">
+    <header class="sys-navbar">
+        <div class="left-controls">
+            <a href="#" class="logo">SERVO<span>.</span></a>
+            
+            <div class="toggle-wrapper" onclick="toggleSystemView()">
+                <span class="toggle-label active" id="labelConsumer">Consumer</span>
+                <div class="switch-track">
+                    <div class="switch-thumb"></div>
+                </div>
+                <span class="toggle-label" id="labelAdmin">Admin Radar</span>
             </div>
-    </section>
+        </div>
+
+        <div class="nav-tabs">
+            <button id="tabRequest" class="active" onclick="switchActiveView('consumer-pane')">Request Service</button>
+            <button id="tabOnboard" onclick="switchActiveView('onboard-pane')">Fleet Sign-Up</button>
+        </div>
+    </header>
+
+    <main class="view-pane active" id="consumer-pane">
+        <div id="consumerMap" class="map-element"></div>
+        <div class="sidebar-radar-panel">
+            <input type="text" placeholder="Search required capability (e.g., AC, Plumber)..." class="tactical-search">
+            
+            <div id="servicesContainer" style="display:flex; flex-direction:column; gap:12px;">
+                </div>
+        </div>
+    </main>
+
+    <main class="view-pane" id="admin-pane">
+        <div id="adminMap" class="map-element"></div>
+        <div class="sidebar-radar-panel">
+            <h2 style="font-size:12px; font-weight:800; text-transform:uppercase; color:var(--accent-admin); margin-bottom:15px; border-bottom:1px solid var(--gray-border); padding-bottom:12px;">Live Operational Logs | RADAR SECURE</h2>
+            <div id="adminLogsContainer">
+                </div>
+        </div>
+    </main>
+
+    <main class="view-pane onboard-layout" id="onboard-pane">
+        <div class="registry-panel">
+            <h2>Registry of Fleet Assets</h2>
+            <p>Deploy your trade parameters within our localized spatial matrix grid infrastructure.</p>
+            <form id="registrationForm">
+                <div class="input-group">
+                    <label>Operational Identity (Full Name)</label>
+                    <input type="text" id="partnerName" placeholder="Enter full legal name" required>
+                </div>
+                <div class="input-group">
+                    <label>Core Trade Capability Tier</label>
+                    <select id="partnerTrade" required>
+                        <option value="Electrician">Electrician (Grid Balance)</option>
+                        <option value="Plumber">Plumber (Fluid Routing Infrastructure)</option>
+                        <option value="AC Repair">AC Repair (Thermal Fluid Systems)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Mobile Handset Connection Vector</label>
+                    <input type="tel" id="partnerPhone" placeholder="10-digit communication vector" required>
+                </div>
+                <div class="input-group">
+                    <label>Operational City Matrix</label>
+                    <input type="text" id="partnerCity" placeholder="e.g., Jaipur" required>
+                </div>
+                <button type="submit" class="submit-btn">Deploy System Asset</button>
+            </form>
+        </div>
+    </main>
+
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closePromptModal()">✕</span>
+            <h2 id="modalTitle" style="font-size:22px; font-weight:900; text-transform:uppercase; margin-bottom:20px;">Dispatch Pipeline Authorization</h2>
+            <form id="bookingForm">
+                <input type="hidden" id="selectedServiceType">
+                <div class="input-group">
+                    <label>Client Reference Identity Name</label>
+                    <input type="text" id="custName" required placeholder="Enter primary booking name">
+                </div>
+                <div class="input-group">
+                    <label>Mobile Handset Line</label>
+                    <input type="tel" id="custPhone" required placeholder="10-digit handset routing link">
+                </div>
+                <div class="input-group">
+                    <label>Target Flat Unit Designation Parameters</label>
+                    <input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location">
+                </div>
+                <button type="submit" class="submit-btn">Authorize Deployment Request</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="radar-scan-overlay" id="radarScanOverlay">
+        <div class="graphic-radar-ring">
+            <span style="font-size:28px;">📡</span>
+        </div>
+        <h3 id="radarStatusTitle">Pinging Fleet Matrix</h3>
+        <p id="radarTickerStatus">Initializing spatial query array handshake...</p>
+    </div>
 
     <script>
-        // Connect public structural data directly to UI templates
-        fetch('https://servoo0-backend.onrender.com/api/services')
-            .then(res => res.json())
-            .then(services => {
-                const container = document.getElementById('landingGridCatalog');
+        // CORE TARGETED LIVE CLOUD BACKEND | As seen in screenshots
+        const LIVE_API_URL = 'https://servoo0-backend.onrender.com';
+
+        let cMapEngine, aMapEngine;
+        let adminMarkerList = [];
+
+        function switchActiveView(targetId) {
+            document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+            
+            const pane = document.getElementById(targetId);
+            pane.classList.add('active');
+
+            if (targetId === 'onboard-pane') document.getElementById('tabOnboard').classList.add('active');
+            if (targetId === 'consumer-pane') document.getElementById('tabRequest').classList.add('active');
+
+            // Force dynamic canvas resizing for mapping engines
+            setTimeout(() => { if(cMapEngine) cMapEngine.invalidateSize(); if(aMapEngine) aMapEngine.invalidateSize(); }, 50);
+        }
+
+        function toggleSystemView() {
+            const isAdminMode = document.body.classList.toggle('admin-mode-active');
+            
+            if (isAdminMode) {
+                switchActiveView('admin-pane');
+                document.getElementById('labelConsumer').classList.remove('active');
+                document.getElementById('labelAdmin').classList.add('active');
+                initializeAdminTelemetryLogs();
+            } else {
+                switchActiveView('consumer-pane');
+                document.getElementById('labelAdmin').classList.remove('active');
+                document.getElementById('labelConsumer').classList.add('active');
+            }
+        }
+
+        function bootstrapSpatialMaps() {
+            cMapEngine = L.map('consumerMap', {zoomControl: false}).setView([26.9124, 75.7873], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(cMapEngine);
+
+            aMapEngine = L.map('adminMap', {zoomControl: false}).setView([26.9124, 75.7873], 12);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(aMapEngine);
+        }
+
+        function syncLiveGridVariables() {
+            Promise.all([
+                fetch(`${LIVE_API_URL}/api/services`).then(res => res.json()),
+                fetch(`${LIVE_API_URL}/api/providers`).then(res => res.json())
+            ]).then(([services, providers]) => {
+                
+                // Plot Active Technicians onto Consumer Radar Canvas
+                providers.forEach(p => {
+                    L.circleMarker([p.lat, p.lng], { color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.3, radius: 7 }).addTo(cMapEngine);
+                });
+
+                // Deploy Service Action Matrix Cards | Replicating features
+                const target = document.getElementById('servicesContainer');
+                target.innerHTML = '';
                 services.forEach(s => {
-                    container.innerHTML += `
-                        <div class="utility-premium-card">
-                            <div class="card-top">
-                                <h3>${s.name}</h3>
-                                <p>// Status Active Node [${s.status}]</p>
-                            </div>
-                            <div class="card-bottom">
-                                <div class="price-tag">₹${s.basePrice}<span>${s.rateType}</span></div>
-                                <button class="book-now-trigger" onclick="window.location.href='dashboard.html'">Book Now</button>
-                            </div>
+                    target.innerHTML += `
+                        <div class="utility-matrix-card" onclick="openPromptModal('${s.name}')">
+                            <div class="card-left"><h3>${s.name}</h3><div class="card-meta">${s.status}</div></div>
+                            <div class="card-right">₹${s.basePrice}<span>${s.rateType}</span></div>
                         </div>`;
                 });
             });
+        }
+
+        function initializeAdminTelemetryLogs() {
+            fetch(`${LIVE_API_URL}/api/bookings`)
+                .then(res => res.json())
+                .then(bookings => {
+                    adminMarkerList.forEach(m => aMapEngine.removeLayer(m));
+                    adminMarkerList = [];
+                    const container = document.getElementById('adminLogsContainer');
+                    container.innerHTML = bookings.length === 0 ? '<div style="color:#555; text-align:center; padding-top:20px;">RADAR SECURE: No active dispatches.</div>' : '';
+                    
+                    bookings.forEach(b => {
+                        const marker = L.circleMarker([b.lat, b.lng], { color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.6, radius: 9 }).addTo(aMapEngine);
+                        adminMarkerList.push(marker);
+                        container.innerHTML += `
+                            <div class="telemetry-card">
+                                <h4>${b.customerName} <span class="status-badge">${b.status}</span></h4>
+                                <p><b>Required capability:</b> ${b.serviceType}<br><b>Address Designation:</b> ${b.flatAddress}<br><b>Assigned Agent:</b> <span style="color:#00e5ff;">⚡ ${b.assignedPartner}</span> (Tier-1 Pro)</p>
+                                <button class="resolve-btn" onclick="terminateDispatchFrame('${b._id}')">Resolve & Terminate Case</button>
+                            </div>`;
+                    });
+                });
+        }
+
+        function terminateDispatchFrame(id) { fetch(`${LIVE_API_URL}/api/bookings/${id}`, { method: 'DELETE' }).then(() => initializeAdminTelemetryLogs()); }
+        function openPromptModal(name) { document.getElementById('selectedServiceType').value = name; document.getElementById('modalTitle').innerText = `AUTHORIZE ${name}`; document.getElementById('bookingModal').style.display = 'flex'; }
+        function closePromptModal() { document.getElementById('bookingModal').style.display = 'none'; }
+
+        // Core Interaction Pipeline | Submitting booking requirements
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const serviceType = document.getElementById('selectedServiceType').value;
+            closePromptModal();
+
+            document.getElementById('radarScanOverlay').style.display = 'flex';
+            const ticker = document.getElementById('radarTickerStatus');
+            const headerStatus = document.getElementById('radarStatusTitle');
+
+            // Procedural Graphic Feedback Loop Sequence
+            setTimeout(() => { ticker.innerText = `[ROSTER]: Syncing spatial coordinate matrix array...`; }, 1000);
+            setTimeout(() => { ticker.innerText = `[MATCH]: Optimizing dispatch routing vector handshake...`; headerStatus.innerText = `Deployment Pipeline Confirmed`; headerStatus.style.color = `#00ffaa`; }, 2500);
+
+            setTimeout(() => {
+                fetch(`${LIVE_API_URL}/api/book-service`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        customerName: document.getElementById('custName').value,
+                        customerPhone: document.getElementById('custPhone').value,
+                        serviceType: serviceType,
+                        flatAddress: document.getElementById('custAddr').value
+                    })
+                }).then(() => {
+                    document.getElementById('radarScanOverlay').style.display = 'none';
+                    document.getElementById('bookingForm').reset();
+                    syncLiveGridVariables();
+                });
+            }, 3500);
+        });
+
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(`${LIVE_API_URL}/api/register-provider`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    name: document.getElementById('partnerName').value,
+                    trade: document.getElementById('partnerTrade').value,
+                    phone: document.getElementById('partnerPhone').value,
+                    city: document.getElementById('partnerCity').value
+                })
+            }).then(res => res.json()).then(data => {
+                alert(data.message);
+                document.getElementById('registrationForm').reset();
+                switchActiveView('consumer-pane');
+                syncLiveGridVariables();
+            });
+        });
+
+        // Initialize Procedural Boot Loops
+        bootstrapSpatialMaps();
+        syncLiveGridVariables();
+        setInterval(() => { if(document.body.classList.contains('admin-mode-active')) initializeAdminTelemetryLogs(); }, 5000);
     </script>
 </body>
 </html>
