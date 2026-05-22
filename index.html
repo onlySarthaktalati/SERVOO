@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVO | Premium Grid Core</title>
+    <title>SERVO | Premium Marketplace Matrix</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         :root {
             --black: #000000;
@@ -22,7 +23,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
         body { background-color: var(--black); color: var(--text-main); letter-spacing: -0.02em; overflow-x: hidden; min-height: 100vh; }
 
-        /* 🧭 PREMIUM NAVBAR */
         header.sys-navbar {
             display: flex; justify-content: space-between; align-items: center;
             padding: 0 5%; height: 80px; background: var(--black);
@@ -42,38 +42,25 @@
         body.admin-mode-active .switch-thumb { left: 21px; background: var(--accent-pink); }
         body.admin-mode-active .logo span { color: var(--accent-pink); }
 
-        /* 📋 MAIN CONTAINER CHANNEL */
+        .nav-actions { display: flex; gap: 25px; }
+        .nav-actions button { background: transparent; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
+        .nav-actions button:hover, .nav-actions button.active { color: white; }
+
         .viewport-wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 5%; }
 
-        /* 🏷️ THE SERVICES LINE ACCENT SEPARATOR */
-        .services-section-divider {
-            display: flex; align-items: center; gap: 20px;
-            margin: 20px 0 25px 0;
-        }
-        .services-section-divider h2 {
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: var(--text-muted); letter-spacing: 0.15em; white-space: nowrap;
-        }
-        .services-section-divider .line-graphic {
-            width: 100%; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, rgba(255,255,255,0.05) 50%, var(--border-color) 100%);
-        }
+        .services-section-divider { display: flex; align-items: center; gap: 20px; margin: 20px 0 25px 0; }
+        .services-section-divider h2 { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.15em; white-space: nowrap; }
+        .services-section-divider .line-graphic { width: 100%; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, rgba(255,255,255,0.05) 50%, var(--border-color) 100%); }
 
-        /* 🏎️ HORIZONTAL SWIPABLE MARKETPLACE SLIDER */
-        .horizontal-cards-slider {
-            display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px;
-            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        }
-        /* Custom scrollbar minimalism */
+        .horizontal-cards-slider { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px; scroll-snap-type: x mandatory; }
         .horizontal-cards-slider::-webkit-scrollbar { height: 4px; }
-        .horizontal-cards-slider::-webkit-scrollbar-track { background: transparent; }
         .horizontal-cards-slider::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
         .premium-service-card {
             flex: 0 0 310px; scroll-snap-align: start;
             background: var(--card-bg); border: 1px solid var(--border-color);
             padding: 28px; border-radius: 12px; display: flex; flex-direction: column;
-            justify-content: space-between; min-height: 200px;
-            transition: border-color 0.2s, transform 0.2s;
+            justify-content: space-between; min-height: 200px; transition: 0.2s;
         }
         .premium-service-card:hover { border-color: #3f3f46; transform: translateY(-3px); }
 
@@ -82,53 +69,44 @@
         
         .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
         .price-display { font-size: 22px; font-weight: 900; }
-        .price-display span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+        .price-display span { block: font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
 
-        .book-pill-btn {
-            background: var(--text-main); color: var(--black); border: none;
-            padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase;
-            border-radius: 30px; cursor: pointer; transition: 0.2s;
-        }
+        .book-pill-btn { background: var(--text-main); color: var(--black); border: none; padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; transition: 0.2s; }
         .book-pill-btn:hover { background: var(--accent-cyan); box-shadow: var(--neon-glow); }
 
-        /* 🗺️ MINIMIZED MAP PLACEMENT FRAMEWORK */
-        .minimized-map-container {
-            margin-top: 40px; border: 1px solid var(--border-color);
-            border-radius: 12px; overflow: hidden; height: 260px; position: relative;
-            background: var(--dark-void);
-        }
+        .minimized-map-container { margin-top: 40px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 260px; background: var(--dark-void); }
         .map-element { width: 100%; height: 100%; }
         .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
-        .leaflet-control-attribution { display: none !important; }
 
-        /* 🚨 ADMIN TELEMETRY OVERLAY LAYOUT */
+        #onboardFormSpace { display: none; max-width: 500px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; }
+
         #adminViewInterface { display: none; }
         .admin-grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .telemetry-pipeline-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-pink);
-        }
+        .telemetry-pipeline-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-pink); }
         .telemetry-pipeline-card h4 { font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
         .telemetry-pipeline-card p { font-size: 13px; color: #a1a1aa; line-height: 1.5; margin-bottom: 12px; }
         .live-tag { background: rgba(0, 255, 170, 0.1); color: #00ffaa; padding: 2px 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .resolve-btn { background: transparent; border: 1px solid #27272a; color: #ef4444; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 4px; }
         .resolve-btn:hover { background: #ef4444; color: white; }
 
-        /* 📋 FORM MODAL STRUCTURING */
         .modal-blur-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; width: 92%; max-width: 440px; border-radius: 12px; position: relative; }
         .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; font-size: 20px; }
         
         .form-block { display: flex; flex-direction: column; margin-bottom: 18px; }
         .form-block label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
-        .form-block input { background: var(--black); border: 1px solid var(--border-color); padding: 14px; color: white; font-size: 15px; border-radius: 6px; outline: none; }
-        .form-block input:focus { border-color: var(--accent-cyan); }
+        .form-block input, .form-block select { background: var(--black); border: 1px solid var(--border-color); padding: 14px; color: white; font-size: 15px; border-radius: 6px; outline: none; }
+        .form-block input:focus, .form-block select:focus { border-color: var(--accent-cyan); }
         .submit-dispatch-btn { width: 100%; background: white; color: black; border: none; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; }
 
         .radar-ping-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 6000; flex-direction: column; align-items: center; justify-content: center; }
         .radar-pulsing-circle { width: 100px; height: 100px; border: 2px solid var(--accent-cyan); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 30px; }
         .radar-pulsing-circle::after { content: ''; position: absolute; width: 100%; height: 100%; border: 2px solid var(--accent-cyan); border-radius: 50%; animation: matrixPing 1.5s infinite linear; }
         @keyframes matrixPing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
+
+        @media (max-width: 900px) {
+            .minimized-map-container { display: none; }
+        }
     </style>
 </head>
 <body>
@@ -143,69 +121,48 @@
     </header>
 
     <div class="viewport-wrapper">
-        
         <div id="userViewInterface">
-            
-            <div class="services-section-divider">
-                <h2>Capabilities We Deployed</h2>
-                <div class="line-graphic"></div>
+            <div class="nav-actions" style="margin-bottom: 20px;">
+                <button id="tabReq" class="active" onclick="switchClientTab('req')">Request Service</button>
+                <button id="tabOnb" onclick="switchClientTab('onb')">Join Fleet Roster</button>
             </div>
 
-            <div class="horizontal-cards-slider" id="horizontalSliderCatalog">
-                
-                <div class="premium-service-card">
-                    <div class="card-top">
-                        <h3>AC Repair</h3>
-                        <div class="card-tag">// Thermal Management [Online]</div>
+            <div id="requestSubPane">
+                <div class="services-section-divider"><h2>Capabilities We Deployed</h2><div class="line-graphic"></div></div>
+                <div class="horizontal-cards-slider">
+                    <div class="premium-service-card">
+                        <div class="card-top"><h3>AC Repair</h3><div class="card-tag">// Thermal Management [Online]</div></div>
+                        <div class="card-bottom"><div class="price-display">₹450<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('AC Repair')">Book Now</button></div>
                     </div>
-                    <div class="card-bottom">
-                        <div class="price-display"> can ₹450<span>Base Rate</span></div>
-                        <button class="book-pill-btn" onclick="openDispatchPrompt('AC Repair')">Book Now</button>
+                    <div class="premium-service-card">
+                        <div class="card-top"><h3>Electrician</h3><div class="card-tag">// Power & Grid Balance [Online]</div></div>
+                        <div class="card-bottom"><div class="price-display">₹290<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Electrician')">Book Now</button></div>
+                    </div>
+                    <div class="premium-service-card">
+                        <div class="card-top"><h3>Plumber</h3><div class="card-tag">// Fluid Routing Mechanics [Online]</div></div>
+                        <div class="card-bottom"><div class="price-display">₹350<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Plumber')">Book Now</button></div>
                     </div>
                 </div>
-
-                <div class="premium-service-card">
-                    <div class="card-top">
-                        <h3>Electrician</h3>
-                        <div class="card-tag">// Power & Grid Balance [Online]</div>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="price-display">Example ₹290<span>Base Rate</span></div>
-                        <button class="book-pill-btn" onclick="openDispatchPrompt('Electrician')">Book Now</button>
-                    </div>
-                </div>
-
-                <div class="premium-service-card">
-                    <div class="card-top">
-                        <h3>Plumber</h3>
-                        <div class="card-tag">// Fluid Routing Infrastructure [Online]</div>
-                    </div>
-                    <div class="card-bottom">
-                        <div class="price-display">₹350<span>Base Rate</span></div>
-                        <button class="book-pill-btn" onclick="openDispatchPrompt('Plumber')">Book Now</button>
-                    </div>
-                </div>
-
+                <div class="services-section-divider" style="margin-top: 20px;"><h2>Localized Coverage Radar Map</h2><div class="line-graphic"></div></div>
+                <div class="minimized-map-container"><div id="minimizedMap" class="map-element"></div></div>
             </div>
 
-            <div class="services-section-divider" style="margin-top: 20px;">
-                <h2>Localized Coverage Radar Map</h2>
-                <div class="line-graphic"></div>
+            <div id="onboardFormSpace">
+                <div class="services-section-divider"><h2>Fleet Registration Hub</h2><div class="line-graphic"></div></div>
+                <form id="fleetRegistrationForm">
+                    <div class="form-block"><label>Full Identity Legal Name</label><input type="text" id="partnerName" placeholder="Enter full name" required></div>
+                    <div class="form-block"><label>Trade Parameters Allocation</label><select id="partnerTrade" required><option value="Electrician">Electrician</option><option value="Plumber">Plumber</option><option value="AC Repair">AC Repair</option></select></div>
+                    <div class="form-block"><label>Handset Vector Phone Link</label><input type="tel" id="partnerPhone" placeholder="10-digit mobile phone number" required></div>
+                    <div class="form-block"><label>Target Base City Location</label><input type="text" id="partnerCity" placeholder="e.g. Jaipur" required></div>
+                    <button type="submit" class="submit-dispatch-btn" style="background:white; color:black;">Deploy Node Roster</button>
+                </form>
             </div>
-            <div class="minimized-map-container">
-                <div id="minimizedMap" class="map-element"></div>
-            </div>
-
         </div>
 
         <div id="adminViewInterface">
-            <div class="services-section-divider">
-                <h2 style="color: var(--accent-pink);">Live Infrastructure Dispatches</h2>
-                <div class="line-graphic"></div>
-            </div>
+            <div class="services-section-divider"><h2 style="color: var(--accent-pink);">Live Infrastructure Dispatches</h2><div class="line-graphic"></div></div>
             <div class="admin-grid-layout" id="telemetryStreamTarget"></div>
         </div>
-
     </div>
 
     <div class="modal-blur-backdrop" id="bookingModalPrompt">
@@ -214,18 +171,9 @@
             <h2 id="modalLabelHeader" style="font-size: 18px; font-weight: 900; text-transform: uppercase; margin-bottom: 22px;">Authorize Dispatch Request</h2>
             <form id="bookingSubmissionForm">
                 <input type="hidden" id="selectedServiceTypeField">
-                <div class="form-block">
-                    <label>Client Reference Identity Name</label>
-                    <input type="text" id="custName" required placeholder="Enter primary customer identifier name">
-                </div>
-                <div class="form-block">
-                    <label>Mobile Handset Vector String</label>
-                    <input type="tel" id="custPhone" required placeholder="10-digit communication vector line">
-                </div>
-                <div class="form-block">
-                    <label>Target Flat Unit Designation Parameters</label>
-                    <input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location">
-                </div>
+                <div class="form-block"><label>Client Reference Identity Name</label><input type="text" id="custName" required placeholder="Enter customer name token"></div>
+                <div class="form-block"><label>Mobile Handset Vector String</label><input type="tel" id="custPhone" required placeholder="10-digit communication vector line"></div>
+                <div class="form-block"><label>Target Flat Unit Parameters</label><input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location"></div>
                 <button type="submit" class="submit-dispatch-btn">Authorize Node Deployment</button>
             </form>
         </div>
@@ -241,6 +189,14 @@
         const CLOUD_BACKEND_API_LINK = 'https://servoo0-backend.onrender.com';
         let customMinimizedMapInstance;
         let activeMarkersList = [];
+
+        function switchClientTab(tabId) {
+            document.getElementById('tabReq').classList.toggle('active', tabId === 'req');
+            document.getElementById('tabOnb').classList.toggle('active', tabId === 'onb');
+            document.getElementById('requestSubPane').style.display = tabId === 'req' ? 'block' : 'none';
+            document.getElementById('onboardFormSpace').style.display = tabId === 'onb' ? 'block' : 'none';
+            if(tabId === 'req') setTimeout(() => { customMinimizedMapInstance.invalidateSize(); }, 50);
+        }
 
         function togglePlatformOperationalView() {
             const isHqAdminMode = document.body.classList.toggle('admin-mode-active');
@@ -258,14 +214,11 @@
             customMinimizedMapInstance = L.map('minimizedMap', {zoomControl: false}).setView([26.9124, 75.7873], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(customMinimizedMapInstance);
             
-            // Failsafe coordinate pull dot array loading
             fetch(`${CLOUD_BACKEND_API_LINK}/api/providers`)
                 .then(res => res.json())
                 .then(providers => {
-                    providers.forEach(p => {
-                        L.circleMarker([p.lat, p.lng], { color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.3, radius: 5 }).addTo(customMinimizedMapInstance);
-                    });
-                }).catch(e => console.log("Static recovery state bypass mounted active."));
+                    providers.forEach(p => { L.circleMarker([p.lat, p.lng], { color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.3, radius: 5 }).addTo(customMinimizedMapInstance); });
+                }).catch(e => console.log("Static bypass active."));
         }
 
         function pullOperationalLogisticsTelemetry() {
@@ -276,7 +229,7 @@
                     activeMarkersList = [];
                     
                     const logContainer = document.getElementById('telemetryStreamTarget');
-                    logContainer.innerHTML = bookings.length === 0 ? '<p style="color:#444; text-align:center; padding:40px 0; font-size:13px;">RADAR SECURE: No active dispatches tracking.</p>' : '';
+                    logContainer.innerHTML = bookings.length === 0 ? '<p style="color:#444; text-align:center; padding-top:40px 0; font-size:13px;">RADAR SECURE: No active dispatches tracking.</p>' : '';
                     
                     bookings.forEach(b => {
                         const m = L.circleMarker([b.lat, b.lng], { color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.5, radius: 7 }).addTo(customMinimizedMapInstance);
@@ -285,51 +238,61 @@
                         logContainer.innerHTML += `
                             <div class="telemetry-pipeline-card">
                                 <h4>${b.customerName} <span class="live-tag">${b.status}</span></h4>
-                                <p><b>Required:</b> ${b.serviceType}<br><b>Destination Vector:</b> ${b.flatAddress}<br><b>Assigned Agent:</b> <span style="color:#00e5ff;">⚡ ${b.assignedPartner}</span></p>
+                                <p><b>Required:</b> ${b.serviceType}<br><b>Destination Vector:</b> ${b.flatAddress}<br><b>Assigned Fleet Node:</b> <span style="color:#00e5ff;">⚡ ${b.assignedPartner}</span></p>
                                 <button class="resolve-btn" onclick="terminateCaseLog('${b._id}')">Resolve Case Frame</button>
                             </div>`;
                     });
                 });
         }
 
-        function terminateCaseLog(id) {
-            fetch(`${CLOUD_BACKEND_API_LINK}/api/bookings/${id}`, { method: 'DELETE' }).then(() => pullOperationalLogisticsTelemetry());
-        }
-
-        function openDispatchPrompt(serviceTitle) {
-            document.getElementById('selectedServiceTypeField').value = serviceTitle;
-            document.getElementById('modalLabelHeader').innerText = `AUTHORIZE ${serviceTitle} DISPATCH`;
-            document.getElementById('bookingModalPrompt').style.display = 'flex';
-        }
+        function terminateCaseLog(id) { fetch(`${CLOUD_BACKEND_API_LINK}/api/bookings/${id}`, { method: 'DELETE' }).then(() => pullOperationalLogisticsTelemetry()); }
+        function openDispatchPrompt(serviceTitle) { document.getElementById('selectedServiceTypeField').value = serviceTitle; document.getElementById('modalLabelHeader').innerText = `AUTHORIZE ${serviceTitle} DISPATCH`; document.getElementById('bookingModalPrompt').style.display = 'flex'; }
         function closeDispatchPrompt() { document.getElementById('bookingModalPrompt').style.display = 'none'; }
 
         document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const chosenTypeString = document.getElementById('selectedServiceTypeField').value;
-            closeDispatchPrompt();
             
+            const name = document.getElementById('custName').value;
+            const phone = document.getElementById('custPhone').value;
+            const addr = document.getElementById('custAddr').value;
+
+            closeDispatchPrompt();
             document.getElementById('radarAnimationOverlayStage').style.display = 'flex';
 
             setTimeout(() => {
                 fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        customerName: document.getElementById('custName').value,
-                        customerPhone: document.getElementById('custPhone').value,
-                        serviceType: chosenTypeString,
-                        flatAddress: document.getElementById('custAddr').value
+                    body: JSON.stringify({ 
+                        customerName: name, 
+                        customerPhone: phone, 
+                        serviceType: chosenTypeString, 
+                        flatAddress: addr, 
+                        paymentId: "PAYID_SIMULATED_SUCCESS_TOKEN" 
                     })
                 }).then(() => {
                     document.getElementById('radarAnimationOverlayStage').style.display = 'none';
                     document.getElementById('bookingSubmissionForm').reset();
-                    alert("DISPATCH REQUISITION GRANTED. Field engineering asset deployed successfully.");
+                    alert(`⚡ TRANSACTION COMPLETE.\nSimulated Payment Authorized.\nReceipt logged: PAYID_SIMULATED_SUCCESS_TOKEN`);
                 });
             }, 3000);
         });
 
+        document.getElementById('fleetRegistrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fetch(`${CLOUD_BACKEND_API_LINK}/api/register-provider`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ name: document.getElementById('partnerName').value, trade: document.getElementById('partnerTrade').value, phone: document.getElementById('partnerPhone').value, city: document.getElementById('partnerCity').value })
+            }).then(res => res.json()).then(data => {
+                alert(data.message);
+                document.getElementById('fleetRegistrationForm').reset();
+                switchClientTab('req');
+            });
+        });
+
         initMinimizedDisplayMap();
-        setInterval(() => { if(document.body.classList.contains('admin-mode-active')) pullOperationalLogisticsTelemetry(); }, 5000);
     </script>
 </body>
 </html>
