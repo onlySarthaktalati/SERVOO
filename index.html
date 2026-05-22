@@ -3,464 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVO | Next-Gen Utility Matrix</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <title>SERVO | Premium Local Utility Fleet Grid</title>
     <style>
         :root {
-            --black: #000000;
-            --dark: #080808;
-            --gray-card: #121212;
-            --gray-border: #1f1f1f;
-            --accent: #00f0ff;
-            --accent-admin: #ff0055;
-            --text: #ffffff;
-            --muted: #666666;
-            --green: #00ffaa;
-            --gold: #ffd700;
+            --pure-black: #000000;
+            --nike-dark: #0a0a0a;
+            --gray-card: #111111;
+            --gray-border: #1a1a1a;
+            --accent-neon: #00f0ff;
+            --text-primary: #ffffff;
+            --text-muted: #707070;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
-        body { background-color: var(--black); color: var(--text); letter-spacing: -0.02em; overflow-x: hidden; }
+        body { background-color: var(--pure-black); color: var(--text-primary); letter-spacing: -0.03em; overflow-x: hidden; }
 
-        /* 🎛️ Master Control Header */
-        header.sys-navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 4%;
-            background: var(--black);
+        /* 🧭 Premium Monochromatic Navigation */
+        nav.sys-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 4%; height: 90px;
             border-bottom: 1px solid var(--gray-border);
-            height: 85px;
-            position: sticky;
-            top: 0;
-            z-index: 3000;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 1000;
         }
-
-        .left-controls { display: flex; align-items: center; gap: 30px; }
-        .logo { font-size: 24px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; text-decoration: none; color: white; }
-        .logo span { color: var(--accent); }
-
-        /* Tactical Toggle Switch */
-        .toggle-wrapper { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .toggle-label { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); transition: color 0.2s; }
-        .toggle-label.active { color: white; }
+        .logo { font-size: 26px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.06em; text-decoration: none; color: #fff; }
+        .logo span { color: var(--accent-neon); }
         
-        .switch-track {
-            width: 50px; height: 26px;
-            background: #1a1a1a;
-            border: 1px solid var(--gray-border);
-            border-radius: 30px;
-            position: relative;
-            transition: all 0.3s ease;
+        .nav-links { display: flex; gap: 35px; align-items: center; }
+        .nav-links a { color: var(--text-muted); text-decoration: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; transition: color 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        
+        .cta-btn { background: #fff; color: #000; padding: 12px 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; text-decoration: none; border: 1px solid #fff; transition: all 0.2s ease; }
+        .cta-btn:hover { background: #000; color: #fff; }
+
+        /* 🏎️ Cinematic Hero Segment */
+        section.hero-viewport {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; min-height: 70vh; padding: 0 20px;
+            background: radial-gradient(circle at center, #0a0a0a 0%, #000000 100%);
         }
-        .switch-thumb {
-            width: 18px; height: 18px;
-            background: white;
-            border-radius: 50%;
-            position: absolute;
-            top: 3px; left: 4px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+        .hero-viewport h1 { font-size: 72px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; line-height: 0.95; margin-bottom: 20px; }
+        .hero-viewport p { color: var(--text-muted); font-size: 18px; max-width: 600px; line-height: 1.5; margin-bottom: 35px; }
+
+        /* 📋 Premium Grid Catalog Selection */
+        section.catalog-section { max-width: 1300px; margin: 0 auto 100px; padding: 0 4%; }
+        .section-header { font-size: 12px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.1em; margin-bottom: 30px; }
         
-        body.admin-mode-active .switch-track { background: rgba(255, 0, 85, 0.1); border-color: var(--accent-admin); }
-        body.admin-mode-active .switch-thumb { left: 26px; background: var(--accent-admin); }
-        body.admin-mode-active .logo span { color: var(--accent-admin); }
-
-        .nav-tabs { display: flex; gap: 20px; }
-        .nav-tabs button { background: transparent; border: none; color: var(--muted); font-size: 13px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        .nav-tabs button:hover, .nav-tabs button.active { color: white; }
-
-        /* 📡 Streaming System Ticker Panel */
-        .system-ticker-bar {
-            background: #050505;
-            border-bottom: 1px solid var(--gray-border);
-            padding: 8px 4%;
-            font-size: 11px;
-            font-family: monospace;
-            color: var(--accent);
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-        .ticker-label { background: #111; padding: 2px 6px; border: 1px solid #222; font-weight: bold; text-transform: uppercase; }
-
-        /* 📋 Main Viewport System Framework */
-        .view-pane { display: none; max-width: 1400px; margin: 30px auto; padding: 0 20px; }
-        .view-pane.active { display: grid; }
-
-        /* 👤 Consumer View Configuration */
-        .consumer-layout { grid-template-columns: 1fr 440px; gap: 30px; height: calc(100vh - 180px); }
-        #consumerMap { background: var(--dark); border: 1px solid var(--gray-border); border-radius: 4px; }
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; }
+        .utility-premium-card { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 35px; border-radius: 4px; display: flex; flex-direction: column; justify-content: space-between; min-height: 220px; transition: border-color 0.3s; }
+        .utility-premium-card:hover { border-color: #333; }
         
-        .sidebar-panel { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 25px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; border-radius: 4px;}
+        .card-top h3 { font-size: 22px; font-weight: 800; text-transform: uppercase; margin-bottom: 6px; }
+        .card-top p { color: var(--accent-neon); font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
+        .price-tag { font-size: 24px; font-weight: 900; }
+        .price-tag span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
         
-        /* Interactive Search Engine Controls */
-        .search-box-wrapper { position: relative; width: 100%; margin-bottom: 5px; }
-        .search-box-wrapper input { width: 100%; background: var(--black); border: 1px solid var(--gray-border); padding: 12px 15px; color: white; font-size: 14px; border-radius: 4px; outline: none; }
-        .search-box-wrapper input:focus { border-color: var(--accent); }
-
-        .service-action-card { background: var(--black); border: 1px solid var(--gray-border); padding: 20px; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; }
-        .service-action-card:hover { border-color: white; background: #141414; }
-        .card-title h3 { font-size: 18px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
-        .card-meta { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--accent); }
-        .card-price { text-align: right; font-size: 19px; font-weight: 900; }
-        .card-price span { display: block; font-size: 10px; color: var(--muted); text-transform: uppercase; }
-
-        /* 🚨 Dispatch HQ Admin View Configuration */
-        .admin-layout { grid-template-columns: 1fr 480px; gap: 30px; height: calc(100vh - 180px); }
-        #adminRadarMap { background: var(--dark); border: 1px solid var(--gray-border); border-radius: 4px; }
-        
-        .admin-log-stream { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 25px; overflow-y: auto; border-radius: 4px; }
-        .admin-log-stream h2 { font-size: 16px; font-weight: 800; text-transform: uppercase; color: var(--accent-admin); margin-bottom: 20px; border-bottom: 1px solid var(--gray-border); padding-bottom: 12px; }
-        
-        .pipeline-card { background: var(--black); border: 1px solid var(--gray-border); padding: 20px; margin-bottom: 15px; border-radius: 4px; border-left: 3px solid var(--accent-admin); }
-        .pipeline-card h4 { font-size: 16px; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .pipeline-card p { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 12px; }
-        .badge-status { background: rgba(0, 255, 170, 0.1); color: var(--green); padding: 2px 8px; font-size: 10px; font-weight: 800; text-transform: uppercase; border-radius: 2px; }
-        .resolve-btn { background: transparent; border: 1px solid #333; color: #ff3b3b; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
-        .resolve-btn:hover { background: #ff3b3b; color: white; border-color: #ff3b3b; }
-
-        /* 📋 Fleet Sign-Up Pane View */
-        .onboard-layout { display: flex; align-items: center; justify-content: center; min-height: calc(100vh - 200px); }
-        .onboard-panel { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 50px; width: 100%; max-width: 550px; border-radius: 4px; }
-        .onboard-panel h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 10px; }
-        .onboard-panel p { color: #666; font-size: 14px; margin-bottom: 30px; line-height: 1.4; }
-
-        .input-group { display: flex; flex-direction: column; margin-bottom: 20px; }
-        .input-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; }
-        .input-group input, .input-group select { background: var(--black); border: 1px solid var(--gray-border); padding: 14px; color: white; font-size: 16px; border-radius: 4px; outline: none; }
-        .input-group input:focus, .input-group select:focus { border-color: var(--accent); }
-        
-        /* Leaflet Controls Styling Modifiers */
-        .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
-        .leaflet-control-attribution { display: none !important; }
-
-        /* Booking Overlay Modals & Radar System Rings */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(8px); }
-        .modal-content { background: var(--gray-card); border: 1px solid var(--gray-border); padding: 40px; width: 90%; max-width: 480px; position: relative; border-radius: 4px; }
-        .close-btn { position: absolute; top: 20px; right: 20px; color: var(--muted); cursor: pointer; font-size: 22px; }
-
-        .radar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 6000; flex-direction: column; align-items: center; justify-content: center; }
-        .radar-ring { width: 120px; height: 120px; border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 40px; }
-        .radar-ring::after { content: ''; width: 100%; height: 100%; border: 2px solid var(--accent); border-radius: 50%; position: absolute; animation: radarPulse 1.8s infinite linear; }
-        .radar-title { font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.15em; }
-        .radar-ticker { color: var(--muted); font-size: 13px; font-family: monospace; }
-        @keyframes radarPulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
-
-        @media (max-width: 950px) {
-            .consumer-layout, .admin-layout { grid-template-columns: 1fr; height: auto; }
-            #consumerMap, #adminRadarMap { height: 350px; }
-            header.sys-navbar { flex-direction: column; height: auto; padding: 20px; gap: 15px; }
-        }
+        .book-now-trigger { background: transparent; border: 1px solid #333; color: white; padding: 12px 24px; font-size: 11px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; border-radius: 20px; }
+        .book-now-trigger:hover { background: white; color: black; border-color: white; }
     </style>
 </head>
 <body>
 
-    <header class="sys-navbar">
-        <div class="left-controls">
-            <a href="#" class="logo" onclick="switchView('consumer-pane')">SERVO<span>.</span></a>
-            
-            <div class="toggle-wrapper" onclick="toggleSystemMode()">
-                <span class="toggle-label active" id="toggleLabelConsumer">Consumer</span>
-                <div class="switch-track">
-                    <div class="switch-thumb"></div>
-                </div>
-                <span class="toggle-label" id="toggleLabelAdmin">Admin Radar</span>
+    <nav class="sys-nav">
+        <a href="index.html" class="logo">SERVO<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Home</a>
+            <a href="register.html">Fleet Registry</a>
+            <a href="login.html">Command Console</a>
+            <a href="dashboard.html" class="cta-btn">Book Now</a>
+        </div>
+    </nav>
+
+    <section class="hero-viewport">
+        <h1>Precision Logistics.<br>On Demand Matrix.</h1>
+        <p>Deploy tier-1 engineering professionals and computational field technicians straight to your dynamic grid location with zero latency latency.</p>
+        <a href="dashboard.html" class="cta-btn" style="padding: 16px 40px; font-size: 13px;">Initialize Booking Engine</a>
+    </section>
+
+    <section class="catalog-section">
+        <div class="section-header">Active Available Capabilities Catalog</div>
+        <div class="grid-container" id="landingGridCatalog">
             </div>
-        </div>
-
-        <div class="nav-tabs">
-            <button id="tab-request" class="active" onclick="switchView('consumer-pane')">Request Core</button>
-            <button id="tab-onboard" onclick="switchView('onboard-pane')">Fleet Sign-Up</button>
-        </div>
-    </header>
-
-    <div class="system-ticker-bar">
-        <span class="ticker-label">Live Pipeline Feed</span>
-        <span id="tickerMessage">Initializing streaming handshake with grid matrix node...</span>
-    </div>
-
-    <main class="view-pane active consumer-layout" id="consumer-pane">
-        <div id="consumerMap"></div>
-        <div class="sidebar-panel">
-            <div class="search-box-wrapper">
-                <input type="text" id="serviceSearchInput" placeholder="Search required capability (e.g. AC, Plumber)..." oninput="filterServicesCatalog()">
-            </div>
-            <div id="consumerServicesContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
-        </div>
-    </main>
-
-    <main class="view-pane admin-layout" id="admin-pane">
-        <div id="adminRadarMap"></div>
-        <div class="admin-log-stream">
-            <h2>Live Operational Logistics Logs</h2>
-            <div id="adminTelemetryTarget"></div>
-        </div>
-    </main>
-
-    <main class="view-pane onboard-layout" id="onboard-pane">
-        <div class="onboard-panel">
-            <h2>Fleet Node Registration</h2>
-            <p>Deploy your trade parameters directly inside our localized spatial matrix framework.</p>
-            <form id="fleetRegistrationForm">
-                <div class="input-group">
-                    <label>Full Identity Name</label>
-                    <input type="text" id="partnerName" placeholder="Enter full legal name" required>
-                </div>
-                <div class="input-group">
-                    <label>Operational Domain Tier</label>
-                    <select id="partnerTrade" required>
-                        <option value="Electrician">Electrician (Grid Balance)</option>
-                        <option value="Plumber">Plumber (Fluid Operations)</option>
-                        <option value="AC Repair">AC Repair (Thermal Management)</option>
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Smartphone Connection Line</label>
-                    <input type="tel" id="partnerPhone" placeholder="10-digit link number" required>
-                </div>
-                <div class="input-group">
-                    <label>Operational City Matrix</label>
-                    <input type="text" id="partnerCity" placeholder="e.g., Jaipur" required>
-                </div>
-                <button type="submit" class="submit-btn">Deploy Matrix Asset</button>
-            </form>
-        </div>
-    </main>
-
-    <div class="modal" id="bookingModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">✕</span>
-            <h2 id="modalTargetTitle">DISPATCH PIPELINE</h2>
-            <form id="bookingForm">
-                <input type="hidden" id="selectedService">
-                <div class="input-group">
-                    <label>Client Reference Identity Name</label>
-                    <input type="text" id="custName" required placeholder="Enter primary name">
-                </div>
-                <div class="input-group">
-                    <label>Mobile Handset Line</label>
-                    <input type="tel" id="custPhone" required placeholder="10-digit routing number">
-                </div>
-                <div class="input-group">
-                    <label>Target Flat Unit Designation Parameters</label>
-                    <input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location">
-                </div>
-                <button type="submit" class="submit-btn">Authorize Deployment Block</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="radar-overlay" id="radarOverlay">
-        <div class="radar-ring"><span style="font-size:28px;">📡</span></div>
-        <div class="radar-title" id="radarStatusHeader">Pinging Fleet Matrix...</div>
-        <div class="radar-ticker" id="radarTicker">Initializing connection handshakes...</div>
-    </div>
+    </section>
 
     <script>
-        // TARGETED LIVE RENDER URL CONFIGURATION
-        const BASE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-            ? 'http://localhost:3000'
-            : 'https://servoo0-backend.onrender.com';
-
-        let cMap, aMap;
-        let activeAdminMarkers = [];
-        let compiledServicesCache = [];
-
-        // Dynamic Diagnostic Feed Rotation Matrix
-        const diagnosticPool = [
-            "[GRID]: Calibrating localized coordinate telemetry modules...",
-            "[SYSTEM]: Matchmaking array loops running optimal scans...",
-            "[FLEET]: Active technician clusters mapping optimal paths...",
-            "[ZONE-ALPHA]: Elevated transaction load metrics noted in city sectors..."
-        ];
-        setInterval(() => {
-            const randomMsg = diagnosticPool[Math.floor(Math.random() * diagnosticPool.length)];
-            document.getElementById('tickerMessage').innerText = randomMsg;
-        }, 5000);
-
-        function switchView(paneId) {
-            document.querySelectorAll('.view-pane').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
-            
-            const targetPane = document.getElementById(paneId);
-            targetPane.classList.add('active');
-
-            if (paneId === 'onboard-pane') document.getElementById('tab-onboard').classList.add('active');
-            if (paneId === 'consumer-pane') document.getElementById('tab-request').classList.add('active');
-
-            setTimeout(() => { if(cMap) cMap.invalidateSize(); if(aMap) aMap.invalidateSize(); }, 50);
-        }
-
-        function toggleSystemMode() {
-            const isControlAdmin = document.body.classList.toggle('admin-mode-active');
-            const lblConsumer = document.getElementById('toggleLabelConsumer');
-            const lblAdmin = document.getElementById('toggleLabelAdmin');
-
-            if (isControlAdmin) {
-                lblConsumer.classList.remove('active');
-                lblAdmin.classList.add('active');
-                switchView('admin-pane');
-                loadAdminLogsEngine();
-            } else {
-                lblAdmin.classList.remove('active');
-                lblConsumer.classList.add('active');
-                switchView('consumer-pane');
-            }
-        }
-
-        function bootstrapMaps() {
-            cMap = L.map('consumerMap').setView([26.9124, 75.7873], 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(cMap);
-
-            aMap = L.map('adminRadarMap').setView([26.9124, 75.7873], 12);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(aMap);
-        }
-
-        function syncCoreDataEngine() {
-            Promise.all([
-                fetch(`${BASE_API_URL}/api/services`).then(res => res.json()),
-                fetch(`${BASE_API_URL}/api/providers`).then(res => res.json())
-            ]).then(([services, providers]) => {
-                compiledServicesCache = services; // Cache references for instant runtime filtering
-                
-                providers.forEach(p => {
-                    L.circleMarker([p.lat, p.lng], {
-                        color: '#00f0ff', fillColor: '#00f0ff', fillOpacity: 0.4, radius: 7
-                    }).addTo(cMap).bindPopup(`<b>Agent:</b> ${p.name}<br><b>Domain:</b> ${p.trade}`);
+        // Connect public structural data directly to UI templates
+        fetch('https://servoo0-backend.onrender.com/api/services')
+            .then(res => res.json())
+            .then(services => {
+                const container = document.getElementById('landingGridCatalog');
+                services.forEach(s => {
+                    container.innerHTML += `
+                        <div class="utility-premium-card">
+                            <div class="card-top">
+                                <h3>${s.name}</h3>
+                                <p>// Status Active Node [${s.status}]</p>
+                            </div>
+                            <div class="card-bottom">
+                                <div class="price-tag">₹${s.basePrice}<span>${s.rateType}</span></div>
+                                <button class="book-now-trigger" onclick="window.location.href='dashboard.html'">Book Now</button>
+                            </div>
+                        </div>`;
                 });
-
-                renderServicesCatalog(compiledServicesCache);
             });
-        }
-
-        function renderServicesCatalog(catalog) {
-            const target = document.getElementById('consumerServicesContainer');
-            target.innerHTML = '';
-            
-            if(catalog.length === 0) {
-                target.innerHTML = `<div style="color:var(--muted); text-align:center; padding:20px;">No capabilities matching filter.</div>`;
-                return;
-            }
-
-            catalog.forEach(s => {
-                target.innerHTML += `
-                    <div class="service-action-card" onclick="openModal('${s.name}')">
-                        <div class="card-title">
-                            <h3>${s.name}</h3>
-                            <div class="card-meta">${s.status}</div>
-                        </div>
-                        <div class="card-price">₹${s.basePrice}<span>${s.rateType}</span></div>
-                    </div>`;
-                });
-        }
-
-        // Live Frontend Client-Side Keyword Catalog Filtering
-        function filterServicesCatalog() {
-            const query = document.getElementById('serviceSearchInput').value.toLowerCase();
-            const filtered = compiledServicesCache.filter(s => s.name.toLowerCase().includes(query));
-            renderServicesCatalog(filtered);
-        }
-
-        function loadAdminLogsEngine() {
-            fetch(`${BASE_API_URL}/api/bookings`)
-                .then(res => res.json())
-                .then(bookings => {
-                    activeAdminMarkers.forEach(m => aMap.removeLayer(m));
-                    activeAdminMarkers = [];
-
-                    const target = document.getElementById('adminTelemetryTarget');
-                    if(bookings.length === 0) {
-                        target.innerHTML = `<div style="color:var(--muted); text-align:center; padding-top:40px;">RADAR SECURE: No active dispatches.</div>`;
-                        return;
-                    }
-
-                    target.innerHTML = '';
-                    bookings.forEach(b => {
-                        const marker = L.circleMarker([b.lat, b.lng], {
-                            color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.6, radius: 9
-                        }).addTo(aMap).bindPopup(`<b>Dispatched Target:</b> ${b.customerName}`);
-                        
-                        activeAdminMarkers.push(marker);
-
-                        target.innerHTML += `
-                            <div class="pipeline-card">
-                                <h4>${b.customerName} <span class="badge-status">${b.status}</span></h4>
-                                <p><b>Capability Needed:</b> ${b.serviceType}<br>
-                                   <b>Target Space Address:</b> ${b.flatAddress}<br>
-                                   <b>Assigned Active Operator:</b> <span style="color:#00f0ff;">⚡ ${b.assignedPartner}</span> (Tier-1 Pro)</p>
-                                <button class="resolve-btn" onclick="terminateBookingLog('${b._id}')">Resolve Pipeline Frame</button>
-                            </div>`;
-                    });
-                });
-        }
-
-        function terminateBookingLog(id) {
-            fetch(`${BASE_API_URL}/api/bookings/${id}`, { method: 'DELETE' }).then(() => loadAdminLogsEngine());
-        }
-
-        function openModal(name) {
-            document.getElementById('selectedService').value = name;
-            document.getElementById('modalTargetTitle').innerText = `DISPATCH ${name}`;
-            document.getElementById('bookingModal').style.display = 'flex';
-        }
-        function closeModal() { document.getElementById('bookingModal').style.display = 'none'; }
-
-        document.getElementById('bookingForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const serviceType = document.getElementById('selectedService').value;
-            closeModal();
-
-            document.getElementById('radarOverlay').style.display = 'flex';
-            const ticker = document.getElementById('radarTicker');
-            const statusHeader = document.getElementById('radarStatusHeader');
-
-            setTimeout(() => { ticker.innerText = `[CORE]: Processing security authorization token...`; }, 900);
-            setTimeout(() => { ticker.innerText = `[ROSTER]: Querying live spatial coordinate matrix grid...`; }, 1900);
-            setTimeout(() => { ticker.innerText = `[MATCH]: Syncing dispatch pipeline contract...`; statusHeader.innerText = `Contract Secured`; statusHeader.style.color = `#00ffaa`; }, 3000);
-
-            setTimeout(() => {
-                fetch(`${BASE_API_URL}/api/book-service`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        customerName: document.getElementById('custName').value,
-                        customerPhone: document.getElementById('custPhone').value,
-                        serviceType: serviceType,
-                        flatAddress: document.getElementById('custAddr').value
-                    })
-                }).then(() => {
-                    document.getElementById('radarOverlay').style.display = 'none';
-                    document.getElementById('bookingForm').reset();
-                    syncCoreDataEngine();
-                    document.getElementById('tickerMessage').innerText = `[DISPATCH]: Successfully routed active job to network matrix.`;
-                });
-            }, 4000);
-        });
-
-        document.getElementById('fleetRegistrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            fetch(`${BASE_API_URL}/api/register-provider`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    name: document.getElementById('partnerName').value,
-                    trade: document.getElementById('partnerTrade').value,
-                    phone: document.getElementById('partnerPhone').value,
-                    city: document.getElementById('partnerCity').value
-                })
-            }).then(res => res.json()).then(data => {
-                alert(data.message);
-                document.getElementById('fleetRegistrationForm').reset();
-                switchView('consumer-pane');
-                syncCoreDataEngine();
-            });
-        });
-
-        bootstrapMaps();
-        syncCoreDataEngine();
-        setInterval(() => { if(document.body.classList.contains('admin-mode-active')) loadAdminLogsEngine(); }, 4000);
     </script>
 </body>
 </html>

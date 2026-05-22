@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SERVO | System Authentication</title>
+    <style>
+        :root { --black: #000; --dark: #0a0a0a; --border: #1a1a1a; --muted: #666; }
+        * { margin:0; padding:0; box-sizing: border-box; font-family: -apple-system, sans-serif; }
+        body { background: var(--black); color: #fff; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        nav.simple-nav { padding: 30px 4%; border-bottom: 1px solid var(--border); }
+        .logo { font-size: 24px; font-weight: 900; color: #fff; text-decoration: none; text-transform: uppercase; }
+        
+        .auth-container { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { background: var(--dark); border: 1px solid var(--border); padding: 50px; width: 100%; max-width: 440px; border-radius: 4px; }
+        .auth-card h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; letter-spacing: -0.04em; }
+        .auth-card p { color: var(--muted); font-size: 13px; margin-bottom: 30px; }
+        
+        .input-box { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .input-box label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; letter-spacing: 0.05em; }
+        .input-box input { background: var(--black); border: 1px solid var(--border); padding: 14px; color: #fff; font-size: 15px; border-radius: 4px; outline: none; }
+        .input-box input:focus { border-color: #fff; }
+        
+        .submit-btn { width: 100%; background: #fff; color: #000; border: none; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; cursor: pointer; border-radius: 30px; margin-top: 10px; transition: 0.2s; }
+        .submit-btn:hover { background: var(--black); color: #fff; border: 1px solid #fff; }
+        .switch-prompt { text-align: center; margin-top: 20px; font-size: 12px; color: var(--muted); }
+        .switch-prompt a { color: #fff; text-decoration: none; font-weight: 700; }
+    </style>
+</head>
+<body>
+
+    <nav class="simple-nav">
+        <a href="index.html" class="logo">SERVO.</a>
+    </nav>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <h2>Console Access</h2>
+            <p>Enter administrative operational system credentials.</p>
+            <form onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+                <div class="input-box">
+                    <label>Operator Key Token ID</label>
+                    <input type="text" placeholder="username or email" required>
+                </div>
+                <div class="input-box">
+                    <label>Secure Cryptographic Passphrase</label>
+                    <input type="password" placeholder="••••••••••••" required>
+                </div>
+                <button type="submit" class="submit-btn">Authorize Node Connection</button>
+            </form>
+            <div class="switch-prompt">New matrix asset? <a href="register.html">Join Fleet here</a></div>
+        </div>
+    </main>
+
+</body>
+</html>
