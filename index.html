@@ -291,7 +291,7 @@
         // AUTOMATED ENVIRONMENTAL BASE URL ROUTER
         const BASE_API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3000'
-            : 'https://servoo-backend.onrender.com'; // Your live Render link!
+            : 'https://servoo0-backend.onrender.com'; // Your live Render link!
 
         let cMap, aMap;
         let activeAdminMarkers = [];
@@ -465,5 +465,5 @@
         bootstrapMaps();
         syncCoreDataEngine();
         setInterval(() => { if(document.body.classList.contains('admin-mode-active')) loadAdminLogsEngine(); }, 4000);
-        
+
     </script>
