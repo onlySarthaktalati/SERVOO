@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SERVO | Force Multiplier Home Repairs</title>
+    <style>
+        :root { --black: #000000; --dark: #0a0a0a; --gray: #121212; --accent: #00f0ff; --text: #ffffff; --muted: #666666; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
+        body { background-color: var(--black); color: var(--text); letter-spacing: -0.03em; }
+        
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 30px 8%; background: var(--black); border-bottom: 1px solid #1a1a1a; }
+        .logo { font-size: 28px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; color: white; text-decoration: none;}
+        .logo span { color: var(--accent); }
+        .nav-links { display: flex; gap: 20px; align-items: center; }
+        .nav-links a { color: var(--muted); text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; transition: 0.2s; }
+        .nav-links a:hover, .nav-links a.active { color: white; }
+
+        .hero { padding: 120px 8% 60px 8%; text-align: center; max-width: 1000px; margin: 0 auto; }
+        .hero h1 { font-size: 72px; font-weight: 900; text-transform: uppercase; line-height: 0.95; margin-bottom: 25px; }
+        .hero p { color: var(--muted); font-size: 20px; max-width: 650px; margin: 0 auto 50px auto; line-height: 1.4; }
+
+        .metrics { display: flex; justify-content: center; gap: 60px; margin-bottom: 60px; text-transform: uppercase; }
+        .metric-item h4 { font-size: 32px; font-weight: 900; color: var(--accent); }
+        .metric-item span { font-size: 11px; color: var(--muted); font-weight: 700; letter-spacing: 0.05em; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px 100px 20px; }
+        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px; border-bottom: 1px solid #151515; padding-bottom: 15px; }
+        .section-header h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; }
+
+        /* Updated Services Cards with Pricing Info */
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+        .service-card { background: var(--gray); border: 1px solid #1a1a1a; padding: 45px 35px; border-radius: 0px; position: relative; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; justify-content: space-between; min-height: 340px; }
+        .service-card:hover { border-color: white; background: #181818; }
+        .service-tag { position: absolute; top: 25px; right: 25px; font-size: 10px; font-weight: 800; background: #222; padding: 4px 10px; color: var(--accent); text-transform: uppercase; }
+        .service-icon { font-size: 36px; margin-bottom: 20px; display: block; }
+        .service-card h3 { font-size: 24px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; }
+        .service-card p { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
+        
+        .price-tag { font-size: 20px; font-weight: 900; border-top: 1px solid #1f1f1f; padding-top: 15px; display: flex; justify-content: space-between; align-items: baseline; }
+        .price-tag span { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; }
+
+        /* Booking Overlay Module */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
+        .modal-content { background: var(--gray); border: 1px solid #222; padding: 50px; width: 100%; max-width: 500px; position: relative; }
+        .close-btn { position: absolute; top: 25px; right: 25px; color: var(--muted); cursor: pointer; font-size: 20px; font-weight: 800; }
+        .close-btn:hover { color: white; }
+        .modal h2 { font-size: 28px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; }
+        
+        .input-group { display: flex; flex-direction: column; margin-bottom: 20px; }
+        .input-group label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+        .input-group input { background: var(--black); border: 1px solid #222; padding: 14px; color: white; font-size: 16px; outline: none; }
+        .input-group input:focus { border-color: var(--accent); }
+        .submit-btn { width: 100%; background: white; color: black; border: none; padding: 16px; font-weight: 800; text-transform: uppercase; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .submit-btn:hover { background: var(--accent); }
+
+        /* Fullscreen Radar Matching Interface */
+        .radar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 2000; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .radar-circle { width: 160px; height: 160px; border: 2px solid var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; position: relative; margin-bottom: 40px; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2); }
+        .radar-circle::after { content: ''; width: 100%; height: 100%; border: 2px solid var(--accent); border-radius: 50%; position: absolute; animation: pulse 2s infinite linear; }
+        .radar-icon { font-size: 40px; }
+        .radar-status { font-size: 14px; font-weight: 800; letter-spacing: 0.1em; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; }
+        .radar-logs { color: var(--muted); font-size: 14px; max-width: 400px; height: 20px; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">SERVO<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html" class="active">Request Force</a>
+            <a href="join.html">Fleet Onboarding</a>
+            <a href="admin.html">Dispatch HQ</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>DON'T WAIT FOR REPAIRS.<br>COMMAND DISPATCH.</h1>
+        <p>A zero-friction utility framework connecting flat modules to technical deployment nodes across localized zones instantly.</p>
+        
+        <div class="metrics">
+            <div class="metric-item"><h4 id="count-providers">..</h4><span>Active Agents</span></div>
+            <div class="metric-item"><h4>3.4 MIN</h4><span>Response Velocity</span></div>
+            <div class="metric-item"><h4>100%</h4><span>Verified Track</span></div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section>
+            <div class="section-header">
+                <h2>ACTIVE FIELD TIERS</h2>
+                <div style="font-size: 12px; font-weight: 700; color: var(--muted);">SYSTEMS STATUS: OPTIMAL</div>
+            </div>
+            <div class="services-grid" id="services-grid"></div>
+        </section>
+    </main>
+
+    <div class="modal" id="bookingModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">✕</span>
+            <h2 id="modalTargetTitle">DISPATCH</h2>
+            <form id="bookingForm">
+                <input type="hidden" id="selectedService">
+                <div class="input-group">
+                    <label>Your Full Name</label>
+                    <input type="text" id="custName" required placeholder="Enter primary identity name">
+                </div>
+                <div class="input-group">
+                    <label>Active Contact Line</label>
+                    <input type="tel" id="custPhone" required placeholder="10-digit link">
+                </div>
+                <div class="input-group">
+                    <label>Flat Unit Designation & Address</label>
+                    <input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location">
+                </div>
+                <button type="submit" class="submit-btn">Initiate Tactical Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="radar-overlay" id="radarOverlay">
+        <div class="radar-circle">
+            <div class="radar-icon" id="radarIcon">⚡</div>
+        </div>
+        <div class="radar-status" id="radarStatusHeader">Pinging Local Nodes...</div>
+        <div class="radar-logs" id="radarTicker">Analyzing geo-radius coordinates...</div>
+    </div>
+
+    <script>
+        const structuralMeta = {
+            "Electrician": { icon: "⚡", desc: "High-voltage containment, grid faults correction, and flat layout balancing adjustments." },
+            "Plumber": { icon: "🚰", desc: "Fluid containment overhauls, high-pressure diagnostics, and system replacements." },
+            "AC Repair": { icon: "❄️", desc: "Thermal regulation override deployments, coolant compression charging, and extraction runs." }
+        };
+
+        // Bootstrap App Data
+        Promise.all([
+            fetch('http://localhost:3000/api/services').then(res => res.json()),
+            fetch('http://localhost:3000/api/providers').then(res => res.json())
+        ]).then(([services, providers]) => {
+            document.getElementById('count-providers').innerText = providers.length;
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = '';
+            
+            services.forEach(s => {
+                const meta = structuralMeta[s.name] || { icon: "🛠️", desc: "Standard field unit asset allocation." };
+                grid.innerHTML += `
+                    <div class="service-card" onclick="openModal('${s.name}')">
+                        <div>
+                            <span class="service-tag">${s.status}</span>
+                            <span class="service-icon">${meta.icon}</span>
+                            <h3>${s.name}</h3>
+                            <p>${meta.desc}</p>
+                        </div>
+                        <div class="price-tag">
+                            ₹${s.basePrice} <span>${s.rateType}</span>
+                        </div>
+                    </div>`;
+            });
+        });
+
+        function openModal(serviceName) {
+            document.getElementById('selectedService').value = serviceName;
+            document.getElementById('modalTargetTitle').innerText = `DISPATCH ${serviceName}`;
+            document.getElementById('bookingModal').style.display = 'flex';
+        }
+        function closeModal() { document.getElementById('bookingModal').style.display = 'none'; }
+
+        // Core Matchmaking Animation Pipeline
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const serviceType = document.getElementById('selectedService').value;
+            const meta = structuralMeta[serviceType] || { icon: "🛠️" };
+            
+            // Close the collection details, trigger intense radar mode
+            closeModal();
+            document.getElementById('radarIcon').innerText = meta.icon;
+            document.getElementById('radarOverlay').style.display = 'flex';
+
+            const ticker = document.getElementById('radarTicker');
+            const statusHeader = document.getElementById('radarStatusHeader');
+
+            // Timeline simulated match sequences
+            setTimeout(() => { ticker.innerText = `Establishing data handshake with server...`; }, 1000);
+            setTimeout(() => { ticker.innerText = `Searching active ${serviceType} database roster...`; }, 2200);
+            setTimeout(() => { 
+                ticker.innerText = `Routing job packet payload...`; 
+                statusHeader.innerText = `Agent Located!`;
+                statusHeader.style.color = `#00ffaa`;
+            }, 3800);
+
+            // Trigger actual server fetch registration during simulation window
+            setTimeout(() => {
+                fetch('http://localhost:3000/api/book-service', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        customerName: document.getElementById('custName').value,
+                        customerPhone: document.getElementById('custPhone').value,
+                        serviceType: serviceType,
+                        flatAddress: document.getElementById('custAddr').value
+                    })
+                }).then(res => res.json()).then(data => {
+                    // Turn off radar, reset form inputs
+                    document.getElementById('radarOverlay').style.display = 'none';
+                    statusHeader.innerText = `Pinging Local Nodes...`;
+                    statusHeader.style.color = `#00f0ff`;
+                    alert(data.message);
+                    document.getElementById('bookingForm').reset();
+                });
+            }, 4800);
+        });
+    </script>
+</body>
+</html>

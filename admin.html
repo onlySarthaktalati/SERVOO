@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SERVO | Central Dispatch HQ</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        :root { --black: #000000; --dark: #0a0a0a; --gray: #121212; --accent: #ff0055; --text: #ffffff; --muted: #666666; --green: #00ffaa; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
+        body { background-color: var(--black); color: var(--text); letter-spacing: -0.03em; overflow: hidden; }
+        
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 25px 5%; background: var(--black); border-bottom: 1px solid #1a1a1a; height: 80px; }
+        .logo { font-size: 28px; font-weight: 900; text-transform: uppercase; color: white; text-decoration: none;}
+        .logo span { color: var(--accent); }
+        .nav-links a { color: var(--muted); text-decoration: none; font-weight: 700; font-size: 13px; text-transform: uppercase; margin-left: 20px;}
+        .nav-links a.active { color: white; }
+
+        /* Fullscreen Split Dashboard Interface */
+        .control-room { display: grid; grid-template-columns: 1fr 600px; height: calc(100vh - 80px); }
+        #adminRadarMap { height: 100%; background: var(--dark); }
+        
+        .log-panel { background: var(--gray); border-left: 1px solid #1a1a1a; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; }
+        .log-panel h2 { font-size: 24px; font-weight: 900; text-transform: uppercase; margin-bottom: 25px; border-left: 3px solid var(--accent); padding-left: 12px; }
+
+        .log-card { background: var(--black); border: 1px solid #1c1c1c; padding: 20px; margin-bottom: 15px; position: relative; }
+        .log-card h3 { font-size: 18px; text-transform: uppercase; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .log-card p { font-size: 13px; color: var(--muted); line-height: 1.4; margin-bottom: 12px; }
+        
+        .status-badge { background: rgba(0, 255, 170, 0.1); color: var(--green); padding: 3px 8px; border-radius: 2px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
+        .clear-btn { background: transparent; border: 1px solid #333; color: #ff3b3b; padding: 6px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; }
+        .clear-btn:hover { background: #ff3b3b; color: white; border-color: #ff3b3b; }
+
+        /* Dark Mapping Layer Styles */
+        .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
+        .leaflet-control-attribution { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="logo">SERVO<span>.</span></a>
+        <div class="nav-links">
+            <a href="index.html">Request Force</a>
+            <a href="join.html">Fleet Onboarding</a>
+            <a href="admin.html" class="active">Dispatch HQ</a>
+        </div>
+    </nav>
+
+    <div class="control-room">
+        <div id="adminRadarMap"></div>
+
+        <div class="log-panel">
+            <h2>Live Pipeline Tracking Logs</h2>
+            <div id="adminLogTarget">
+                <div style="color: var(--muted); text-align: center; padding-top: 40px;">Syncing live streaming logs...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Admin Command Room Tracking Map
+        const adminMap = L.map('adminRadarMap').setView([26.9124, 75.7873], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(adminMap);
+
+        let activeMarkers = [];
+
+        function loadCentralTelemetry() {
+            fetch('http://localhost:3000/api/bookings')
+                .then(res => res.json())
+                .then(bookings => {
+                    // Clear out outdated marker arrays before rebuilding frames
+                    activeMarkers.forEach(m => adminMap.removeLayer(m));
+                    activeMarkers = [];
+
+                    const container = document.getElementById('adminLogTarget');
+                    if(bookings.length === 0) {
+                        container.innerHTML = `<div style="color: var(--muted); text-align: center; padding-top: 60px; font-size:14px;">GRID SECURE: Operational pipelines completely clear.</div>`;
+                        return;
+                    }
+
+                    container.innerHTML = '';
+                    bookings.forEach(b => {
+                        // Plot Live Active Booking Incidents onto Admin Screen Map Row
+                        const marker = L.circleMarker([b.lat, b.lng], {
+                            color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.6, radius: 10
+                        }).addTo(adminMap).bindPopup(`<b>Incident Log:</b> ${b.customerName}<br><b>Assigned Agent:</b> ${b.assignedPartner}`);
+                        
+                        activeMarkers.push(marker);
+
+                        container.innerHTML += `
+                            <div class="log-card">
+                                <h3>${b.customerName} <span class="status-badge">${b.status}</span></h3>
+                                <p><b>Domain Skill Required:</b> ${b.serviceType}<br>
+                                   <b>Target Matrix Location:</b> ${b.flatAddress}<br>
+                                   <b>Assigned Active Operator:</b> <span style="color:#00f0ff;">${b.assignedPartner}</span></p>
+                                <button class="clear-btn" onclick="resolvePipelineLog('${b._id}')">Resolve Log Frame</button>
+                            </div>`;
+                    });
+                });
+        }
+
+        function resolvePipelineLog(id) {
+            fetch(`http://localhost:3000/api/bookings/${id}`, { method: 'DELETE' })
+                .then(res => res.json())
+                .then(() => loadCentralTelemetry());
+        }
+
+        // Initialize Live Automated Engine Refresh Tickers (Sync cycles every 3 seconds)
+        loadCentralTelemetry();
+        setInterval(loadCentralTelemetry, 3000);
+    </script>
+</body>
+</html>
