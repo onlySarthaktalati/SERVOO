@@ -1,24 +1,40 @@
 const express = require('express');
 const cors = require('cors');
 const Datastore = require('nedb');
-const Razorpay = require('razorpay');
+const https = require('https'); // Native node engine to handle outgoing Telegram API webhooks
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize local memory storage tracks
 const dbBookings = new Datastore({ filename: 'bookings.db', autoload: true });
 const dbProviders = new Datastore({ filename: 'providers.db', autoload: true });
 
-// 💳 INITIALIZE RAZORPAY GATEWAY CORE
-// Uses a test placeholder mode so it compiles cleanly without breaking your dashboard boot loops
-const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_placeholderID',
-    key_secret: process.env.RAZORPAY_KEY_SECRET || 'placeholderSecret'
-});
+// 📡 TELEGRAM OPERATIONS CONTROL DESK PORTALS
+// Using Environment variables for production hosting safety configurations
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'PASTE_YOUR_BOT_TOKEN_HERE';
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || 'PASTE_YOUR_USER_ID_HERE';
 
-// 📍 SEED DEFAULT TECHNICIANS IN JAIPUR (If database layer sits empty)
+// Helper Function to blast notifications onto your phone lines instantly
+function dispatchTelegramAlert(messageText) {
+    const telegramEndpointUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+    const payloadData = JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: messageText, parse_mode: 'Markdown' });
+
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Content-Length': payloadData.length }
+    };
+
+    const req = https.request(telegramEndpointUrl, requestOptions, (res) => {
+        res.on('data', () => {}); // Consumes data streams cleanly
+    });
+
+    req.on('error', (e) => { console.error("Telegram alert delivery timeout exception: ", e); });
+    req.write(payloadData);
+    req.end();
+}
+
+// Seed default technician nodes across Jaipur matrix frames
 dbProviders.count({}, (err, count) => {
     if (count === 0) {
         const initialFleet = [
@@ -27,111 +43,68 @@ dbProviders.count({}, (err, count) => {
             { name: "Vikram Singh", trade: "Plumber", phone: "9414098765", city: "Jaipur", lat: 26.8990, lng: 75.8120 }
         ];
         dbProviders.insert(initialFleet);
-        console.log(">>> Local fleet synchronized over Jaipur grid coordinate vectors <<<");
     }
 });
 
-// 📋 CATALOG API: Static pricing data matching your premium boxes
-app.get('/api/services', (req, res) => {
-    const activeCatalog = [
-        { name: "AC Repair", basePrice: 450, rateType: "Base Rate", status: "Active Node" },
-        { name: "Electrician", basePrice: 290, rateType: "Base Rate", status: "Active Node" },
-        { name: "Plumber", basePrice: 350, rateType: "Base Rate", status: "Active Node" }
-    ];
-    res.json(activeCatalog);
-});
+app.get('/api/providers', (req, res) => { dbProviders.find({}, (err, docs) => { res.json(docs); }); });
+app.get('/api/bookings', (req, res) => { dbBookings.find({}, (err, docs) => { res.json(docs); }); });
 
-// 📡 PROVIDERS API: Pulls active field assets
-app.get('/api/providers', (req, res) => {
-    dbProviders.find({}, (err, docs) => { res.json(docs); });
-});
-
-// 📋 BOOKINGS API: Fetching tracking logs for Admin Dashboard
-app.get('/api/bookings', (req, res) => {
-    dbBookings.find({}, (err, docs) => { res.json(docs); });
-});
-
-// 💳 STEP 1 HANDSHAKE: CREATE SECURE INTENT ORDER
-app.post('/api/create-order', async (req, res) => {
-    const { amount, serviceType } = req.body;
-    
-    const options = {
-        amount: amount * 100, // Razorpay processes transactions in Paisa (₹1 = 100 Paisa)
-        currency: "INR",
-        receipt: `rcpt_srv_${Date.now()}`,
-        notes: { service: serviceType }
-    };
-
-    try {
-        const order = await razorpay.orders.create(options);
-        res.status(200).json({
-            success: true,
-            order_id: order.id,
-            amount: order.amount,
-            key_id: razorpay.key_id
-        });
-    } catch (error) {
-        console.error("Payment Gateway order generation crash logic:", error);
-        res.status(500).json({ success: false, error: "Gateway Init Timeout" });
-    }
-});
-
-// 🚀 STEP 2 HANDSHAKE: VERIFY RECEIPT AND COMMIT BOOKING
+// 🚀 CORE DISPATCH ROUTE LINKED TO LIVE PUSH ALERTS
 app.post('/api/book-service', (req, res) => {
-    const { customerName, customerPhone, serviceType, flatAddress, paymentId } = req.body;
+    const { customerName, customerPhone, serviceType, flatAddress } = req.body;
     
-    // Generate randomized drop coordinate points matching center Jaipur map radius bounds
     const baseLat = 26.9124;
     const baseLng = 75.7873;
     const offsetLat = baseLat + (Math.random() - 0.5) * 0.05;
     const offsetLng = baseLng + (Math.random() - 0.5) * 0.05;
 
-    // Filter local workforce queue arrays to assign a matched field unit identity token automatically
     dbProviders.find({ trade: serviceType }, (err, availableWorkers) => {
         const matchedPro = availableWorkers.length > 0 ? availableWorkers[0].name : "Automated Router System Node";
 
         const newBookingReceipt = {
-            customerName,
-            customerPhone,
-            serviceType,
-            flatAddress,
-            paymentId: paymentId || "OFFLINE_TEST_BYPASS",
-            lat: offsetLat,
-            lng: offsetLng,
-            status: "DISPATCHED",
-            assignedPartner: matchedPro,
+            customerName, customerPhone, serviceType, flatAddress,
+            paymentId: "PAYID_SIMULATED_SUCCESS_TOKEN",
+            lat: offsetLat, lng: offsetLng,
+            status: "DISPATCHED", assignedPartner: matchedPro,
             createdAt: new Date()
         };
 
         dbBookings.insert(newBookingReceipt, (err, doc) => {
-            res.status(201).json({ success: true, message: "Booking securely logged into central grid pipeline infrastructure", data: doc });
+            // 🔥 TRIGGER ALIVE JETSTREAM TELEGRAM NOTIFICATION MESSAGE
+            const formattingTelegramPayloadString = 
+`🚨 *NEW INCOMING JOB COMPLETED* 🚨
+--------------------------------------
+👤 *Client Name:* ${customerName}
+📞 *Handset Line:* ${customerPhone}
+🛠️ *Required Core:* ${serviceType}
+📍 *Destination Target:* ${flatAddress}
+⚡ *Assigned Fleet Node:* ${matchedPro}
+--------------------------------------
+💻 _Check Telemetry logs on your laptop Admin HQ panel screen frame_`;
+
+            dispatchTelegramAlert(formattingTelegramPayloadString);
+
+            res.status(201).json({ success: true, message: "Booking securely logged and pushed to dispatch systems queue.", data: doc });
         });
     });
 });
 
-// 📋 PROVIDER ONBOARD REGISTRY ROUTE
 app.post('/api/register-provider', (req, res) => {
     const { name, trade, phone, city } = req.body;
-    const baseLat = 26.9124;
-    const baseLng = 75.7873;
-    
-    const newAssetNode = {
-        name, trade, phone, city,
-        lat: baseLat + (Math.random() - 0.5) * 0.04,
-        lng: baseLng + (Math.random() - 0.5) * 0.04
-    };
+    const newAssetNode = { name, trade, phone, city, lat: 26.9124 + (Math.random() - 0.5) * 0.04, lng: 75.7873 + (Math.random() - 0.5) * 0.04 };
 
     dbProviders.insert(newAssetNode, (err, doc) => {
+        // 📡 Alert when a new provider registers
+        dispatchTelegramAlert(`👷 *NEW FLEET NODE SIGN-UP*\n-------------------\nName: ${name}\nTrade Capability: ${trade}\nPhone String: ${phone}\nBase Hub: ${city}`);
         res.status(201).json({ message: "Workforce matrix registration complete. Node active.", asset: doc });
     });
 });
 
-// 🚨 TERMINATE ACTION: Delete resolved dispatches
 app.delete('/api/bookings/:id', (req, res) => {
     dbBookings.remove({ _id: req.params.id }, {}, (err, numRemoved) => {
-        res.json({ message: "Case frame successfully resolved and removed from tracking systems logs." });
+        res.json({ message: "Case frame successfully resolved." });
     });
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`>>> SERVO INFRASTRUCTURE NODE ACTIVE ON PORT ${PORT} <<<`));
+app.listen(PORT, () => console.log(`>>> SERVO OPERATIONS LIVE ON PORT ${PORT} <<<`));
