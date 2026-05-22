@@ -25,102 +25,98 @@
 
         /* 🧭 PREMIUM STICKY NAVBAR */
         header.sys-navbar {
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 0 5%; height: 80px; background: var(--black);
             border-bottom: 1px solid var(--border-color);
             position: sticky; top: 0; z-index: 1000;
         }
-        .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; text-decoration: none; color: white; }
-        .logo span { color: var(--accent-cyan); }
 
-        .toggle-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; background: #0c0c0e; padding: 6px 14px; border-radius: 30px; border: 1px solid var(--border-color); }
-        .toggle-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); }
-        .toggle-label.active { color: white; }
-        .switch-track { width: 36px; height: 18px; background: #27272a; border-radius: 20px; position: relative; }
-        .switch-thumb { width: 12px; height: 12px; background: white; border-radius: 50%; position: absolute; top: 3px; left: 3px; transition: 0.2s; }
+        /* ☰ HAMBURGER ICON BUTTON */
+        .hamburger-menu-btn {
+            display: flex; flex-direction: column; justify-content: space-between;
+            width: 22px; height: 16px; background: transparent; border: none; cursor: pointer; z-index: 2000;
+        }
+        .hamburger-menu-btn span {
+            width: 100%; height: 2px; background-color: white; border-radius: 2px;
+            transition: transform 0.3s, opacity 0.3s;
+        }
+
+        .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; text-decoration: none; color: white; margin-right: auto; margin-left: 20px; }
+        .logo span { color: var(--accent-cyan); }
         
-        body.admin-mode-active .switch-track { background: rgba(255, 0, 85, 0.2); }
-        body.admin-mode-active .switch-thumb { left: 21px; background: var(--accent-pink); }
         body.admin-mode-active .logo span { color: var(--accent-pink); }
 
-        .nav-actions { display: flex; gap: 25px; }
-        .nav-actions button { background: transparent; border: none; color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: color 0.2s; }
-        .nav-actions button:hover, .nav-actions button.active { color: white; }
+        /* 🗲 SLIDE-OUT DRAWER SIDEBAR CONTAINER */
+        .side-drawer-panel {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
+            background: var(--dark-void); border-right: 1px solid var(--border-color);
+            z-index: 1500; padding: 100px 24px 40px 24px; display: flex; flex-direction: column; gap: 30px;
+            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .side-drawer-panel.open { left: 0; box-shadow: 20px 0 40px rgba(0,0,0,0.5); }
 
-        /* 📋 MASTER VIEWPORT PADDING CONTAINER */
+        /* Drawer Links styling */
+        .drawer-nav-link {
+            background: transparent; border: none; color: var(--text-muted);
+            font-size: 14px; font-weight: 700; text-transform: uppercase; text-align: left;
+            letter-spacing: 0.08em; cursor: pointer; padding: 10px 0; transition: color 0.2s;
+        }
+        .drawer-nav-link:hover, .drawer-nav-link.active { color: white; }
+        .drawer-nav-link.admin-btn { border-top: 1px solid var(--border-color); padding-top: 25px; margin-top: 10px; }
+        .drawer-nav-link.admin-btn:hover { color: var(--accent-pink); }
+
+        /* Dim Backdrop overlay screen block */
+        .drawer-overlay-backdrop {
+            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1400;
+        }
+        .drawer-overlay-backdrop.open { display: block; }
+
+        /* 📋 MASTER CONTAINER PAGE PADDING */
         .viewport-wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 5%; }
 
-        /* 🏷️ THE SERVICES LINE ACCENT SEPARATOR */
-        .services-section-divider {
-            display: flex; align-items: center; gap: 20px;
-            margin: 20px 0 25px 0;
-        }
-        .services-section-divider h2 {
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            color: var(--text-muted); letter-spacing: 0.15em; white-space: nowrap;
-        }
-        .services-section-divider .line-graphic {
-            width: 100%; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, rgba(255,255,255,0.05) 50%, var(--border-color) 100%);
-        }
+        /* 🏷️ ACCENT DIVIDERS */
+        .services-section-divider { display: flex; align-items: center; gap: 20px; margin: 20px 0 25px 0; }
+        .services-section-divider h2 { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.15em; white-space: nowrap; }
+        .services-section-divider .line-graphic { width: 100%; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, rgba(255,255,255,0.05) 50%, var(--border-color) 100%); }
 
         /* 🏎️ HORIZONTAL SWIPABLE MARKETPLACE SLIDER */
-        .horizontal-cards-slider {
-            display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px;
-            scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
-        }
+        .horizontal-cards-slider { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .horizontal-cards-slider::-webkit-scrollbar { height: 4px; }
-        .horizontal-cards-slider::-webkit-scrollbar-track { background: transparent; }
         .horizontal-cards-slider::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
 
         .premium-service-card {
-            flex: 0 0 310px; scroll-snap-align: start;
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 28px; border-radius: 12px; display: flex; flex-direction: column;
-            justify-content: space-between; min-height: 200px;
-            transition: border-color 0.2s, transform 0.2s;
+            flex: 0 0 310px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid var(--border-color);
+            padding: 28px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; transition: 0.2s;
         }
         .premium-service-card:hover { border-color: #3f3f46; transform: translateY(-3px); }
-
         .card-top h3 { font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
         .card-tag { font-size: 10px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.05em; }
-        
         .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
         .price-display { font-size: 22px; font-weight: 900; }
         .price-display span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
 
-        .book-pill-btn {
-            background: var(--text-main); color: var(--black); border: none;
-            padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase;
-            border-radius: 30px; cursor: pointer; transition: 0.2s;
-        }
+        .book-pill-btn { background: var(--text-main); color: var(--black); border: none; padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; transition: 0.2s; }
         .book-pill-btn:hover { background: var(--accent-cyan); box-shadow: var(--neon-glow); }
 
-        /* 🗺️ MINIMIZED MAP PLACEMENT FRAMEWORK */
-        .minimized-map-container {
-            margin-top: 40px; border: 1px solid var(--border-color);
-            border-radius: 12px; overflow: hidden; height: 260px; position: relative;
-            background: var(--dark-void);
-        }
+        .minimized-map-container { margin-top: 40px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 260px; position: relative; background: var(--dark-void); }
         .map-element { width: 100%; height: 100%; }
         .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
 
-        /* 📋 FORM SUB-WINDOW PANES */
+        /* 📋 FORM WINDOW PANES */
         #onboardFormSpace { display: none; max-width: 500px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; }
 
-        /* 🚨 ADMIN TELEMETRY OVERLAY LAYOUT */
+        /* 🚨 ADMIN LOGS OVERLAY */
         #adminViewInterface { display: none; }
         .admin-grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .telemetry-pipeline-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-pink);
-        }
+        .telemetry-pipeline-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-pink); }
         .telemetry-pipeline-card h4 { font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
         .telemetry-pipeline-card p { font-size: 13px; color: #a1a1aa; line-height: 1.5; margin-bottom: 12px; }
         .live-tag { background: rgba(0, 255, 170, 0.1); color: #00ffaa; padding: 2px 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
         .resolve-btn { background: transparent; border: 1px solid #27272a; color: #ef4444; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 4px; }
         .resolve-btn:hover { background: #ef4444; color: white; }
 
-        /* 📋 FORM MODAL STRUCTURING */
+        /* 📋 OVERLAY DIALOGUE FORMS */
         .modal-blur-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; width: 92%; max-width: 440px; border-radius: 12px; position: relative; }
         .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; font-size: 20px; }
@@ -136,29 +132,31 @@
         .radar-pulsing-circle::after { content: ''; position: absolute; width: 100%; height: 100%; border: 2px solid var(--accent-cyan); border-radius: 50%; animation: matrixPing 1.5s infinite linear; }
         @keyframes matrixPing { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.6); opacity: 0; } }
 
-        @media (max-width: 900px) {
-            .minimized-map-container { display: none; }
-        }
+        @media (max-width: 900px) { .minimized-map-container { display: none; } }
     </style>
 </head>
 <body>
 
     <header class="sys-navbar">
+        <button class="hamburger-menu-btn" onclick="toggleNavigationDrawer()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <a href="#" class="logo">SERVO<span>.</span></a>
-        <div class="toggle-wrapper" onclick="togglePlatformOperationalView()">
-            <span class="toggle-label active" id="userViewLabel">User Space</span>
-            <div class="switch-track"><div class="switch-thumb"></div></div>
-            <span class="toggle-label" id="adminViewLabel">Admin HQ</span>
-        </div>
     </header>
 
-    <div class="viewport-wrapper">
-        <div id="userViewInterface">
-            <div class="nav-actions" style="margin-bottom: 25px;">
-                <button id="tabReq" class="active" onclick="switchClientTab('req')">Request Service</button>
-                <button id="tabOnb" onclick="switchClientTab('onb')">Join Fleet Roster</button>
-            </div>
+    <div class="drawer-overlay-backdrop" id="drawerOverlay" onclick="toggleNavigationDrawer()"></div>
+    <nav class="side-drawer-panel" id="sideDrawerMenu">
+        <button id="btnHome" class="drawer-nav-link active" onclick="navigateDrawerAction('home')">Home Dashboard</button>
+        <button id="btnOnboard" class="drawer-nav-link" onclick="navigateDrawerAction('fleet')">Join Fleet Roster</button>
+        <button id="btnAdmin" class="drawer-nav-link admin-btn" onclick="navigateDrawerAction('admin')">Admin HQ Radar</button>
+    </nav>
 
+    <div class="viewport-wrapper">
+        
+        <div id="userViewInterface">
             <div id="requestSubPane">
                 <div class="services-section-divider"><h2>Capabilities We Deployed</h2><div class="line-graphic"></div></div>
                 
@@ -194,7 +192,7 @@
         </div>
 
         <div id="adminViewInterface">
-            <div class="services-section-divider"><h2 style="color: var(--accent-pink);">Live Infrastructure Dispatches</h2><div class="line-graphic"></div></div>
+            <div class="services-section-divider"><h2 style="color: var(--accent-pink);">Live Dispatches Transmitting</h2><div class="line-graphic"></div></div>
             <div class="admin-grid-layout" id="telemetryStreamTarget"></div>
         </div>
     </div>
@@ -224,24 +222,40 @@
         let customMinimizedMapInstance;
         let activeMarkersList = [];
 
-        function switchClientTab(tabId) {
-            document.getElementById('tabReq').classList.toggle('active', tabId === 'req');
-            document.getElementById('tabOnb').classList.toggle('active', tabId === 'onb');
-            document.getElementById('requestSubPane').style.display = tabId === 'req' ? 'block' : 'none';
-            document.getElementById('onboardFormSpace').style.display = tabId === 'onb' ? 'block' : 'none';
-            if(tabId === 'req') setTimeout(() => { customMinimizedMapInstance.invalidateSize(); }, 50);
+        // ☰ SIDE DRAWER PANEL TOGGLE MECHANICS
+        function toggleNavigationDrawer() {
+            document.getElementById('sideDrawerMenu').classList.toggle('open');
+            document.getElementById('drawerOverlay').classList.toggle('open');
         }
 
-        function togglePlatformOperationalView() {
-            const isHqAdminMode = document.body.classList.toggle('admin-mode-active');
-            document.getElementById('userViewLabel').classList.toggle('active', !isHqAdminMode);
-            document.getElementById('adminViewLabel').classList.toggle('active', isHqAdminMode);
+        function navigateDrawerAction(targetView) {
+            toggleNavigationDrawer(); // Auto-collapse drawer panel on select click
             
-            document.getElementById('userViewInterface').style.display = isHqAdminMode ? 'none' : 'block';
-            document.getElementById('adminViewInterface').style.display = isHqAdminMode ? 'block' : 'none';
+            // Clean active tracking indicator line tags
+            document.querySelectorAll('.drawer-nav-link').forEach(btn => btn.classList.remove('active'));
+            document.body.classList.remove('admin-mode-active');
+            
+            // Layout toggling matrices
+            document.getElementById('userViewInterface').style.display = 'none';
+            document.getElementById('adminViewInterface').style.display = 'none';
+            document.getElementById('requestSubPane').style.display = 'none';
+            document.getElementById('onboardFormSpace').style.display = 'none';
 
-            if (isHqAdminMode) pullOperationalLogisticsTelemetry();
-            setTimeout(() => { customMinimizedMapInstance.invalidateSize(); }, 50);
+            if(targetView === 'home') {
+                document.getElementById('btnHome').classList.add('active');
+                document.getElementById('userViewInterface').style.display = 'block';
+                document.getElementById('requestSubPane').style.display = 'block';
+                setTimeout(() => { customMinimizedMapInstance.invalidateSize(); }, 50);
+            } else if (targetView === 'fleet') {
+                document.getElementById('btnOnboard').classList.add('active');
+                document.getElementById('userViewInterface').style.display = 'block';
+                document.getElementById('onboardFormSpace').style.display = 'block';
+            } else if (targetView === 'admin') {
+                document.body.classList.add('admin-mode-active');
+                document.getElementById('btnAdmin').classList.add('active');
+                document.getElementById('adminViewInterface').style.display = 'block';
+                pullOperationalLogisticsTelemetry();
+            }
         }
 
         function initMinimizedDisplayMap() {
@@ -252,7 +266,7 @@
                 .then(res => res.json())
                 .then(providers => {
                     providers.forEach(p => { L.circleMarker([p.lat, p.lng], { color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.3, radius: 5 }).addTo(customMinimizedMapInstance); });
-                }).catch(e => console.log("Static recovery active."));
+                }).catch(e => console.log("Static recovery map link safe."));
         }
 
         function pullOperationalLogisticsTelemetry() {
@@ -286,7 +300,6 @@
         document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const chosenTypeString = document.getElementById('selectedServiceTypeField').value;
-            
             const name = document.getElementById('custName').value;
             const phone = document.getElementById('custPhone').value;
             const addr = document.getElementById('custAddr').value;
@@ -298,13 +311,7 @@
                 fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ 
-                        customerName: name, 
-                        customerPhone: phone, 
-                        serviceType: chosenTypeString, 
-                        flatAddress: addr, 
-                        paymentId: "PAYID_SIMULATED_SUCCESS_TOKEN" 
-                    })
+                    body: JSON.stringify({ customerName: name, customerPhone: phone, serviceType: chosenTypeString, flatAddress: addr, paymentId: "PAYID_SIMULATED_SUCCESS_TOKEN" })
                 }).then(() => {
                     document.getElementById('radarAnimationOverlayStage').style.display = 'none';
                     document.getElementById('bookingSubmissionForm').reset();
@@ -315,18 +322,24 @@
 
         document.getElementById('fleetRegistrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            document.getElementById('radarAnimationOverlayStage').style.display = 'flex';
+
             fetch(`${CLOUD_BACKEND_API_LINK}/api/register-provider`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ name: document.getElementById('partnerName').value, trade: document.getElementById('partnerTrade').value, phone: document.getElementById('partnerPhone').value, city: document.getElementById('partnerCity').value })
-            }).then(res => res.json()).then(data => {
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('radarAnimationOverlayStage').style.display = 'none';
                 alert(data.message);
                 document.getElementById('fleetRegistrationForm').reset();
-                switchClientTab('req');
+                navigateDrawerAction('home');
             });
         });
 
         initMinimizedDisplayMap();
+        setInterval(() => { if(document.body.classList.contains('admin-mode-active')) pullOperationalLogisticsTelemetry(); }, 5000);
     </script>
 </body>
 </html>
