@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVO | Premium Hyperlocal Matrix</title>
+    <title>SERVO | Premium Grid Core</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <style>
         :root {
             --black: #000000;
@@ -23,115 +22,51 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif; }
         body { background-color: var(--black); color: var(--text-main); letter-spacing: -0.02em; overflow-x: hidden; min-height: 100vh; }
 
-        /* 🔐 PRODUCTION FEATURE: ENTRY AUTHENTICATION LAYER */
-        .auth-gate-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--black); z-index: 9999; display: flex; align-items: center; justify-content: center;
-        }
-        .auth-card {
-            background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 40px; width: 92%; max-width: 400px; border-radius: 16px; text-align: center;
-        }
-
-        /* 🧭 PREMIUM STICKY NAVBAR */
-        header.sys-navbar {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 5%; height: 80px; background: var(--black);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky; top: 0; z-index: 1000;
-        }
-
-        /* ☰ HAMBURGER ICON BUTTON */
-        .hamburger-menu-btn {
-            display: flex; flex-direction: column; justify-content: space-between;
-            width: 22px; height: 16px; background: transparent; border: none; cursor: pointer; z-index: 2000;
-        }
-        .hamburger-menu-btn span {
-            width: 100%; height: 2px; background-color: white; border-radius: 2px;
-            transition: transform 0.3s, opacity 0.3s;
-        }
-
+        header.sys-navbar { display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 80px; background: var(--black); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 1000; }
+        .hamburger-menu-btn { display: flex; flex-direction: column; justify-content: space-between; width: 22px; height: 16px; background: transparent; border: none; cursor: pointer; z-index: 2000; }
+        .hamburger-menu-btn span { width: 100%; height: 2px; background-color: white; border-radius: 2px; }
         .logo { font-size: 22px; font-weight: 900; text-transform: uppercase; letter-spacing: -0.04em; text-decoration: none; color: white; margin-right: auto; margin-left: 20px; }
         .logo span { color: var(--accent-cyan); }
         body.admin-mode-active .logo span { color: var(--accent-pink); }
 
-        /* 🗲 SLIDE-OUT DRAWER SIDEBAR CONTAINER */
-        .side-drawer-panel {
-            position: fixed; top: 0; left: -280px; width: 280px; height: 100vh;
-            background: var(--dark-void); border-right: 1px solid var(--border-color);
-            z-index: 1500; padding: 100px 24px 40px 24px; display: flex; flex-direction: column; gap: 30px;
-            transition: left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .side-drawer-panel.open { left: 0; box-shadow: 20px 0 40px rgba(0,0,0,0.5); }
+        .side-drawer-panel { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: var(--dark-void); border-right: 1px solid var(--border-color); z-index: 1500; padding: 100px 24px 40px 24px; display: flex; flex-direction: column; gap: 30px; transition: left 0.35s ease; }
+        .side-drawer-panel.open { left: 0; }
+        .drawer-nav-link { background: transparent; border: none; color: var(--text-muted); font-size: 14px; font-weight: 700; text-transform: uppercase; text-align: left; cursor: pointer; padding: 10px 0; }
+        .drawer-nav-link.active { color: white; }
+        .drawer-overlay-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1400; }
+        .drawer-overlay-backdrop.open { display: block; }
 
-        .drawer-nav-link {
-            background: transparent; border: none; color: var(--text-muted);
-            font-size: 14px; font-weight: 700; text-transform: uppercase; text-align: left;
-            letter-spacing: 0.08em; cursor: pointer; padding: 10px 0; transition: color 0.2s;
-        }
-        .drawer-nav-link:hover, .drawer-nav-link.active { color: white; }
-        .drawer-nav-link.admin-btn { border-top: 1px solid var(--border-color); padding-top: 25px; margin-top: 10px; }
-        .drawer-nav-link.admin-btn:hover { color: var(--accent-pink); }
-
-        .drawer-overlay-backdrop {
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 1400;
-        }
-        .drawer-overlay-backdrop.open { block: display: block; }
-
-        /* 📋 MASTER CONTAINER PAGE PADDING */
         .viewport-wrapper { max-width: 1300px; margin: 0 auto; padding: 40px 5%; }
-
-        /* 🏷️ ACCENT DIVIDERS */
         .services-section-divider { display: flex; align-items: center; gap: 20px; margin: 20px 0 25px 0; }
         .services-section-divider h2 { font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); letter-spacing: 0.15em; white-space: nowrap; }
         .services-section-divider .line-graphic { width: 100%; height: 1px; background: linear-gradient(90deg, var(--border-color) 0%, rgba(255,255,255,0.05) 50%, var(--border-color) 100%); }
 
-        /* 🏎️ HORIZONTAL SWIPABLE MARKETPLACE SLIDER */
-        .horizontal-cards-slider { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-        .horizontal-cards-slider::-webkit-scrollbar { height: 4px; }
-        .horizontal-cards-slider::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
-
-        .premium-service-card {
-            flex: 0 0 310px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid var(--border-color);
-            padding: 28px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; transition: 0.2s;
-        }
-        .premium-service-card:hover { border-color: #3f3f46; transform: translateY(-3px); }
+        .horizontal-cards-slider { display: flex; gap: 20px; overflow-x: auto; padding: 10px 5px 25px 5px; scroll-snap-type: x mandatory; }
+        .premium-service-card { flex: 0 0 310px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid var(--border-color); padding: 28px; border-radius: 12px; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
         .card-top h3 { font-size: 20px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px; }
-        .card-tag { font-size: 10px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.05em; }
-        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; }
+        .card-tag { font-size: 10px; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; }
+        .card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
         .price-display { font-size: 22px; font-weight: 900; }
-        .price-display span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+        .price-display span { display: block; font-size: 10px; color: var(--text-muted); }
+        .book-pill-btn { background: var(--text-main); color: var(--black); border: none; padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; }
 
-        .book-pill-btn { background: var(--text-main); color: var(--black); border: none; padding: 10px 22px; font-size: 11px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; transition: 0.2s; }
-        .book-pill-btn:hover { background: var(--accent-cyan); box-shadow: var(--neon-glow); }
-
-        .minimized-map-container { margin-top: 40px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 260px; position: relative; background: var(--dark-void); }
+        .minimized-map-container { margin-top: 40px; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; height: 260px; background: var(--dark-void); }
         .map-element { width: 100%; height: 100%; }
         .leaflet-tile { filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%); }
 
-        /* 📋 FORM WINDOW PANES */
-        #onboardFormSpace { display: none; max-width: 500px; margin: 0 auto; background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; border-radius: 12px; }
-
-        /* 🚨 ADMIN LOGS OVERLAY */
-        #adminViewInterface { display: none; }
+        #onboardFormSpace, #adminViewInterface { display: none; }
         .admin-grid-layout { display: grid; grid-template-columns: 1fr; gap: 20px; }
         .telemetry-pipeline-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 8px; border-left: 3px solid var(--accent-pink); }
-        .telemetry-pipeline-card h4 { font-size: 15px; text-transform: uppercase; display: flex; justify-content: space-between; margin-bottom: 6px; }
-        .telemetry-pipeline-card p { font-size: 13px; color: #a1a1aa; line-height: 1.5; margin-bottom: 12px; }
-        .live-tag { background: rgba(0, 255, 170, 0.1); color: #00ffaa; padding: 2px 6px; font-size: 10px; font-weight: 800; text-transform: uppercase; }
-        .resolve-btn { background: transparent; border: 1px solid #27272a; color: #ef4444; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; cursor: pointer; border-radius: 4px; }
-        .resolve-btn:hover { background: #ef4444; color: white; }
+        .live-tag { background: rgba(0, 255, 170, 0.1); color: #00ffaa; padding: 2px 6px; font-size: 10px; font-weight: 800; }
+        .resolve-btn { background: transparent; border: 1px solid #27272a; color: #ef4444; padding: 6px 14px; font-size: 11px; font-weight: 700; cursor: pointer; }
 
-        /* 📋 OVERLAY DIALOGUE FORMS */
         .modal-blur-backdrop { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
         .modal-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 40px; width: 92%; max-width: 440px; border-radius: 12px; position: relative; }
-        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; font-size: 20px; }
+        .close-modal { position: absolute; top: 20px; right: 20px; color: var(--text-muted); cursor: pointer; }
         
         .form-block { display: flex; flex-direction: column; margin-bottom: 18px; }
         .form-block label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
         .form-block input, .form-block select { background: var(--black); border: 1px solid var(--border-color); padding: 14px; color: white; font-size: 15px; border-radius: 6px; outline: none; }
-        .form-block input:focus { border-color: var(--accent-cyan); }
         .submit-dispatch-btn { width: 100%; background: white; color: black; border: none; padding: 16px; font-size: 12px; font-weight: 800; text-transform: uppercase; border-radius: 30px; cursor: pointer; }
 
         .radar-ping-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--black); z-index: 6000; flex-direction: column; align-items: center; justify-content: center; }
@@ -144,26 +79,8 @@
 </head>
 <body>
 
-    <div class="auth-gate-overlay" id="systemAuthGate">
-        <div class="auth-card">
-            <h2 style="font-size: 22px; font-weight: 900; letter-spacing: -0.04em; margin-bottom: 8px;">SERVO<span>.</span> MATRIX</h2>
-            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 24px;">Enter your handset vector line token to initialize space</p>
-            <form id="authSubmissionForm">
-                <div class="form-block" style="text-align: left;">
-                    <label>Communication Link Number</label>
-                    <input type="tel" id="authUserPhone" placeholder="10-digit mobile line" required pattern="[0-9]{10}">
-                </div>
-                <button type="submit" class="submit-dispatch-btn" style="background: var(--accent-cyan); color: black;">Initialize Client Space</button>
-            </form>
-        </div>
-    </div>
-
     <header class="sys-navbar">
-        <button class="hamburger-menu-btn" onclick="toggleNavigationDrawer()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+        <button class="hamburger-menu-btn" onclick="toggleNavigationDrawer()"><span></span><span></span><span></span></button>
         <a href="#" class="logo">SERVO<span>.</span></a>
     </header>
 
@@ -172,34 +89,20 @@
         <button id="btnHome" class="drawer-nav-link active" onclick="navigateDrawerAction('home')">Home Dashboard</button>
         <button id="btnOnboard" class="drawer-nav-link" onclick="navigateDrawerAction('fleet')">Join Fleet Roster</button>
         <button id="btnAdmin" class="drawer-nav-link admin-btn" onclick="navigateDrawerAction('admin')">Admin HQ Radar</button>
-        <button class="drawer-nav-link" style="color: #ef4444; border-top: 1px solid var(--border-color); margin-top: auto; padding-top: 15px;" onclick="terminateUserSession()">Log Out Session</button>
     </nav>
 
     <div class="viewport-wrapper">
-        
         <div id="userViewInterface">
             <div id="requestSubPane">
                 <div class="services-section-divider"><h2>Capabilities We Deployed</h2><div class="line-graphic"></div></div>
-                
                 <div class="horizontal-cards-slider">
-                    <div class="premium-service-card">
-                        <div class="card-top"><h3>AC Repair</h3><div class="card-tag">// Thermal Management [Online]</div></div>
-                        <div class="card-bottom"><div class="price-display">₹450<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('AC Repair')">Book Now</button></div>
-                    </div>
-                    <div class="premium-service-card">
-                        <div class="card-top"><h3>Electrician</h3><div class="card-tag">// Power & Grid Balance [Online]</div></div>
-                        <div class="card-bottom"><div class="price-display">₹290<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Electrician')">Book Now</button></div>
-                    </div>
-                    <div class="premium-service-card">
-                        <div class="card-top"><h3>Plumber</h3><div class="card-tag">// Fluid Routing Mechanics [Online]</div></div>
-                        <div class="card-bottom"><div class="price-display">₹350<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Plumber')">Book Now</button></div>
-                    </div>
+                    <div class="premium-service-card"><div class="card-top"><h3>AC Repair</h3><div class="card-tag">// Thermal Management</div></div><div class="card-bottom"><div class="price-display">₹450<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('AC Repair')">Book Now</button></div></div>
+                    <div class="premium-service-card"><div class="card-top"><h3>Electrician</h3><div class="card-tag">// Power Balance</div></div><div class="card-bottom"><div class="price-display">₹290<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Electrician')">Book Now</button></div></div>
+                    <div class="premium-service-card"><div class="card-top"><h3>Plumber</h3><div class="card-tag">// Fluid Routing</div></div><div class="card-bottom"><div class="price-display">₹350<span>Base Rate</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Plumber')">Book Now</button></div></div>
                 </div>
-
                 <div class="services-section-divider" style="margin-top: 20px;"><h2>Localized Coverage Radar Map</h2><div class="line-graphic"></div></div>
                 <div class="minimized-map-container"><div id="minimizedMap" class="map-element"></div></div>
             </div>
-
             <div id="onboardFormSpace">
                 <div class="services-section-divider"><h2>Fleet Registration Hub</h2><div class="line-graphic"></div></div>
                 <form id="fleetRegistrationForm">
@@ -211,7 +114,6 @@
                 </form>
             </div>
         </div>
-
         <div id="adminViewInterface">
             <div class="services-section-divider"><h2 style="color: var(--accent-pink);">Live Dispatches Transmitting</h2><div class="line-graphic"></div></div>
             <div class="admin-grid-layout" id="telemetryStreamTarget"></div>
@@ -221,63 +123,39 @@
     <div class="modal-blur-backdrop" id="bookingModalPrompt">
         <div class="modal-card">
             <span class="close-modal" onclick="closeDispatchPrompt()">✕</span>
-            <h2 id="modalLabelHeader" style="font-size: 18px; font-weight: 900; text-transform: uppercase; margin-bottom: 22px;">Authorize Dispatch Request</h2>
+            <h2 id="modalLabelHeader" style="font-size: 18px; font-weight: 900; text-transform: uppercase; margin-bottom: 22px;">Authorize Dispatch</h2>
+            
             <form id="bookingSubmissionForm">
                 <input type="hidden" id="selectedServiceTypeField">
-                <div class="form-block"><label>Client Reference Identity Name</label><input type="text" id="custName" required placeholder="Enter customer name token"></div>
-                <div class="form-block"><label>Mobile Handset Vector String</label><input type="tel" id="custPhone" required placeholder="10-digit communication vector line"></div>
+                <div class="form-block"><label>Your Reference Identity Name</label><input type="text" id="custName" required placeholder="Enter your name"></div>
+                <div class="form-block"><label>Mobile Handset Vector Number</label><input type="tel" id="custPhone" required placeholder="10-digit mobile line" pattern="[0-9]{10}"></div>
                 <div class="form-block"><label>Target Flat Unit Parameters</label><input type="text" id="custAddr" required placeholder="Block, Floor, Flat Layout Location"></div>
-                <button type="submit" class="submit-dispatch-btn">Authorize Node Deployment</button>
+                <button type="submit" class="submit-dispatch-btn" style="background: var(--accent-cyan); color: #000;">Request Verification Token</button>
+            </form>
+
+            <form id="bookingOtpVerificationForm" style="display: none; margin-top: 20px;">
+                <div class="form-block"><label style="color: #00e5ff;">Enter 4-Digit Inbox Code</label><input type="text" id="bookingVerifiedOtpInput" required placeholder="Enter OTP number" pattern="[0-9]{4}"></div>
+                <button type="submit" class="submit-dispatch-btn">Verify & Secure Booking</button>
             </form>
         </div>
     </div>
 
     <div class="radar-ping-overlay" id="radarAnimationOverlayStage">
         <div class="radar-pulsing-circle"><span style="font-size:24px;">📡</span></div>
-        <h3 style="font-size:13px; font-weight:800; color:var(--accent-cyan); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px;">Pinging Fleet Allocation Matrix</h3>
-        <p style="color:#444; font-size:12px; font-family:monospace;">Securing route authorization sequence token...</p>
+        <h3 style="font-size:13px; font-weight:800; color:var(--accent-cyan); text-transform:uppercase; margin-bottom:6px;">Pinging Fleet Allocation Matrix</h3>
     </div>
 
     <script>
         const CLOUD_BACKEND_API_LINK = 'https://servoo0-backend.onrender.com';
         let customMinimizedMapInstance;
-        let activeMarkersList = [];
+        let cachedBookingFormData = {};
 
-        // 🔑 CHECK USER SESSION VALIDITY ON LOAD
-        window.addEventListener('DOMContentLoaded', () => {
-            const activeSessionToken = localStorage.getItem('servo_user_logged');
-            if (activeSessionToken) {
-                document.getElementById('systemAuthGate').style.display = 'none';
-                document.getElementById('custPhone').value = activeSessionToken; // Pre-fill booking forms for convenience
-            }
-        });
-
-        // Handle Gate authorization action
-        document.getElementById('authSubmissionForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const phoneVal = document.getElementById('authUserPhone').value;
-            localStorage.setItem('servo_user_logged', phoneVal);
-            document.getElementById('custPhone').value = phoneVal;
-            document.getElementById('systemAuthGate').style.display = 'none';
-        });
-
-        function terminateUserSession() {
-            localStorage.removeItem('servo_user_logged');
-            location.reload();
-        }
-
-        // ☰ SIDE DRAWER PANEL TOGGLE MECHANICS
-        function toggleNavigationDrawer() {
-            document.getElementById('sideDrawerMenu').classList.toggle('open');
-            document.getElementById('drawerOverlay').classList.toggle('open');
-        }
+        function toggleNavigationDrawer() { document.getElementById('sideDrawerMenu').classList.toggle('open'); document.getElementById('drawerOverlay').classList.toggle('open'); }
 
         function navigateDrawerAction(targetView) {
             toggleNavigationDrawer();
-            
             document.querySelectorAll('.drawer-nav-link').forEach(btn => btn.classList.remove('active'));
             document.body.classList.remove('admin-mode-active');
-            
             document.getElementById('userViewInterface').style.display = 'none';
             document.getElementById('adminViewInterface').style.display = 'none';
             document.getElementById('requestSubPane').style.display = 'none';
@@ -303,98 +181,94 @@
         function initMinimizedDisplayMap() {
             customMinimizedMapInstance = L.map('minimizedMap', {zoomControl: false}).setView([26.9124, 75.7873], 12);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(customMinimizedMapInstance);
-            
-            fetch(`${CLOUD_BACKEND_API_LINK}/api/providers`)
-                .then(res => res.json())
-                .then(providers => {
-                    providers.forEach(p => { L.circleMarker([p.lat, p.lng], { color: '#00e5ff', fillColor: '#00e5ff', fillOpacity: 0.3, radius: 5 }).addTo(customMinimizedMapInstance); });
-                }).catch(e => console.log("Network safe recovery configuration initialized."));
         }
 
         function pullOperationalLogisticsTelemetry() {
-            fetch(`${CLOUD_BACKEND_API_LINK}/api/bookings`)
-                .then(res => res.json())
-                .then(bookings => {
-                    activeMarkersList.forEach(m => customMinimizedMapInstance.removeLayer(m));
-                    activeMarkersList = [];
-                    
-                    const logContainer = document.getElementById('telemetryStreamTarget');
-                    logContainer.innerHTML = bookings.length === 0 ? '<p style="color:#444; text-align:center; padding-top:40px 0; font-size:13px;">RADAR SECURE: No active dispatches tracking.</p>' : '';
-                    
-                    bookings.forEach(b => {
-                        const m = L.circleMarker([b.lat, b.lng], { color: '#ff0055', fillColor: '#ff0055', fillOpacity: 0.5, radius: 7 }).addTo(customMinimizedMapInstance);
-                        activeMarkersList.push(m);
-                        
-                        logContainer.innerHTML += `
-                            <div class="telemetry-pipeline-card">
-                                <h4>${b.customerName} <span class="live-tag">${b.status}</span></h4>
-                                <p><b>Required:</b> ${b.serviceType}<br><b>Destination Vector:</b> ${b.flatAddress}<br><b>Assigned Fleet Node:</b> <span style="color:#00e5ff;">⚡ ${b.assignedPartner}</span></p>
-                                <button class="resolve-btn" onclick="terminateCaseLog('${b._id}')">Resolve Case Frame</button>
-                            </div>`;
-                    });
-                }).catch(() => {
-                    document.getElementById('telemetryStreamTarget').innerHTML = '<p style="color:#ef4444; text-align:center; font-size:12px;">Network synchronization issue. Retrying operational link...</p>';
+            fetch(`${CLOUD_BACKEND_API_LINK}/api/bookings`).then(res => res.json()).then(bookings => {
+                const logContainer = document.getElementById('telemetryStreamTarget');
+                logContainer.innerHTML = bookings.length === 0 ? '<p style="color:#444; text-align:center; font-size:13px;">RADAR SECURE: No active dispatches tracking.</p>' : '';
+                bookings.forEach(b => {
+                    logContainer.innerHTML += `<div class="telemetry-pipeline-card"><h4>${b.customerName} <span class="live-tag">${b.status}</span></h4><p><b>Required:</b> ${b.serviceType}<br><b>Destination:</b> ${b.flatAddress}</p><button class="resolve-btn" onclick="terminateCaseLog('${b._id}')">Resolve Case Frame</button></div>`;
                 });
+            });
         }
 
         function terminateCaseLog(id) { fetch(`${CLOUD_BACKEND_API_LINK}/api/bookings/${id}`, { method: 'DELETE' }).then(() => pullOperationalLogisticsTelemetry()); }
-        function openDispatchPrompt(serviceTitle) { document.getElementById('selectedServiceTypeField').value = serviceTitle; document.getElementById('modalLabelHeader').innerText = `AUTHORIZE ${serviceTitle} DISPATCH`; document.getElementById('bookingModalPrompt').style.display = 'flex'; }
-        function closeDispatchPrompt() { document.getElementById('bookingModalPrompt').style.display = 'none'; }
+        function openDispatchPrompt(serviceTitle) { document.getElementById('selectedServiceTypeField').value = serviceTitle; document.getElementById('modalLabelHeader').innerText = `${serviceTitle} DISPATCH`; document.getElementById('bookingModalPrompt').style.display = 'flex'; }
+        
+        function closeDispatchPrompt() { 
+            document.getElementById('bookingModalPrompt').style.display = 'none'; 
+            document.getElementById('bookingSubmissionForm').style.display = 'block';
+            document.getElementById('bookingOtpVerificationForm').style.display = 'none';
+        }
 
+        // 📋 ACTION 1: FIRE SMS TO USER FROM CHECKOUT PANEL
         document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const chosenTypeString = document.getElementById('selectedServiceTypeField').value;
-            const name = document.getElementById('custName').value;
-            const phone = document.getElementById('custPhone').value;
-            const addr = document.getElementById('custAddr').value;
+            
+            cachedBookingFormData = {
+                customerName: document.getElementById('custName').value,
+                customerPhone: document.getElementById('custPhone').value,
+                serviceType: document.getElementById('selectedServiceTypeField').value,
+                flatAddress: document.getElementById('custAddr').value
+            };
 
+            // Trigger secure handshake sequence
+            fetch(`${CLOUD_BACKEND_API_LINK}/api/auth/send-otp`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ phone: cachedBookingFormData.customerPhone })
+            }).then(() => {
+                // Morph the inputs to let them type the code
+                document.getElementById('bookingSubmissionForm').style.display = 'none';
+                document.getElementById('bookingOtpVerificationForm').style.display = 'block';
+            });
+        });
+
+        // 🔐 ACTION 2: COUPLER VERIFICATION AND REAL-TIME DISPATCH CLEARANCE
+        document.getElementById('bookingOtpVerificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const typedCode = document.getElementById('bookingVerifiedOtpInput').value;
+            
             closeDispatchPrompt();
             document.getElementById('radarAnimationOverlayStage').style.display = 'flex';
 
-            setTimeout(() => {
-                fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ customerName: name, customerPhone: phone, serviceType: chosenTypeString, flatAddress: addr, paymentId: "PAYID_SIMULATED_SUCCESS_TOKEN" })
-                })
-                .then(() => {
-                    document.getElementById('radarAnimationOverlayStage').style.display = 'none';
+            fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service-secure`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ ...cachedBookingFormData, otp: typedCode })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('radarAnimationOverlayStage').style.display = 'none';
+                if(data.success) {
+                    alert("⚡ SECURE ORDER DEPLOYED.\nReal SMS Verified.\nTracking logistics data logs inside Admin HQ.");
                     document.getElementById('bookingSubmissionForm').reset();
-                    alert(`⚡ TRANSACTION COMPLETE.\nSimulated Payment Authorized.\nReceipt logged: PAYID_SIMULATED_SUCCESS_TOKEN`);
-                })
-                .catch(() => {
-                    document.getElementById('radarAnimationOverlayStage').style.display = 'none';
-                    alert(`⚡ BACKEND CONNECT TIMEOUT.\nLocal booking simulation backup successful.\nReceipt saved: LOCAL_BYPASS_TOKEN`);
-                });
-            }, 3000);
+                    document.getElementById('bookingOtpVerificationForm').reset();
+                } else {
+                    alert("Invalid verification code sequence.");
+                }
+            }).catch(() => {
+                document.getElementById('radarAnimationOverlayStage').style.display = 'none';
+                alert("Matrix connection sync timeout.");
+            });
         });
 
         document.getElementById('fleetRegistrationForm').addEventListener('submit', function(e) {
             e.preventDefault();
             document.getElementById('radarAnimationOverlayStage').style.display = 'flex';
-
             fetch(`${CLOUD_BACKEND_API_LINK}/api/register-provider`, {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ name: document.getElementById('partnerName').value, trade: document.getElementById('partnerTrade').value, phone: document.getElementById('partnerPhone').value, city: document.getElementById('partnerCity').value })
-            })
-            .then(res => res.json())
-            .then(data => {
+            }).then(() => {
                 document.getElementById('radarAnimationOverlayStage').style.display = 'none';
-                alert(data.message);
-                document.getElementById('fleetRegistrationForm').reset();
-                navigateDrawerAction('home');
-            })
-            .catch(() => {
-                document.getElementById('radarAnimationOverlayStage').style.display = 'none';
-                alert("Fleet roster registration complete in fallback mode.");
                 document.getElementById('fleetRegistrationForm').reset();
                 navigateDrawerAction('home');
             });
         });
 
         initMinimizedDisplayMap();
-        setInterval(() => { if(document.body.classList.contains('admin-mode-active')) pullOperationalLogisticsTelemetry(); }, 5000);
     </script>
 </body>
 </html>
