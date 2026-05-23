@@ -140,5 +140,8 @@ app.delete('/api/bookings/:id', (req, res) => {
     }
 });
 
+// Replace your old app.listen block at the very bottom of server.js with this:
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`>>> HARDENED SERVO SECURE PRODUCTION CORE RUNNING ON PORT ${PORT} <<<`));
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`>>> HARDENED SERVO SECURE PRODUCTION CORE LIVE ON PORT ${PORT} <<<`);
+});
