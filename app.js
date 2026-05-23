@@ -1,5 +1,5 @@
-// 📡 CONFIGURATION VECTOR: Pointing directly to your real, corrected Render domain
-const CLOUD_BACKEND_API_LINK = "https://servoo-backend.onrender.com";
+// 📡 THE CORRECT ALIGNED LINK (NO TYPOS)
+const CLOUD_BACKEND_API_LINK = "https://servoo-backend.onrender.com"; 
 
 let activeSelectedServiceGlobalType = "";
 let cachedBookingFormData = {};
@@ -37,6 +37,7 @@ function openDispatchPrompt(serviceTokenString) {
     document.getElementById('dispatchModalWindow').style.display = 'flex';
 }
 
+// RESTORED: Explicit close modal function matching your index.html layouts
 function closeDispatchPrompt() {
     document.getElementById('dispatchModalWindow').style.display = 'none';
     document.getElementById('bookingOtpVerificationForm').style.display = 'none';
@@ -46,6 +47,7 @@ function closeDispatchPrompt() {
 // 🍞 PREMIUM TOAST NOTIFICATION UTILITY
 function triggerToastFeedback(messageText, isErrorState = false) {
     const container = document.getElementById('toastNotificationContainer');
+    if (!container) return;
     const bubble = document.createElement('div');
     bubble.className = `custom-toast-bubble ${isErrorState ? 'error-toast' : ''}`;
     bubble.innerText = messageText;
@@ -53,7 +55,7 @@ function triggerToastFeedback(messageText, isErrorState = false) {
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
-// 📱 ACTION 1: CAPTURE DETAILS AND INITIATE SECURITY OTP HANDSHAKE
+// 📱 ACTION 1: CAPTURE DETAILS AND INITIATE HANDSHAKE
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const actionSubmitBtn = document.getElementById('btnInitiateHandshake');
@@ -65,7 +67,8 @@ document.getElementById('bookingSubmissionForm').addEventListener('submit', func
         flatAddress: document.getElementById('bookingFlatAddress').value
     };
 
-    actionSubmitBtn.disabled = true; actionSubmitBtn.innerText = "Transmitting Credentials...";
+    actionSubmitBtn.disabled = true; 
+    actionSubmitBtn.innerText = "Transmitting Credentials...";
 
     fetch(`${CLOUD_BACKEND_API_LINK}/api/auth/send-otp`, {
         method: 'POST',
@@ -74,18 +77,21 @@ document.getElementById('bookingSubmissionForm').addEventListener('submit', func
     })
     .then(res => res.json())
     .then(serverDataResponse => {
-        actionSubmitBtn.disabled = false; actionSubmitBtn.innerText = "Send Verification OTP";
+        actionSubmitBtn.disabled = false; 
+        actionSubmitBtn.innerText = "Send Verification OTP";
         if(serverDataResponse.success) {
-            triggerToastFeedback("Security validation code sent to console logs!");
+            triggerToastFeedback("Verification code triggered! Enter '1234' to verify.");
             document.getElementById('bookingSubmissionForm').style.display = 'none';
             document.getElementById('bookingOtpVerificationForm').style.display = 'block';
         } else {
             triggerToastFeedback(serverDataResponse.message || "Authentication transmission failed.", true);
         }
     })
-    .catch(() => {
-        actionSubmitBtn.disabled = false; actionSubmitBtn.innerText = "Send Verification OTP";
-        triggerToastFeedback("Backend connection offline. Please reload.", true);
+    .catch((err) => {
+        console.error(err);
+        actionSubmitBtn.disabled = false; 
+        actionSubmitBtn.innerText = "Send Verification OTP";
+        triggerToastFeedback("BACKEND CONNECTION OFFLINE. PLEASE RELOAD.", true);
     });
 });
 
@@ -95,9 +101,9 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
     const verifyBtn = document.getElementById('btnVerifyOtp');
     const typedCode = document.getElementById('bookingVerifiedOtpInput').value;
     
-    verifyBtn.disabled = true; verifyBtn.innerText = "Processing...";
+    verifyBtn.disabled = true; 
+    verifyBtn.innerText = "Processing...";
 
-    // Turn on the cool animated radar scanner screen while processing database query strings
     document.getElementById('radarScannerLayer').style.display = 'flex';
 
     fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service-secure`, {
@@ -113,7 +119,8 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
     })
     .then(res => res.json())
     .then(finalData => {
-        verifyBtn.disabled = false; verifyBtn.innerText = "Verify & Complete Booking";
+        verifyBtn.disabled = false; 
+        verifyBtn.innerText = "Verify & Complete Booking";
         document.getElementById('radarScannerLayer').style.display = 'none';
         closeDispatchPrompt();
 
@@ -128,8 +135,10 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
             triggerToastFeedback(finalData.message || "Verification code mismatch.", true);
         }
     })
-    .catch(() => {
-        verifyBtn.disabled = false; verifyBtn.innerText = "Verify & Complete Booking";
+    .catch((err) => {
+        console.error(err);
+        verifyBtn.disabled = false; 
+        verifyBtn.innerText = "Verify & Complete Booking";
         document.getElementById('radarScannerLayer').style.display = 'none';
         closeDispatchPrompt();
         triggerToastFeedback("Connection validation timeout.", true);
