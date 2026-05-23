@@ -183,6 +183,91 @@
     </div>
 
     <div id="toastNotificationContainer"></div>
+    <div id="customerDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
+    <div style="max-width: 800px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+            <h2 style="font-size: 1.5rem; font-weight: 800;">Your <span style="color: #00e5ff;">SERVO Profile</span></h2>
+            <button onclick="exitToMainHome()" style="background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Home</button>
+        </div>
+
+        <div id="activeBookingCard" style="background: #121214; border: 1px solid #00e5ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: none;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                <div>
+                    <span style="background: rgba(0, 229, 255, 0.1); color: #00e5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Active Pipeline Tracker</span>
+                    <h4 id="custActiveServiceType" style="font-size: 1.25rem; margin-top: 8px; font-weight: 700;">AC Repair Assignment</h4>
+                </div>
+                <div id="custActiveStatusBadge" style="color: #ffb300; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;">● ASSIGNED</div>
+            </div>
+
+            <div style="display: flex; align-items: center; background: #1a1a1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222;">
+                <div id="custTechPhotoAvatar" style="font-size: 2rem; margin-right: 15px; background: #26262b; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👨‍🔧</div>
+                <div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span id="custTechName" style="font-weight: 700; color: #fff;">Amit Sharma</span>
+                        <span style="background: #00e676; color: #000; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">✓ VERIFIED PRO</span>
+                    </div>
+                    <p style="color: #aaa; font-size: 0.8rem; margin-top: 2px;">⭐ 4.9/5 Rating | Jaipur Operations Group</p>
+                </div>
+                <a id="custTechCallBtn" href="tel:" style="margin-left: auto; background: #222; color: #00e5ff; border: 1px solid #333; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Call Pro</a>
+            </div>
+
+            <div style="background: #1a1a1e; padding: 15px; border-radius: 8px; border: 1px solid #222; text-align: center;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: #aaa;">
+                    <span>📍 Destination Address Matrix</span>
+                    <span style="color: #ff5252; font-weight: 700;">ETA: ~25 Mins</span>
+                </div>
+                <div id="customerLiveTransitMapContainer" style="height: 180px; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 0.9rem; font-weight: 500;">
+                    [ Live Route Geolocation Intersect Active ]
+                </div>
+            </div>
+        </div>
+
+        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Booking Records & Invoices</h3>
+        <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
+            <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Dispatch</h5>
+                    <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed 2 hours ago • Paid via UPI</p>
+                </div>
+                <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="technicianDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #121214; padding: 15px; border-radius: 10px; border: 1px solid #222;">
+            <div>
+                <h3 id="techWelcomeHeader" style="font-weight: 800; font-size: 1.2rem;">Console: Amit Sharma</h3>
+                <p style="color: #00e676; font-size: 0.8rem; font-weight: 600; margin-top: 2px;">⚡ Earnings Today: ₹1,480</p>
+            </div>
+            <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
+        </div>
+
+        <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs</h4>
+        <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;">
+            <div id="techJobAssignmentCard" style="background: #121214; border: 1px solid #333; padding: 20px; border-radius: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                    <h5 style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">AC Repair & Diagnostics</h5>
+                    <span style="color: #ffb300; font-weight: 700; font-size: 0.85rem;">PENDING ACCEPTANCE</span>
+                </div>
+                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 6px;"><strong>Client:</strong> Sarthak Jain</p>
+                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;"><strong>Address Matrix:</strong> Flat 402, Block C, Mansarovar, Jaipur</p>
+                
+                <div style="display: flex; gap: 10px;">
+                    <a href="https://www.google.com/maps" target="_blank" style="flex: 1; text-align: center; background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">🗺️ Navigation</a>
+                    <button onclick="triggerJobCompletionSequence()" style="flex: 1; background: #00e676; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Complete Job ✅</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px;">
+    <button onclick="switchToPanel('customer')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">📱 User View</button>
+    <button onclick="switchToPanel('technician')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">👨‍🔧 Pro View</button>
+</div>
 
     <script src="app.js"></script>
 
