@@ -1,32 +1,18 @@
+require('dotenv').config(); // 🔑 LINE 1: Load environment variables instantly
+
 const express = require('express');
 const cors = require('cors');
 const Datastore = require('nedb');
 const https = require('https');
-const rateLimit = require('express-rate-limit');
 
 const app = express();
 
-// 🔓 PERFECT OMNI-DIRECTIONAL CORS PERMISSIONS
-app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
-    credentials: true
-}));
-
-app.options('*', cors()); // Preflight handling for Chrome
-
+// 🔓 SIMPLE, STABLE CORS FOR MVP
+app.use(cors());
 app.use(express.json());
 
 // 🗄️ DATABASE STORAGE INITIALIZATION
 const dbBookings = new Datastore({ filename: 'bookings.db', autoload: true });
-
-// 🛡️ ANTI-SPAM SHIELD CONFIGURATION: Max 5 OTP requests per 10 minutes per IP
-const otpRouteLimiterShield = rateLimit({
-    windowMs: 10 * 60 * 1000,
-    max: 5,
-    message: { success: false, message: "Too many verification requests. Please try again after 10 minutes." }
-});
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || 'YOUR_BOT_TOKEN';
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || 'YOUR_CHAT_ID';
@@ -34,7 +20,7 @@ const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || 'YOUR_CHAT_ID';
 // ==========================================
 // 📱 SANDBOX AUTHENTICATION ROUTE (Bypasses template & balance restrictions)
 // ==========================================
-app.post('/api/auth/send-otp', otpRouteLimiterShield, (req, res) => {
+app.post('/api/auth/send-otp', (req, res) => {
     try {
         const { phone } = req.body;
         if (!phone || phone.length !== 10) {
@@ -46,7 +32,7 @@ app.post('/api/auth/send-otp', otpRouteLimiterShield, (req, res) => {
 
         return res.status(200).json({ 
             success: true, 
-            message: "Sandbox verification token logged to Render console tray successfully." 
+            message: "Sandbox verification token logged successfully." 
         });
 
     } catch (error) {
