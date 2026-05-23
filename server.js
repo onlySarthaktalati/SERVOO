@@ -95,8 +95,9 @@ app.post('/api/book-service-secure', (req, res) => {
     }
 });
 
-app.get('/api/providers', (req, res) => {
-    res.json({ status: "alive", operationalZone: "Jaipur Hub" });
+// 🌐 ROOT ALIVE STATUS CHECK: Instantly verify if the server environment is responsive
+app.get('/', (req, res) => {
+   res.send('SERVO backend is officially live and running smoothly!');
 });
 
 // ==========================================

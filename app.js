@@ -1,5 +1,5 @@
-// 📡 CONFIGURATION VECTOR: Connect directly to your Render backend domain
-const CLOUD_BACKEND_API_LINK = "https://servoo0-backend.onrender.com"; 
+// 📡 CONFIGURATION VECTOR: Pointing directly to your real, corrected Render domain
+const CLOUD_BACKEND_API_LINK = "https://servoo-backend.onrender.com";
 
 let activeSelectedServiceGlobalType = "";
 let cachedBookingFormData = {};
