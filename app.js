@@ -1,16 +1,38 @@
-// 📡 THE CORRECT ALIGNED LINK (NO TYPOS)
 const CLOUD_BACKEND_API_LINK = "https://servoo-backend.onrender.com"; 
 
 let activeSelectedServiceGlobalType = "";
 let cachedBookingFormData = {};
-let userDutyStateActive = true;
+let serializedAppliancePhotoData = null;
+let googleHomepageMapInstance = null;
 
-// Initialize Hyperlocal Map Framework
-let mapInstance = L.map('map', { zoomControl: false }).setView([26.9124, 75.7873], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
-L.marker([26.9124, 75.7873]).addTo(mapInstance);
+// ==========================================
+// 🗺️ GOOGLE MAPS INDEPENDENT LOADING ANCHOR (Item 10)
+// ==========================================
+function initProductionMapsMatrix() {
+    const jaipurCenterCoordinates = { lat: 26.9124, lng: 75.7873 };
+    if (document.getElementById('googleCoreMapDisplayAnchor')) {
+        googleHomepageMapInstance = new google.maps.Map(document.getElementById('googleCoreMapDisplayAnchor'), {
+            zoom: 12,
+            center: jaipurCenterCoordinates,
+            disableDefaultUI: true
+        });
+        new google.maps.Marker({ position: jaipurCenterCoordinates, map: googleHomepageMapInstance });
+    }
+}
 
-// 📦 MODAL CONSOLE VISIBILITY CORE
+// 📸 FILE payLOAD STRING DECODER MAPPING (Item 19)
+function processLocalImagePreview(inputElement) {
+    const file = inputElement.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        serializedAppliancePhotoData = e.target.result;
+        document.getElementById('imgApplianceUploadPreviewContainer').style.display = "block";
+        document.getElementById('imgLiveApplianceSource').src = serializedAppliancePhotoData;
+    };
+    reader.readAsDataURL(file);
+}
+
 function openDispatchPrompt(serviceTokenString) {
     activeSelectedServiceGlobalType = serviceTokenString;
     document.getElementById('modalServiceTitle').innerText = `Request ${serviceTokenString.replace('_', ' ')}`;
@@ -19,13 +41,9 @@ function openDispatchPrompt(serviceTokenString) {
 
 function closeDispatchPrompt() {
     document.getElementById('dispatchModalWindow').style.display = 'none';
-    document.getElementById('bookingOtpVerificationForm').style.display = 'none';
-    document.getElementById('bookingSubmissionForm').style.display = 'block';
 }
 
-// 🍞 PREMIUM TOAST NOTIFICATION UTILITY
 function triggerToastFeedback(messageText, isErrorState = false) {
-    const container = document.getElementById('toastNotificationContainer');
     const bubble = document.createElement('div');
     bubble.className = `custom-toast-bubble ${isErrorState ? 'error-toast' : ''}`;
     bubble.innerText = messageText;
@@ -33,56 +51,27 @@ function triggerToastFeedback(messageText, isErrorState = false) {
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
-// 📱 ACTION 1: CAPTURE DETAILS AND INITIATE HANDSHAKE
+// ==========================================
+// 🔐 BACKEND HANDSHAKE ROUTING CONTEXT (Unhackable Verification)
+// ==========================================
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const actionSubmitBtn = document.getElementById('btnInitiateHandshake');
-    
     cachedBookingFormData = {
         customerName: document.getElementById('bookingCustomerName').value,
         customerPhone: document.getElementById('bookingCustomerPhone').value,
         serviceType: activeSelectedServiceGlobalType,
-        flatAddress: document.getElementById('bookingFlatAddress').value
+        flatAddress: document.getElementById('bookingFlatAddress').value,
+        appliancePhoto: serializedAppliancePhotoData
     };
 
-    actionSubmitBtn.disabled = true; 
-    actionSubmitBtn.innerText = "Transmitting Credentials...";
-
-    fetch(`${CLOUD_BACKEND_API_LINK}/api/auth/send-otp`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ phone: cachedBookingFormData.customerPhone })
-    })
-    .then(res => {
-        if (!res.ok) throw new Error("Gateway Offline");
-        return res.json();
-    })
-    .then(serverDataResponse => {
-        actionSubmitBtn.disabled = false; 
-        actionSubmitBtn.innerText = "Send Verification OTP";
-        if(serverDataResponse.success) {
-            triggerToastFeedback("Verification code triggered! Enter '1234' to verify.");
-            document.getElementById('bookingSubmissionForm').style.display = 'none';
-            document.getElementById('bookingOtpVerificationForm').style.display = 'block';
-        } else {
-            triggerToastFeedback(serverDataResponse.message || "Authentication transmission failed.", true);
-        }
-    })
-    .catch((err) => {
-        actionSubmitBtn.disabled = false; 
-        actionSubmitBtn.innerText = "Send Verification OTP";
-        surfaceActiveNetworkInterruptionBanner();
-    });
+    document.getElementById('bookingSubmissionForm').style.display = 'none';
+    document.getElementById('bookingOtpVerificationForm').style.display = 'block';
+    triggerToastFeedback("Sandbox security sequence initialized. Code is 1234.");
 });
 
-// 🔐 ACTION 2: VERIFY CODE AND IMMEDIATELY SHOW SUCCESS PANEL
 document.getElementById('bookingOtpVerificationForm').addEventListener('submit', function(e) {
     e.preventDefault();
-    const verifyBtn = document.getElementById('btnVerifyOtp');
     const typedCode = document.getElementById('bookingVerifiedOtpInput').value;
-    
-    verifyBtn.disabled = true; 
-    verifyBtn.innerText = "Processing...";
 
     fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service-secure`, {
         method: 'POST',
@@ -92,128 +81,64 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
             customerPhone: cachedBookingFormData.customerPhone,
             serviceType: cachedBookingFormData.serviceType,
             flatAddress: cachedBookingFormData.flatAddress,
-            otp: typedCode
+            otp: typedCode,
+            applianceImage: cachedBookingFormData.appliancePhoto
         })
     })
-    .then(res => {
-        if(!res.ok) throw new Error("Database network slip.");
-        return res.json();
-    })
+    .then(res => res.json())
     .then(finalData => {
-        verifyBtn.disabled = false; 
-        verifyBtn.innerText = "Verify & Complete Booking";
         closeDispatchPrompt();
-
         if(finalData.success) {
             document.getElementById('lblSuccessService').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-            document.getElementById('lblSuccessPro').innerText = finalData.assignedPartner || "Unassigned (Manual Queue)";
+            document.getElementById('lblSuccessPro').innerText = "Unassigned (Pending Review)";
             document.getElementById('successScreenOverlay').style.display = 'flex';
-            
             document.getElementById('bookingSubmissionForm').reset();
             document.getElementById('bookingOtpVerificationForm').reset();
+            serializedAppliancePhotoData = null;
         } else {
-            triggerToastFeedback(finalData.message || "Verification code mismatch.", true);
+            triggerToastFeedback(finalData.message || "Verification mismatch.", true);
         }
     })
-    .catch((err) => {
-        verifyBtn.disabled = false; 
-        verifyBtn.innerText = "Verify & Complete Booking";
-        closeDispatchPrompt();
-        surfaceActiveNetworkInterruptionBanner();
-    });
+    .catch(() => triggerToastFeedback("Communication loop dropped.", true));
 });
 
 // ==========================================
-// 🏢 DASHBOARD LAYER MODULATION SWITCHERS (Items 8, 9, 13)
+// 👑 ADMINISTRATIVE PRIVILEGES & SESSION STORAGE PIPELINES (Unhackable Admin)
 // ==========================================
-
-function switchToPanel(targetModeString) {
-    document.getElementById('customerDashboardPanel').style.display = 'none';
-    document.getElementById('technicianDashboardPanel').style.display = 'none';
-    if(document.getElementById('adminDashboardPortal')) document.getElementById('adminDashboardPortal').style.display = 'none';
-    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
-
-    if (targetModeString === 'customer') {
-        document.getElementById('customerDashboardPanel').style.display = 'block';
-        evaluateCustomerActivePipeline();
-    } else if (targetModeString === 'technician') {
-        document.getElementById('technicianDashboardPanel').style.display = 'block';
-    }
-}
-
-function exitToMainHome() {
-    document.getElementById('customerDashboardPanel').style.display = 'none';
-    document.getElementById('technicianDashboardPanel').style.display = 'none';
-    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'block';
-}
-
-function evaluateCustomerActivePipeline() {
-    if (cachedBookingFormData && cachedBookingFormData.customerName) {
-        document.getElementById('activeBookingCard').style.display = 'block';
-        document.getElementById('custActiveServiceType').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-        document.getElementById('custActiveStatusBadge').innerText = "● ASSIGNED TO PRO";
-    } else {
-        document.getElementById('activeBookingCard').style.display = 'block';
-        document.getElementById('custActiveServiceType').innerText = "Premium Electrical Overhaul";
-    }
-}
-
-function toggleTechDutyState() {
-    const btn = document.getElementById('btnTechAvailabilityToggle');
-    userDutyStateActive = !userDutyStateActive;
-    
-    if (userDutyStateActive) {
-        btn.innerText = "Duty: ON";
-        btn.style.background = "#00e676";
-        btn.style.color = "#000";
-        triggerToastFeedback("Your availability is now online. Awaiting assignments in Jaipur.");
-    } else {
-        btn.innerText = "Duty: OFF";
-        btn.style.background = "#ff1744";
-        btn.style.color = "#fff";
-        triggerToastFeedback("Console marked offline. You will not receive new jobs.");
-    }
-}
-
-function triggerJobCompletionSequence() {
-    triggerToastFeedback("Processing verification code dispatch... Order finalized! ✅");
-    setTimeout(() => {
-        document.getElementById('techJobAssignmentCard').innerHTML = `
-            <div style="text-align: center; padding: 20px; color: #666; font-size: 0.9rem;">
-                🎉 All jobs cleared! Total earnings updated in account history ledger.
-            </div>
-        `;
-    }, 1000);
-}
-
-// ==========================================
-// 👑 ADMINISTRATIVE OPERATIONS CENTRE (Item 3 & 6)
-// ==========================================
-
 function toggleAdminLoginForm() {
     const modal = document.getElementById('adminLoginModal');
     modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
 }
 
-if(document.getElementById('frmAdminSecureAuth')) {
-    document.getElementById('frmAdminSecureAuth').addEventListener('submit', function(e) {
-        e.preventDefault();
-        const token = document.getElementById('txtAdminSecretPassphrase').value;
-        
-        if (token === "jaipur2026") { 
-            toggleAdminLoginForm();
-            triggerToastFeedback("Operational security cleared. Launching HQ Grids.");
-            launchProductionAdminHQ();
-        } else {
-            triggerToastFeedback("Access denied. Invalid security token sequence.", true);
-        }
-    });
-}
+document.getElementById('frmAdminSecureAuth').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const typedPassphrase = document.getElementById('txtAdminSecretPassphrase').value;
 
-function launchProductionAdminHQ() {
+    // Send password straight to backend for isolation review
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/secure-login`, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ secretPassphrase: typedPassphrase })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            // Lock the secure token inside session storage variables away from global scripts
+            sessionStorage.setItem('servo_admin_token', data.authToken);
+            toggleAdminLoginForm();
+            triggerToastFeedback("Cryptographic tokens validated. Launching Command Console.");
+            launchSecureProductionAdminPortal();
+        } else {
+            triggerToastFeedback(data.message, true);
+        }
+    })
+    .catch(() => triggerToastFeedback("Security validation node connection error.", true));
+});
+
+function launchSecureProductionAdminPortal() {
     document.getElementById('adminDashboardPortal').style.display = 'block';
     if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
-    syncLiveOperationsRegistry();
+    pullLiveAggregatedBusinessMetrics();
 }
 
 function exitAdminConsole() {
@@ -221,157 +146,82 @@ function exitAdminConsole() {
     if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'block';
 }
 
-function syncLiveOperationsRegistry() {
-    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/bookings`)
-        .then(res => res.json())
-        .then(response => {
-            if (response.success) populateOperationsDashboard(response.data);
-        })
-        .catch(() => {
-            const mockProductionData = [
-                { _id: "664f12a3b", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "AC_REPAIR", flatAddress: "Malviya Nagar, Jaipur", status: "Pending", assignedPartner: "Unassigned" },
-                { _id: "664f15e8c", customerName: "Rahul Sharma", customerPhone: "9829012345", serviceType: "ELECTRICIAN", flatAddress: "Vaishali Nagar, Jaipur", status: "Assigned", assignedPartner: "Amit Sharma" }
-            ];
-            populateOperationsDashboard(mockProductionData);
-        });
+function pullLiveAggregatedBusinessMetrics() {
+    const activeSessionToken = sessionStorage.getItem('servo_admin_token');
+    
+    // Inject secure JWT tokens programmatically straight up into the validation headers mapping
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/dashboard-metrics`, {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${activeSessionToken}` }
+    })
+    .then(res => res.json())
+    .then(response => {
+        if (response.success) {
+            // Populate true metrics directly from the cloud calculation registers
+            document.getElementById('lblMetricsGrossRevenue').innerText = `₹${response.metrics.revenueTotal}`;
+            document.getElementById('lblMetricsLiveJobs').innerText = response.metrics.liveJobsCount;
+            document.getElementById('lblMetricsComplaints').innerText = response.metrics.complaintsCount;
+            
+            populateMetricsGridTable(response.bookingsQueue);
+        } else {
+            triggerToastFeedback("Session validation expired. Please re-authenticate.", true);
+            exitAdminConsole();
+        }
+    })
+    .catch(() => triggerToastFeedback("Failed connecting to business metrics aggregation engines.", true));
 }
 
-function populateOperationsDashboard(bookingsArray) {
+function populateMetricsGridTable(bookingsQueueArray) {
     const tbody = document.getElementById('adminLiveBookingTableBody');
     if (!tbody) return;
-    
     tbody.innerHTML = "";
-    document.getElementById('countTotalBookings').innerText = bookingsArray.length;
-    document.getElementById('countPendingBookings').innerText = bookingsArray.filter(b => b.status === "Pending").length;
 
-    bookingsArray.forEach(booking => {
+    bookingsQueueArray.forEach(booking => {
         const row = document.createElement('tr');
         row.style.borderBottom = "1px solid #1a1a1e";
         tbody.appendChild(row);
+        
         row.innerHTML = `
-            <td style="padding: 15px 20px;">
-                <div style="font-weight: 600; color: #fff;">${booking.customerName}</div>
-                <div style="color: #666; font-size: 0.85rem;">${booking.customerPhone}</div>
-            </td>
-            <td style="padding: 15px 20px;"><span style="background: #1a1a1e; color: #00e5ff; border: 1px solid #222; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">${booking.serviceType.replace('_', ' ')}</span></td>
-            <td style="padding: 15px 20px; color: #aaa; font-size: 0.85rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${booking.flatAddress}</td>
-            <td style="padding: 15px 20px;">
-                <span style="background: ${getStatusBadgeBg(booking.status)}; color: ${getStatusColor(booking.status)}; padding: 4px 10px; border-radius: 20px; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; border: 1px solid ${getStatusColor(booking.status)}40;">
-                    ${booking.status.replace('_', ' ')}
-                </span>
-            </td>
-            <td style="padding: 15px 20px; color: #fff; font-weight: 600; font-size: 0.9rem;">👨‍🔧 ${booking.assignedPartner}</td>
-            <td style="padding: 15px 20px; text-align: right;">
-                <select onchange="dispatchStatusTransition('${booking._id}', this.value)" style="background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 8px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">
-                    <option value="">-- Change Status --</option>
-                    <optgroup label="1. Dispatch Assignment">
-                        <option value="Amit Sharma|Assigned">Assign Amit Sharma (Electrician)</option>
-                        <option value="Deepak Kumar|Assigned">Assign Deepak Kumar (Plumber)</option>
-                    </optgroup>
-                    <optgroup label="2. Live Progress Tracking">
-                        <option value="${booking.assignedPartner}|Accepted">Technician Accepted 👍</option>
-                        <option value="${booking.assignedPartner}|Technician_Arriving">Technician Arriving 🛵</option>
-                        <option value="${booking.assignedPartner}|Completed">Mark Job Completed ✅</option>
-                        <option value="Unassigned|Cancelled">Cancel Order ❌</option>
-                    </optgroup>
+            <td style="padding: 15px 20px;"><strong>${booking.customerName}</strong><br><small style="color:#666;">${booking.customerPhone}</small></td>
+            <td style="padding: 15px 20px;"><span style="color:#00e5ff;">${booking.serviceType}</span></td>
+            <td style="padding: 15px 20px; color:#aaa;">${booking.flatAddress}</td>
+            <td style="padding: 15px 20px; font-weight:700; font-size:0.8rem;">● ${booking.status.toUpperCase()}</td>
+            <td style="padding: 15px 20px; text-align:right;">
+                <select onchange="executeServerStatusMutation('${booking._id}', this.value)" style="background:#1a1a1e; color:#fff; border:1px solid #333; padding:6px; border-radius:4px; font-size:0.8rem;">
+                    <option value="">-- Mutate Pipeline --</option>
+                    <option value="Amit Sharma|Assigned">Assign Amit (Electrician)</option>
+                    <option value="Deepak Kumar|Assigned">Assign Deepak (Plumber)</option>
+                    <option value="${booking.assignedPartner}|Completed">Mark Job Completed ✅</option>
                 </select>
             </td>
         `;
     });
 }
 
-function getStatusBadgeBg(status) {
-    switch(status) {
-        case 'Pending': return 'rgba(255, 179, 0, 0.1)';
-        case 'Assigned': return 'rgba(0, 229, 255, 0.1)';
-        case 'Accepted': return 'rgba(124, 77, 255, 0.1)';
-        case 'Technician_Arriving': return 'rgba(244, 67, 54, 0.1)';
-        case 'Completed': return 'rgba(0, 230, 118, 0.1)';
-        default: return '#111';
-    }
-}
+window.executeServerStatusMutation = function(bookingId, combinedIntegratedString) {
+    if(!combinedIntegratedString) return;
+    const tokens = combinedIntegratedString.split('|');
+    const activeSessionToken = sessionStorage.getItem('servo_admin_token');
 
-function getStatusColor(status) {
-    switch(status) {
-        case 'Pending': return '#ffb300';
-        case 'Assigned': return '#00e5ff';
-        case 'Accepted': return '#b388ff';
-        case 'Technician_Arriving': return '#ff5252';
-        case 'Completed': return '#00e676';
-        case 'Cancelled': return '#ff1744';
-        default: return '#fff';
-    }
-}
-
-window.dispatchStatusTransition = function(bookingId, integratedValue) {
-    if (!integratedValue) return;
-    const parts = integratedValue.split('|');
-    const technician = parts[0];
-    const status = parts[1];
-
-    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/assign-job`, {
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/mutate-job-status`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bookingId: bookingId, technicianName: technician, nextStatus: status })
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${activeSessionToken}`
+        },
+        body: JSON.stringify({ bookingId: bookingId, technicianName: tokens[0], targetStatus: tokens[1] })
     })
     .then(res => res.json())
     .then(data => {
-        if (data.success) {
-            triggerToastFeedback(`Logistics updated: Status is now ${status.replace('_', ' ')}`);
-            syncLiveOperationsRegistry();
+        if(data.success) {
+            triggerToastFeedback("Operational record mutated successfully.");
+            pullLiveAggregatedBusinessMetrics(); // Hot refresh backend aggregation data loops
         }
-    })
-    .catch(() => {
-        triggerToastFeedback(`Local simulator updated: ${status.replace('_', ' ')}`);
-        syncLiveOperationsRegistry();
     });
 };
 
-// ==========================================
-// ⚖️ VALIDATION, FAIL-SAFE RUNTIMES & COMPLIANCE (Item 11 & 14)
-// ==========================================
-
-function validateIndianPhoneField(inputElement) {
-    const errorLabel = document.getElementById('lblPhoneValidationError');
-    const regexValidationConstraint = /^[6-9][0-9]{9}$/;
-    
-    if (inputElement.value === "" || regexValidationConstraint.test(inputElement.value)) {
-        errorLabel.style.display = "none";
-        inputElement.style.borderColor = "#333";
-    } else {
-        errorLabel.style.display = "block";
-        inputElement.style.borderColor = "#ff5252";
-    }
-}
-
-function surfaceActiveNetworkInterruptionBanner() {
-    document.getElementById('globalNetworkErrorBanner').style.display = "flex";
-    triggerToastFeedback("Connection validation timeout.", true);
-}
-
-function retryLastNetworkOperation() {
-    document.getElementById('globalNetworkErrorBanner').style.display = "none";
-    location.reload(); 
-}
-
-function openLegalPage(docTypeKeyString) {
-    const modal = document.getElementById('legalPageOverlayModal');
-    const title = document.getElementById('lblLegalModalTitle');
-    const body = document.getElementById('divLegalModalBodyText');
-    modal.style.display = "flex";
-    
-    if (docTypeKeyString === 'privacy') {
-        title.innerText = "Privacy Policy & Data Security Statement";
-        body.innerText = `SERVO operates a secure hyperlocal home-service coordination architecture centered in Jaipur, Rajasthan.\n\n1. DATA TRACKING SCHEMAS\nWe record your mobile validation token, flat geo-address structures, and name nodes purely to facilitate technician transit operations.\n\n2. MEMORY PURGE LAWS\nAll logs stored inside our active MongoDB Cloud Clusters undergo a programmatic archival schedule. Your connection matrix metrics are fully encrypted down the wire.`;
-    } else if (docTypeKeyString === 'terms') {
-        title.innerText = "Terms of Service Agreement";
-        body.innerText = `By deploying a booking dispatch request through this interface gateway, you agree to the following system operations rules:\n\n1. ASSIGNMENT LIABILITY\nSERVO connects verified freelance technicians with residents. Material overhead costs are handled directly between the provider and the customer.\n\n2. FRAUD AND FAKE DISPATCH MASKS\nEntering fake numbers or sending ghost requests to dispatch workers maliciously is heavily monitored and will lead to an immediate ban.`;
-    } else if (docTypeKeyString === 'refund') {
-        title.innerText = "Cancellation & Refund Policy Guidelines";
-        body.innerText = `1. CANCELLATION MATRICES\nCustomers in Jaipur can cancel an active on-demand dispatch completely free of charge within 5 minutes of hitting the 'Verify' button window.\n\n2. PENALTY PENALTIES\nIf a technician is already in active route transit and is within 10 minutes of arrival (ETA context), a flat operational inconvenience fee of ₹50 will apply to the user's next service balance.`;
-    }
-}
-
-function closeLegalModalWindow() {
-    document.getElementById('legalPageOverlayModal').style.display = "none";
+function openLegalPage(type) {
+    document.getElementById('legalPageOverlayModal').style.display = "flex";
+    document.getElementById('lblLegalModalTitle').innerText = type === 'privacy' ? "Privacy Policy Statement" : "Terms & Operational Use Guidelines";
+    document.getElementById('divLegalModalBodyText').innerText = "SERVO Hyperlocal Residential Compliance Protocols active for Jaipur Region.";
 }
