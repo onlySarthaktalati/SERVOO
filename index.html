@@ -15,26 +15,26 @@
             <span></span><span></span><span></span>
         </button>
         <a href="#" class="logo">SERVO<span>.</span></a>
-        
         <nav class="desktop-nav-links">
             <a href="#services-anchor">Services</a>
             <a href="#pipeline-anchor">How It Works</a>
             <a href="#coverage-anchor">Live Coverage</a>
             <a href="#trust-anchor">Safety Standards</a>
-            <button class="primary-cta-btn mini-btn" onclick="scrollToSection('services-anchor')">Book Now</button>
+            <button class="primary-cta-btn mini-btn" onclick="openDispatchPrompt('ELECTRICIAN')">Book Now</button>
         </nav>
     </header>
 
     <div class="drawer-overlay-backdrop" id="drawerOverlay" onclick="toggleNavigationDrawer()"></div>
-    <nav class="side-drawer-panel" id="sideDrawerMenu">
-        <button id="btnHome" class="drawer-nav-link active" onclick="navigateDrawerAction('home')">Home Dashboard</button>
-        <button id="btnOnboard" class="drawer-nav-link" onclick="navigateDrawerAction('fleet')">Join as Specialist</button>
-        <button id="btnAdmin" class="drawer-nav-link admin-btn" onclick="navigateDrawerAction('admin')">Admin Console HQ</button>
-    </nav>
+    <div class="side-drawer-panel" id="sideDrawer">
+        <button class="drawer-nav-link" onclick="scrollToSection('services-anchor')">Available Services</button>
+        <button class="drawer-nav-link" onclick="scrollToSection('pipeline-anchor')">Operational Flow</button>
+        <button class="drawer-nav-link" onclick="scrollToSection('coverage-anchor')">Radar Coverage</button>
+        <button class="drawer-nav-link" onclick="scrollToSection('trust-anchor')">Security Protocols</button>
+    </div>
 
     <section class="hero-matrix-container">
         <div class="hero-left-core">
-            <h1>Premium On-Demand <span>Home Services</span></h1>
+            <h1>PREMIUM ON-DEMAND<br><span>HOME SERVICES</span></h1>
             <p>Experience precision care for your residence. Instantly book background-verified electricians, plumbers, and air conditioning experts to your doorstep within 45 minutes.</p>
             <div class="hero-cta-group">
                 <button class="primary-cta-btn" onclick="scrollToSection('services-anchor')">Book a Service</button>
@@ -47,98 +47,111 @@
             </div>
         </div>
         <div class="hero-right-visual">
-            <div class="brand-motto-badge">INTELLIGENT ROUTING ACTIVE</div>
+            <span class="brand-motto-badge">Intelligent Routing Active</span>
             <h3>Hyperlocal On-Demand Dispatch</h3>
             <p>Our smart dispatch dashboard actively maps availability zones across Jaipur, ensuring the closest available specialist is routed instantly to eliminate long waiting windows.</p>
         </div>
     </section>
 
-    <div class="viewport-wrapper">
-        <div id="userViewInterface">
-            <div id="requestSubPane">
-                
-                <div class="services-section-divider" id="services-anchor"><h2>Available Services</h2><div class="line-graphic"></div></div>
-                <div class="horizontal-cards-slider">
-                    <div class="premium-service-card">
-                        <div class="card-top">
-                            <h3>AC Repair ❄️</h3>
-                            <div class="card-tag">Thermal Systems & Maintenance</div>
-                        </div>
-                        <div class="card-meta-row"><span>⭐ 4.8 (910 reviews)</span><span class="time">30-45 mins</span></div>
-                        <div class="card-bottom"><div class="price-display">₹450<span>Starting from</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('AC Repair')">Book Now</button></div>
-                    </div>
-                    <div class="premium-service-card">
-                        <div class="card-top">
-                            <h3>Electrician ⚡</h3>
-                            <div class="card-tag">Power Systems & Diagnostics</div>
-                        </div>
-                        <div class="card-meta-row"><span>⭐ 4.9 (1.2k reviews)</span><span class="time">15-30 mins</span></div>
-                        <div class="card-bottom"><div class="price-display">₹290<span>Starting from</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Electrician')">Book Now</button></div>
-                    </div>
-                    <div class="premium-service-card">
-                        <div class="card-top">
-                            <h3>Plumber 🔧</h3>
-                            <div class="card-tag">Plumbing & Water Management</div>
-                        </div>
-                        <div class="card-meta-row"><span>⭐ 4.7 (650 reviews)</span><span class="time">20-40 mins</span></div>
-                        <div class="card-bottom"><div class="price-display">₹350<span>Starting from</span></div><button class="book-pill-btn" onclick="openDispatchPrompt('Plumber')">Book Now</button></div>
-                    </div>
-                </div>
-
-                <div class="services-section-divider" id="pipeline-anchor"><h2>How It Works</h2><div class="line-graphic"></div></div>
-                <div class="pipeline-flow-wrapper">
-                    <div class="pipeline-step"><span class="step-num">01</span><h4>Select Service</h4><p>Choose the specialized repair skill you require from our home display cards.</p></div>
-                    <div class="pipeline-step"><span class="step-num">02</span><h4>Verify Phone</h4><p>Confirm your booking details securely with a real-time, one-time SMS OTP verification code.</p></div>
-                    <div class="pipeline-step"><span class="step-num">03</span><h4>Technician Routed</h4><p>Our backend coordinates your booking with the nearest available specialist in Jaipur.</p></div>
-                    <div class="pipeline-step"><span class="step-num">04</span><h4>Job Completed</h4><p>Your specialist resolves the service requirement based on a fully fixed, non-surge transparent rate.</p></div>
-                </div>
-
-                <div class="services-section-divider" id="trust-anchor"><h2>Safety & Trust Standards</h2><div class="line-graphic"></div></div>
-                <div class="trust-grid-layout">
-                    <div class="trust-card"><span class="verified-stamp">Verified</span><h3>100% Background Screened</h3><p>Every technician undergoes comprehensive background checks, credential authentication, and code-of-conduct compliance screening before handling jobs.</p></div>
-                    <div class="trust-card"><span class="verified-stamp">Guaranteed</span><h3>Fixed Pre-Quoted Rates</h3><p>Say goodbye to unexpected costs or stressful bargaining sessions. You see exact transparent price breakdowns before confirming your service.</p></div>
-                </div>
-
-                <div class="services-section-divider" id="coverage-anchor"><h2>Live Service Coverage</h2><div class="line-graphic"></div></div>
-                <div class="map-wrapper-box">
-                    <div class="map-telemetry-header"><div><span class="map-status-dot"></span><span class="header-text">Active Operations Radar</span></div><span class="city-badge">Jaipur Hub</span></div>
-                    <div class="minimized-map-container"><div id="minimizedMap" class="map-element"></div></div>
+    <main class="viewport-wrapper">
+        <div class="services-section-divider" id="services-anchor">
+            <h2>Available Services</h2>
+            <div class="line-graphic"></div>
+        </div>
+        
+        <div class="horizontal-cards-slider">
+            <div class="premium-service-card">
+                <h3>AC Repair ❄️</h3>
+                <div class="card-meta-row"><span class="time">45 Mins Response</span></div>
+                <div class="card-bottom">
+                    <div class="price-display"><span>Starting From</span>₹450</div>
+                    <button class="book-pill-btn" onclick="openDispatchPrompt('AC_REPAIR')">Book Now</button>
                 </div>
             </div>
-
-            <div id="onboardFormSpace">
-                <div class="services-section-divider"><h2>Specialist Registration Portal</h2><div class="line-graphic"></div></div>
-                <form id="fleetRegistrationForm">
-                    <div class="form-block"><label>Full Legal Name</label><input type="text" id="partnerName" placeholder="Enter your full name" required></div>
-                    <div class="form-block"><label>Service Category Specialty</label><select id="partnerTrade" required><option value="Electrician">Electrician</option><option value="Plumber">Plumber</option><option value="AC Repair">AC Repair</option></select></div>
-                    <div class="form-block"><label>Mobile Phone Number</label><input type="tel" id="partnerPhone" placeholder="10-digit mobile number" required pattern="[0-9]{10}"></div>
-                    <div class="form-block"><label>Base Operation City</label><input type="text" id="partnerCity" placeholder="e.g. Jaipur" required></div>
-                    <button type="submit" class="submit-dispatch-btn" id="btnSubmitPartner">Register Specialist Node</button>
-                </form>
+            <div class="premium-service-card">
+                <h3>Electrician ⚡</h3>
+                <div class="card-meta-row"><span class="time">30 Mins Response</span></div>
+                <div class="card-bottom">
+                    <div class="price-display"><span>Starting From</span>₹290</div>
+                    <button class="book-pill-btn" onclick="openDispatchPrompt('ELECTRICIAN')">Book Now</button>
+                </div>
+            </div>
+            <div class="premium-service-card">
+                <h3>Plumber 🔧</h3>
+                <div class="card-meta-row"><span class="time">40 Mins Response</span></div>
+                <div class="card-bottom">
+                    <div class="price-display"><span>Starting From</span>₹350</div>
+                    <button class="book-pill-btn" onclick="openDispatchPrompt('PLUMBER')">Book Now</button>
+                </div>
             </div>
         </div>
 
-        <div id="adminViewInterface">
-            <div class="services-section-divider"><h2 style="color: var(--accent-pink);">Active Operational Bookings</h2><div class="line-graphic"></div></div>
-            <div class="admin-grid-layout" id="telemetryStreamTarget"></div>
+        <div class="services-section-divider" id="pipeline-anchor">
+            <h2>How It Works</h2>
+            <div class="line-graphic"></div>
         </div>
-    </div>
+        <div class="pipeline-flow-wrapper">
+            <div class="pipeline-step"><span class="step-num">01</span><h4>Select Service</h4><p>Choose the specialized repair skill you require from our home display cards.</p></div>
+            <div class="pipeline-step"><span class="step-num">02</span><h4>Verify Phone</h4><p>Confirm your booking details securely with a real-time, one-time SMS OTP verification code.</p></div>
+            <div class="pipeline-step"><span class="step-num">03</span><h4>Technician Routed</h4><p>Our backend coordinates your booking with the nearest available specialist in Jaipur.</p></div>
+            <div class="pipeline-step"><span class="step-num">04</span><h4>Job Completed</h4><p>Your specialist resolves the service requirement based on a fully fixed, non-surge transparent rate.</p></div>
+        </div>
 
-    <div class="modal-blur-backdrop" id="bookingModalPrompt">
+        <div class="services-section-divider" id="coverage-anchor">
+            <h2>Live Coverage</h2>
+            <div class="line-graphic"></div>
+        </div>
+        <div class="map-wrapper-box">
+            <div class="map-telemetry-header">
+                <div class="header-text"><span class="map-status-dot"></span>Jaipur Operations Center Active</div>
+            </div>
+            <div id="map" class="minimized-map-container"></div>
+        </div>
+
+        <div class="services-section-divider" id="trust-anchor">
+            <h2>Safety & Trust Standards</h2>
+            <div class="line-graphic"></div>
+        </div>
+        <div class="trust-grid-layout">
+            <div class="trust-card">
+                <h3>100% Background Screened</h3>
+                <p>Every technician undergoes comprehensive background checks, credential authentication, and code-of-conduct compliance screening before handling jobs.</p>
+                <span class="verified-stamp">Verified</span>
+            </div>
+            <div class="trust-card">
+                <h3>Fixed Pre-Quoted Rates</h3>
+                <p>Say goodbye to unexpected costs or stressful bargaining sessions. You see exact transparent price breakdowns before confirming your service.</p>
+                <span class="verified-stamp">Guaranteed</span>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-blur-backdrop" id="dispatchModalWindow">
         <div class="modal-card">
-            <span class="close-modal" onclick="closeDispatchPrompt()">✕</span>
-            <h2 id="modalLabelHeader">Confirm Booking Details</h2>
+            <span class="close-modal" onclick="closeDispatchPrompt()">&times;</span>
+            <h2 id="modalServiceTitle">Request Specialist</h2>
             
             <form id="bookingSubmissionForm">
-                <input type="hidden" id="selectedServiceTypeField">
-                <div class="form-block"><label>Your Full Name</label><input type="text" id="custName" required placeholder="Enter your name"></div>
-                <div class="form-block"><label>Mobile Phone Number</label><input type="tel" id="custPhone" required placeholder="10-digit mobile line" pattern="[0-9]{10}"></div>
-                <div class="form-block"><label>Flat Number / Address Details</label><input type="text" id="custAddr" required placeholder="Apartment, Block, Floor details"></div>
-                <button type="submit" class="submit-dispatch-btn" id="btnRequestOtp" style="background: var(--accent-cyan); color: #000;">Send Verification OTP</button>
+                <div class="form-block">
+                    <label>Your Full Name</label>
+                    <input type="text" id="bookingCustomerName" placeholder="Enter name" required>
+                </div>
+                <div class="form-block">
+                    <label>10-Digit Mobile Number</label>
+                    <input type="tel" id="bookingCustomerPhone" placeholder="Enter mobile number" maxlength="10" required>
+                </div>
+                <div class="form-block">
+                    <label>Flat / Street Address</label>
+                    <input type="text" id="bookingFlatAddress" placeholder="Flat No, Apartment, Sector" required>
+                </div>
+                <button type="submit" class="submit-dispatch-btn" id="btnInitiateHandshake">Send Verification OTP</button>
             </form>
 
-            <form id="bookingOtpVerificationForm" style="display: none; margin-top: 20px;">
-                <div class="form-block"><label style="color: #00e5ff;">Enter 4-Digit Verification Code</label><input type="text" id="bookingVerifiedOtpInput" required placeholder="0000" pattern="[0-9]{4}"></div>
+            <form id="bookingOtpVerificationForm" style="display: none; margin-top: 20px; border-top: 1px solid #1f1f22; padding-top: 20px;">
+                <div class="form-block">
+                    <label>Enter 4-Digit Verification Code</label>
+                    <input type="text" id="bookingVerifiedOtpInput" placeholder="XXXX" maxlength="4" required style="text-align: center; letter-spacing: 0.3em; font-size: 18px;">
+                </div>
                 <button type="submit" class="submit-dispatch-btn" id="btnVerifyOtp">Verify & Complete Booking</button>
             </form>
         </div>
@@ -147,20 +160,26 @@
     <div class="modal-blur-backdrop" id="successScreenOverlay">
         <div class="modal-card success-card">
             <div class="success-checkmark-glow">✓</div>
-            <h2>Booking Confirmed</h2>
-            <p>Your service request has been validated successfully via SMS authentication link.</p>
+            <h2>Booking Confirmed!</h2>
+            <p style="color: #71717a; font-size: 14px;">Your background-verified expert has been dispatched and is arriving within 45 minutes.</p>
+            
             <div class="success-data-summary">
-                <p>🔧 <b id="lblSuccessService">AC Repair</b></p>
-                <p>👤 Specialist: <span id="lblSuccessPro" style="color: var(--accent-cyan);">Assigning...</span></p>
+                <p>⚙️ <b>Service Type:</b> <span id="lblSuccessService">--</span></p>
+                <p>👤 <b>Assigned Pro:</b> <span id="lblSuccessPro">--</span></p>
+                <p>📍 <b>Status:</b> En Route (Jaipur Operational Unit)</p>
             </div>
-            <button class="submit-dispatch-btn" style="background: var(--accent-cyan); color: black; margin-top: 20px;" onclick="closeSuccessOverlay()">Return to Dashboard</button>
+            
+            <a href="tel:+919829012345" style="text-decoration: none;">
+                <button class="submit-dispatch-btn" style="margin-top: 25px; background: #00e5ff; color: #000;">Call Assigned Specialist</button>
+            </a>
+            <button class="secondary-cta-btn" style="margin-top: 10px; width: 100%;" onclick="document.getElementById('successScreenOverlay').style.display='none'">Close Dashboard</button>
         </div>
     </div>
 
-    <div class="radar-ping-overlay" id="radarAnimationOverlayStage">
-        <div class="radar-pulsing-circle"><span>📡</span></div>
-        <h3>Routing Your Request</h3>
-        <p>Connecting with available technicians in your sector grid...</p>
+    <div class="radar-ping-overlay" id="radarScannerLayer">
+        <div class="radar-pulsing-circle"></div>
+        <h3>Scanning Hyperlocal Grid...</h3>
+        <p>Routing closest available specialist node in Jaipur</p>
     </div>
 
     <div id="toastNotificationContainer"></div>
