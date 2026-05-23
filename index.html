@@ -3,314 +3,399 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SERVO | Premium Home Services</title>
+    <title>SERVO | Premium On-Demand Home Services</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://servoo-beige.vercel.app/favicon.ico">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        body {
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+        /* 🚨 INTERACTIVE NETWORK ERROR STATE ANIMATIONS (Item 11) */
+        .network-retry-banner {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff1744;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            z-index: 100000;
+            box-shadow: 0 4px 20px rgba(255,23,68,0.4);
+            align-items: center;
+            gap: 15px;
+        }
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #111;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+        .logo span { color: #00e5ff; }
+        .hero-section {
+            padding: 80px 20px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -2px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .service-card {
+            background: #0b0b0c;
+            border: 1px solid #1c1c1e;
+            padding: 30px;
+            border-radius: 12px;
+            transition: 0.3s;
+        }
+        .service-card:hover {
+            border-color: #00e5ff;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-box {
+            background: #121214;
+            border: 1px solid #222;
+            padding: 30px;
+            border-radius: 16px;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+        }
+        .custom-toast-bubble {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #111;
+            border: 1px solid #00e676;
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 99999;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .error-toast { border-color: #ff1744; }
+    </style>
 </head>
 <body>
 
-    <header class="sys-navbar">
-        <button class="hamburger-menu-btn" onclick="toggleNavigationDrawer()">
-            <span></span><span></span><span></span>
-        </button>
-        <a href="#" class="logo">SERVO<span>.</span></a>
-        <nav class="desktop-nav-links">
-            <a href="#services-anchor">Services</a>
-            <a href="#pipeline-anchor">How It Works</a>
-            <a href="#coverage-anchor">Live Coverage</a>
-            <a href="#trust-anchor">Safety Standards</a>
-            <button class="primary-cta-btn mini-btn" onclick="openDispatchPrompt('ELECTRICIAN')">Book Now</button>
-        </nav>
-    </header>
-
-    <div class="drawer-overlay-backdrop" id="drawerOverlay" onclick="toggleNavigationDrawer()"></div>
-    <div class="side-drawer-panel" id="sideDrawer">
-        <button class="drawer-nav-link" onclick="scrollToSection('services-anchor')">Available Services</button>
-        <button class="drawer-nav-link" onclick="scrollToSection('pipeline-anchor')">Operational Flow</button>
-        <button class="drawer-nav-link" onclick="scrollToSection('coverage-anchor')">Radar Coverage</button>
-        <button class="drawer-nav-link" onclick="scrollToSection('trust-anchor')">Security Protocols</button>
+    <div id="globalNetworkErrorBanner" class="network-retry-banner">
+        <span>⚠️ Connection Dropped. Handshake pipeline interrupted.</span>
+        <button onclick="retryLastNetworkOperation()" style="background: #fff; color: #ff1744; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Retry Now</button>
     </div>
 
-    <section class="hero-matrix-container">
-        <div class="hero-left-core">
-            <h1>PREMIUM ON-DEMAND<br><span>HOME SERVICES</span></h1>
-            <p>Experience precision care for your residence. Instantly book background-verified electricians, plumbers, and air conditioning experts to your doorstep within 45 minutes.</p>
-            <div class="hero-cta-group">
-                <button class="primary-cta-btn" onclick="scrollToSection('services-anchor')">Book a Service</button>
-                <button class="secondary-cta-btn" onclick="scrollToSection('pipeline-anchor')">See How It Works</button>
-            </div>
-            <div class="hero-stats-row">
-                <div class="stat-node"><h4>2,500+</h4><p>Completed Jobs</p></div>
-                <div class="stat-node"><h4>4.9★</h4><p>Service Rating</p></div>
-                <div class="stat-node"><h4>24/7</h4><p>Live Support</p></div>
-            </div>
-        </div>
-        <div class="hero-right-visual">
-            <span class="brand-motto-badge">Intelligent Routing Active</span>
-            <h3>Hyperlocal On-Demand Dispatch</h3>
-            <p>Our smart dispatch dashboard actively maps availability zones across Jaipur, ensuring the closest available specialist is routed instantly to eliminate long waiting windows.</p>
-        </div>
-    </section>
+    <div id="mainCoreAppWindowView">
+        <header>
+            <div class="logo">SERVO<span>.</span></div>
+            <div style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa;">📍 Jaipur Hub Active</div>
+        </header>
 
-    <main class="viewport-wrapper">
-        <div class="services-section-divider" id="services-anchor">
-            <h2>Available Services</h2>
-            <div class="line-graphic"></div>
-        </div>
-        
-        <div class="horizontal-cards-slider">
-            <div class="premium-service-card">
-                <h3>AC Repair ❄️</h3>
-                <div class="card-meta-row"><span class="time">45 Mins Response</span></div>
-                <div class="card-bottom">
-                    <div class="price-display"><span>Starting From</span>₹450</div>
-                    <button class="book-pill-btn" onclick="openDispatchPrompt('AC_REPAIR')">Book Now</button>
+        <section id="hero" class="hero-section">
+            <h1>PREMIUM ON-DEMAND<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
+            <p style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book verified experts within 45 minutes.</p>
+        </section>
+
+        <section id="services" class="services-grid">
+            <div class="service-card">
+                <div style="font-size: 2rem; margin-bottom: 15px;">❄️</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">AC Repair & Diagnostics</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Complete system checkup, filter wash, and gas refills.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: #00e5ff;">From ₹450</span>
+                    <button onclick="openDispatchPrompt('AC_REPAIR')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
-            <div class="premium-service-card">
-                <h3>Electrician ⚡</h3>
-                <div class="card-meta-row"><span class="time">30 Mins Response</span></div>
-                <div class="card-bottom">
-                    <div class="price-display"><span>Starting From</span>₹290</div>
-                    <button class="book-pill-btn" onclick="openDispatchPrompt('ELECTRICIAN')">Book Now</button>
+
+            <div class="service-card">
+                <div style="font-size: 2rem; margin-bottom: 15px;">⚡</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Premium Electrician Matrix</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Short circuits, wiring repairs, and appliance fittings.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: #00e5ff;">From ₹290</span>
+                    <button onclick="openDispatchPrompt('ELECTRICIAN')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
-            <div class="premium-service-card">
-                <h3>Plumber 🔧</h3>
-                <div class="card-meta-row"><span class="time">40 Mins Response</span></div>
-                <div class="card-bottom">
-                    <div class="price-display"><span>Starting From</span>₹350</div>
-                    <button class="book-pill-btn" onclick="openDispatchPrompt('PLUMBER')">Book Now</button>
+
+            <div class="service-card">
+                <div style="font-size: 2rem; margin-bottom: 15px;">🚰</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Hyperlocal Plumber Core</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Leakage detection, pipeline repair, and tap replacements.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 700; color: #00e5ff;">From ₹350</span>
+                    <button onclick="openDispatchPrompt('PLUMBER')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <div class="services-section-divider" id="pipeline-anchor">
-            <h2>How It Works</h2>
-            <div class="line-graphic"></div>
-        </div>
-        <div class="pipeline-flow-wrapper">
-            <div class="pipeline-step"><span class="step-num">01</span><h4>Select Service</h4><p>Choose the specialized repair skill you require from our home display cards.</p></div>
-            <div class="pipeline-step"><span class="step-num">02</span><h4>Verify Phone</h4><p>Confirm your booking details securely with a real-time, one-time SMS OTP verification code.</p></div>
-            <div class="pipeline-step"><span class="step-num">03</span><h4>Technician Routed</h4><p>Our backend coordinates your booking with the nearest available specialist in Jaipur.</p></div>
-            <div class="pipeline-step"><span class="step-num">04</span><h4>Job Completed</h4><p>Your specialist resolves the service requirement based on a fully fixed, non-surge transparent rate.</p></div>
-        </div>
+        <div id="map" style="height: 300px; width: 100%; border-top: 1px solid #111; background: #111;"></div>
+    </div>
 
-        <div class="services-section-divider" id="coverage-anchor">
-            <h2>Live Coverage</h2>
-            <div class="line-graphic"></div>
-        </div>
-        <div class="map-wrapper-box">
-            <div class="map-telemetry-header">
-                <div class="header-text"><span class="map-status-dot"></span>Jaipur Operations Center Active</div>
-            </div>
-            <div id="map" class="minimized-map-container"></div>
-        </div>
-
-        <div class="services-section-divider" id="trust-anchor">
-            <h2>Safety & Trust Standards</h2>
-            <div class="line-graphic"></div>
-        </div>
-        <div class="trust-grid-layout">
-            <div class="trust-card">
-                <h3>100% Background Screened</h3>
-                <p>Every technician undergoes comprehensive background checks, credential authentication, and code-of-conduct compliance screening before handling jobs.</p>
-                <span class="verified-stamp">Verified</span>
-            </div>
-            <div class="trust-card">
-                <h3>Fixed Pre-Quoted Rates</h3>
-                <p>Say goodbye to unexpected costs or stressful bargaining sessions. You see exact transparent price breakdowns before confirming your service.</p>
-                <span class="verified-stamp">Guaranteed</span>
-            </div>
-        </div>
-    </main>
-
-    <div class="modal-blur-backdrop" id="dispatchModalWindow">
-        <div class="modal-card">
-            <span class="close-modal" onclick="closeDispatchPrompt()">&times;</span>
-            <h2 id="modalServiceTitle">Request Specialist</h2>
+    <div id="dispatchModalWindow" class="modal-overlay">
+        <div class="modal-box">
+            <button onclick="closeDispatchPrompt()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: #666; font-size: 1.2rem; cursor: pointer;">✕</button>
+            <h3 id="modalServiceTitle" style="font-size: 1.25rem; font-weight: 800; margin-bottom: 20px;">Request Service</h3>
             
             <form id="bookingSubmissionForm">
-                <div class="form-block">
-                    <label>Your Full Name</label>
-                    <input type="text" id="bookingCustomerName" placeholder="Enter name" required>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="bookingCustomerName" placeholder="Your Full Name" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff;">
                 </div>
-                <div class="form-block">
-                    <label>10-Digit Mobile Number</label>
-                    <input type="tel" id="bookingCustomerPhone" placeholder="Enter mobile number" maxlength="10" required>
+                <div style="margin-bottom: 15px;">
+                    <input type="tel" id="bookingCustomerPhone" placeholder="10-Digit Mobile Number" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="validateIndianPhoneField(this)" style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff;">
+                    <small id="lblPhoneValidationError" style="color: #ff5252; font-size: 0.75rem; display: none; margin-top: 4px;">Must be a valid 10-digit Indian mobile number starting with 6-9.</small>
                 </div>
-                <div class="form-block">
-                    <label>Flat / Street Address</label>
-                    <input type="text" id="bookingFlatAddress" placeholder="Flat No, Apartment, Sector" required>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="bookingFlatAddress" placeholder="Flat / Street Address" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff;">
                 </div>
-                <button type="submit" class="submit-dispatch-btn" id="btnInitiateHandshake">Send Verification OTP</button>
+                <button type="submit" id="btnInitiateHandshake" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">Send Verification OTP</button>
             </form>
 
-            <form id="bookingOtpVerificationForm" style="display: none; margin-top: 20px; border-top: 1px solid #1f1f22; padding-top: 20px;">
-                <div class="form-block">
-                    <label>Enter 4-Digit Verification Code</label>
-                    <input type="text" id="bookingVerifiedOtpInput" placeholder="XXXX" maxlength="4" required style="text-align: center; letter-spacing: 0.3em; font-size: 18px;">
-                </div>
-                <button type="submit" class="submit-dispatch-btn" id="btnVerifyOtp">Verify & Complete Booking</button>
+            <form id="bookingOtpVerificationForm" style="display: none; text-align: center;">
+                <p style="color: #aaa; font-size: 0.9rem; margin-bottom: 15px;">Enter the 4-digit code dispatched to your phone:</p>
+                <input type="text" id="bookingVerifiedOtpInput" placeholder="••••" maxlength="4" required style="width: 120px; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; text-align: center; letter-spacing: 6px; font-size: 1.25rem; margin-bottom: 20px;">
+                <button type="submit" id="btnVerifyOtp" style="width: 100%; padding: 12px; background: #00e676; color: #000; border: none; border-radius: 6px; font-weight: 700; cursor: pointer;">Verify & Complete Booking</button>
             </form>
         </div>
     </div>
 
-    <div class="modal-blur-backdrop" id="successScreenOverlay">
-        <div class="modal-card success-card">
-            <div class="success-checkmark-glow">✓</div>
-            <h2>Booking Confirmed!</h2>
-            <p style="color: #71717a; font-size: 14px;">Your background-verified expert has been dispatched and is arriving within 45 minutes.</p>
-            
-            <div class="success-data-summary">
-                <p>⚙️ <b>Service Type:</b> <span id="lblSuccessService">--</span></p>
-                <p>👤 <b>Assigned Pro:</b> <span id="lblSuccessPro">--</span></p>
-                <p>📍 <b>Status:</b> En Route (Jaipur Operational Unit)</p>
-            </div>
-            
-            <a href="tel:+919829012345" style="text-decoration: none;">
-                <button class="submit-dispatch-btn" style="margin-top: 25px; background: #00e5ff; color: #000;">Call Assigned Specialist</button>
-            </a>
-            <button class="secondary-cta-btn" style="margin-top: 10px; width: 100%;" onclick="document.getElementById('successScreenOverlay').style.display='none'">Close Dashboard</button>
+    <div id="successScreenOverlay" class="modal-overlay">
+        <div class="modal-box style=text-align: center; max-width: 380px;">
+            <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
+            <h3 style="font-size: 1.5rem; font-weight: 800; color: #00e676; margin-bottom: 10px;">Booking Confirmed!</h3>
+            <p style="color: #aaa; font-size: 0.9rem; line-height: 1.4; margin-bottom: 20px;">Your transaction vector has cleared. Service category <strong id="lblSuccessService" style="color:#fff;"></strong> assigned to specialist partner <strong id="lblSuccessPro" style="color:#00e5ff;"></strong>.</p>
+            <button onclick="document.getElementById('successScreenOverlay').style.display='none'" style="width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Dismiss Panel</button>
         </div>
     </div>
 
-    <div class="radar-ping-overlay" id="radarScannerLayer">
-        <div class="radar-pulsing-circle"></div>
-        <h3>Scanning Hyperlocal Grid...</h3>
-        <p>Routing closest available specialist node in Jaipur</p>
-    </div>
-
-    <div id="toastNotificationContainer"></div>
     <div id="customerDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
-    <div style="max-width: 800px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-            <h2 style="font-size: 1.5rem; font-weight: 800;">Your <span style="color: #00e5ff;">SERVO Profile</span></h2>
-            <button onclick="exitToMainHome()" style="background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Home</button>
-        </div>
-
-        <div id="activeBookingCard" style="background: #121214; border: 1px solid #00e5ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: none;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
-                <div>
-                    <span style="background: rgba(0, 229, 255, 0.1); color: #00e5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Active Pipeline Tracker</span>
-                    <h4 id="custActiveServiceType" style="font-size: 1.25rem; margin-top: 8px; font-weight: 700;">AC Repair Assignment</h4>
-                </div>
-                <div id="custActiveStatusBadge" style="color: #ffb300; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;">● ASSIGNED</div>
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                <h2 style="font-size: 1.5rem; font-weight: 800;">Your <span style="color: #00e5ff;">SERVO Profile</span></h2>
+                <button onclick="exitToMainHome()" style="background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Home</button>
             </div>
 
-            <div style="display: flex; align-items: center; background: #1a1a1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222;">
-                <div id="custTechPhotoAvatar" style="font-size: 2rem; margin-right: 15px; background: #26262b; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👨‍🔧</div>
-                <div>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span id="custTechName" style="font-weight: 700; color: #fff;">Amit Sharma</span>
-                        <span style="background: #00e676; color: #000; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">✓ VERIFIED PRO</span>
+            <div id="activeBookingCard" style="background: #121214; border: 1px solid #00e5ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div>
+                        <span style="background: rgba(0, 229, 255, 0.1); color: #00e5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Active Pipeline Tracker</span>
+                        <h4 id="custActiveServiceType" style="font-size: 1.25rem; margin-top: 8px; font-weight: 700;">AC Repair Assignment</h4>
                     </div>
-                    <p style="color: #aaa; font-size: 0.8rem; margin-top: 2px;">⭐ 4.9/5 Rating | Jaipur Operations Group</p>
+                    <div id="custActiveStatusBadge" style="color: #ffb300; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;">● ASSIGNED</div>
                 </div>
-                <a id="custTechCallBtn" href="tel:" style="margin-left: auto; background: #222; color: #00e5ff; border: 1px solid #333; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Call Pro</a>
+
+                <div style="display: flex; align-items: center; background: #1a1a1e; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #222;">
+                    <div id="custTechPhotoAvatar" style="font-size: 2rem; margin-right: 15px; background: #26262b; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">👨‍🔧</div>
+                    <div>
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <span id="custTechName" style="font-weight: 700; color: #fff;">Amit Sharma</span>
+                            <span style="background: #00e676; color: #000; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">✓ VERIFIED PRO</span>
+                        </div>
+                        <p style="color: #aaa; font-size: 0.8rem; margin-top: 2px;">⭐ 4.9/5 Rating | Jaipur Operations Group</p>
+                    </div>
+                    <a id="custTechCallBtn" href="tel:" style="margin-left: auto; background: #222; color: #00e5ff; border: 1px solid #333; padding: 8px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 600; text-decoration: none;">Call Pro</a>
+                </div>
+
+                <div style="background: #1a1a1e; padding: 15px; border-radius: 8px; border: 1px solid #222; text-align: center;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: #aaa;">
+                        <span>📍 Destination Address Matrix</span>
+                        <span style="color: #ff5252; font-weight: 700;">ETA: ~25 Mins</span>
+                    </div>
+                    <div id="customerLiveTransitMapContainer" style="height: 180px; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 0.9rem; font-weight: 500;">
+                        [ Live Route Geolocation Intersect Active ]
+                    </div>
+                </div>
             </div>
 
-            <div style="background: #1a1a1e; padding: 15px; border-radius: 8px; border: 1px solid #222; text-align: center;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: #aaa;">
-                    <span>📍 Destination Address Matrix</span>
-                    <span style="color: #ff5252; font-weight: 700;">ETA: ~25 Mins</span>
-                </div>
-                <div id="customerLiveTransitMapContainer" style="height: 180px; background: #222; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #555; font-size: 0.9rem; font-weight: 500;">
-                    [ Live Route Geolocation Intersect Active ]
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Booking Records & Invoices</h3>
+            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Dispatch</h5>
+                        <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed 2 hours ago • Paid via UPI</p>
+                    </div>
+                    <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Booking Records & Invoices</h3>
-        <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-            <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+    <div id="technicianDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #121214; padding: 15px; border-radius: 10px; border: 1px solid #222;">
                 <div>
-                    <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Dispatch</h5>
-                    <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed 2 hours ago • Paid via UPI</p>
+                    <h3 id="techWelcomeHeader" style="font-weight: 800; font-size: 1.2rem;">Console: Amit Sharma</h3>
+                    <p style="color: #00e676; font-size: 0.8rem; font-weight: 600; margin-top: 2px;">⚡ Earnings Today: ₹1,480</p>
                 </div>
-                <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
+                <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
+            </div>
+
+            <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs</h4>
+            <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;">
+                <div id="techJobAssignmentCard" style="background: #121214; border: 1px solid #333; padding: 20px; border-radius: 10px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <h5 style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">AC Repair & Diagnostics</h5>
+                        <span style="color: #ffb300; font-weight: 700; font-size: 0.85rem;">PENDING ACCEPTANCE</span>
+                    </div>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 6px;"><strong>Client:</strong> Sarthak Jain</p>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;"><strong>Address Matrix:</strong> Flat 402, Block C, Mansarovar, Jaipur</p>
+                    
+                    <div style="display: flex; gap: 10px;">
+                        <a href="https://maps.google.com" target="_blank" style="flex: 1; text-align: center; background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">🗺️ Navigation</a>
+                        <button onclick="triggerJobCompletionSequence()" style="flex: 1; background: #00e676; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Complete Job ✅</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<div id="technicianDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
-    <div style="max-width: 600px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #121214; padding: 15px; border-radius: 10px; border: 1px solid #222;">
-            <div>
-                <h3 id="techWelcomeHeader" style="font-weight: 800; font-size: 1.2rem;">Console: Amit Sharma</h3>
-                <p style="color: #00e676; font-size: 0.8rem; font-weight: 600; margin-top: 2px;">⚡ Earnings Today: ₹1,480</p>
+    <div id="adminDashboardPortal" style="display: none; padding: 40px 20px; background: #0b0b0c; min-height: 100vh; color: #fff;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;">
+                <h1 style="font-size: 2rem; font-weight: 800; letter-spacing: -1px;">SERVO <span style="color: #00e5ff;">HQ DISPATCH DESK</span></h1>
+                <button onclick="exitAdminConsole()" style="background: #222; color: #fff; border: none; padding: 10px 20px; font-weight: 600; cursor: pointer; border-radius: 4px;">Exit HQ</button>
             </div>
-            <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
-        </div>
 
-        <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs</h4>
-        <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;">
-            <div id="techJobAssignmentCard" style="background: #121214; border: 1px solid #333; padding: 20px; border-radius: 10px;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                    <h5 style="font-size: 1.1rem; font-weight: 700; color: #00e5ff;">AC Repair & Diagnostics</h5>
-                    <span style="color: #ffb300; font-weight: 700; font-size: 0.85rem;">PENDING ACCEPTANCE</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
+                <div style="background: #121214; padding: 20px; border-radius: 6px; border-left: 4px solid #00e5ff;">
+                    <p style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Total Active Pipelines</p>
+                    <h3 id="countTotalBookings" style="font-size: 1.8rem; margin-top: 5px;">0</h3>
                 </div>
-                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 6px;"><strong>Client:</strong> Sarthak Jain</p>
-                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;"><strong>Address Matrix:</strong> Flat 402, Block C, Mansarovar, Jaipur</p>
-                
+                <div style="background: #121214; padding: 20px; border-radius: 6px; border-left: 4px solid #ffb300;">
+                    <p style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Pending Dispatch</p>
+                    <h3 id="countPendingBookings" style="font-size: 1.8rem; margin-top: 5px;">0</h3>
+                </div>
+            </div>
+
+            <div style="background: #121214; border-radius: 8px; overflow: hidden; border: 1px solid #222;">
+                <div style="padding: 20px; border-bottom: 1px solid #222;">
+                    <h2 style="font-size: 1.2rem; font-weight: 600;">Live Incoming Order Grids</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background: #1a1a1e; color: #aaa; font-size: 0.85rem; text-transform: uppercase;">
+                                <th style="padding: 15px 20px;">Customer / Contact</th>
+                                <th style="padding: 15px 20px;">Service Node</th>
+                                <th style="padding: 15px 20px;">Address Matrix</th>
+                                <th style="padding: 15px 20px;">Tracking Status</th>
+                                <th style="padding: 15px 20px;">Assigned Pro</th>
+                                <th style="padding: 15px 20px; text-align: right;">Logistics Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminLiveBookingTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
+        <button onclick="toggleAdminLoginForm()" style="background: rgba(18, 18, 20, 0.85); color: #aaa; border: 1px solid #333; padding: 10px 15px; font-size: 0.8rem; font-weight: 600; border-radius: 6px; cursor: pointer; backdrop-filter: blur(10px);">
+            🔒 Staff HQ Login
+        </button>
+    </div>
+
+    <div id="adminLoginModal" class="modal-overlay">
+        <div class="modal-box" style="text-align: center;">
+            <h3 style="color: #fff; font-size: 1.25rem; margin-bottom: 10px; font-weight: 700;">SERVO OPERATIONS TERMINAL</h3>
+            <p style="color: #666; font-size: 0.85rem; margin-bottom: 20px;">Enter security authorization code (`jaipur2026`)</p>
+            <form id="frmAdminSecureAuth">
+                <input type="password" id="txtAdminSecretPassphrase" placeholder="••••••••" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 4px; color: #fff; text-align: center; letter-spacing: 4px; margin-bottom: 20px; font-size: 1.1rem;">
                 <div style="display: flex; gap: 10px;">
-                    <a href="https://www.google.com/maps" target="_blank" style="flex: 1; text-align: center; background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">🗺️ Navigation</a>
-                    <button onclick="triggerJobCompletionSequence()" style="flex: 1; background: #00e676; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Complete Job ✅</button>
+                    <button type="button" onclick="toggleAdminLoginForm()" style="flex: 1; padding: 12px; background: #222; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-weight: 600;">Cancel</button>
+                    <button type="submit" style="flex: 1; padding: 12px; background: #00e5ff; color: #000; border: none; border-radius: 4px; cursor: pointer; font-weight: 700;">Authenticate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px;">
+        <button onclick="switchToPanel('customer')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">📱 User View</button>
+        <button onclick="switchToPanel('technician')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">👨‍🔧 Pro View</button>
+    </div>
+
+    <footer style="background: #0b0b0c; border-top: 1px solid #1a1a1e; padding: 40px 20px; color: #666; font-size: 0.85rem; margin-top: 60px;">
+        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px;">
+            <div>
+                <h4 style="color: #fff; font-weight: 800; font-size: 1.1rem; margin-bottom: 10px;">SERVO TECHNOLOGY LTD</h4>
+                <p>Hyperlocal Operational On-Demand Home Logistics Dispatch Core.</p>
+                <p style="margin-top: 5px; font-size: 0.8rem; color: #444;">© 2026 SERVO. Crafted for real-world execution in Jaipur.</p>
+            </div>
+            <div style="display: flex; gap: 40px;">
+                <div>
+                    <h5 style="color: #aaa; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Company</h5>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                        <li><a href="#services" style="color: #666; text-decoration: none;">Our Services</a></li>
+                        <li><a href="mailto:support@servoo.com" style="color: #666; text-decoration: none;">Contact Support</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 style="color: #aaa; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;">Legal & Trust</h5>
+                    <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px;">
+                        <li><a href="#" onclick="openLegalPage('privacy')" style="color: #666; text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="#" onclick="openLegalPage('terms')" style="color: #666; text-decoration: none;">Terms of Service</a></li>
+                        <li><a href="#" onclick="openLegalPage('refund')" style="color: #666; text-decoration: none;">Refund Policy</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
+    </footer>
+
+    <div id="legalPageOverlayModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200000; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: #121214; border: 1px solid #222; max-width: 650px; width: 100%; max-height: 80vh; border-radius: 12px; padding: 30px; display: flex; flex-direction: column; color: #fff;">
+            <h3 id="lblLegalModalTitle" style="font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; color: #00e5ff;"></h3>
+            <div id="divLegalModalBodyText" style="overflow-y: auto; flex: 1; font-size: 0.9rem; line-height: 1.6; color: #ccc; padding-right: 10px; margin-bottom: 20px; white-space: pre-wrap;"></div>
+            <button onclick="closeLegalModalWindow()" style="background: #222; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; font-weight: 700; cursor: pointer; text-transform: uppercase; font-size: 0.85rem;">I Understand</button>
+        </div>
     </div>
-</div>
 
-<div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px;">
-    <button onclick="switchToPanel('customer')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">📱 User View</button>
-    <button onclick="switchToPanel('technician')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">👨‍🔧 Pro View</button>
-</div>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
-
-<div id="adminDashboardPortal" style="display: none; padding: 40px 20px; background: #0b0b0c; min-height: 100vh; color: #fff;">
-    <div style="max-width: 1200px; margin: 0 auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;">
-            <h1 style="font-size: 2rem; font-weight: 800; tracking: -1px;">SERVO <span style="color: #00e5ff;">HQ DISPATCH DESK</span></h1>
-            <button onclick="exitAdminConsole()" style="background: #222; color: #fff; border: none; padding: 10px 20px; font-weight: 600; cursor: pointer; border-radius: 4px;">Exit HQ</button>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
-            <div style="background: #121214; padding: 20px; border-radius: 6px; border-left: 4px solid #00e5ff;">
-                <p style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Total Active Pipelines</p>
-                <h3 id="countTotalBookings" style="font-size: 1.8rem; margin-top: 5px;">0</h3>
-            </div>
-            <div style="background: #121214; padding: 20px; border-radius: 6px; border-left: 4px solid #ffb300;">
-                <p style="color: #666; font-size: 0.85rem; text-transform: uppercase;">Pending Dispatch</p>
-                <h3 id="countPendingBookings" style="font-size: 1.8rem; margin-top: 5px;">0</h3>
-            </div>
-        </div>
-
-        <div style="background: #121214; border-radius: 8px; overflow: hidden; border: 1px solid #222;">
-            <div style="padding: 20px; border-bottom: 1px solid #222;">
-                <h2 style="font-size: 1.2rem; font-weight: 600;">Live Incoming Order Grids</h2>
-            </div>
-            <div style="overflow-x: auto;">
-                <table style="width: 100%; border-collapse: collapse; text-align: left;">
-                    <thead>
-                        <tr style="background: #1a1a1e; color: #aaa; font-size: 0.85rem; text-transform: uppercase;">
-                            <th style="padding: 15px 20px;">Customer / Contact</th>
-                            <th style="padding: 15px 20px;">Service Node</th>
-                            <th style="padding: 15px 20px;">Address Matrix</th>
-                            <th style="padding: 15px 20px;">Tracking Status</th>
-                            <th style="padding: 15px 20px;">Assigned Pro</th>
-                            <th style="padding: 15px 20px; text-align: right;">Logistics Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminLiveBookingTableBody">
-                        </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
 </body>
 </html>

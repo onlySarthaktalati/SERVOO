@@ -10,29 +10,6 @@ let mapInstance = L.map('map', { zoomControl: false }).setView([26.9124, 75.7873
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapInstance);
 L.marker([26.9124, 75.7873]).addTo(mapInstance);
 
-// 🧭 DRAWER CONTROL INTERFACE MECHANICS
-function toggleNavigationDrawer() {
-    const drawer = document.getElementById('sideDrawer');
-    const overlay = document.getElementById('drawerOverlay');
-    if(drawer && overlay) {
-        drawer.classList.toggle('open');
-        overlay.classList.toggle('open');
-    }
-}
-
-function scrollToSection(elementId) {
-    const targetElement = document.getElementById(elementId);
-    if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-    }
-    const drawer = document.getElementById('sideDrawer');
-    const overlay = document.getElementById('drawerOverlay');
-    if (drawer && drawer.classList.contains('open')) {
-        drawer.classList.remove('open');
-        overlay.classList.remove('open');
-    }
-}
-
 // 📦 MODAL CONSOLE VISIBILITY CORE
 function openDispatchPrompt(serviceTokenString) {
     activeSelectedServiceGlobalType = serviceTokenString;
@@ -49,11 +26,10 @@ function closeDispatchPrompt() {
 // 🍞 PREMIUM TOAST NOTIFICATION UTILITY
 function triggerToastFeedback(messageText, isErrorState = false) {
     const container = document.getElementById('toastNotificationContainer');
-    if (!container) return;
     const bubble = document.createElement('div');
     bubble.className = `custom-toast-bubble ${isErrorState ? 'error-toast' : ''}`;
     bubble.innerText = messageText;
-    container.appendChild(bubble);
+    document.body.appendChild(bubble);
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
@@ -77,7 +53,10 @@ document.getElementById('bookingSubmissionForm').addEventListener('submit', func
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ phone: cachedBookingFormData.customerPhone })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) throw new Error("Gateway Offline");
+        return res.json();
+    })
     .then(serverDataResponse => {
         actionSubmitBtn.disabled = false; 
         actionSubmitBtn.innerText = "Send Verification OTP";
@@ -90,10 +69,9 @@ document.getElementById('bookingSubmissionForm').addEventListener('submit', func
         }
     })
     .catch((err) => {
-        console.error(err);
         actionSubmitBtn.disabled = false; 
         actionSubmitBtn.innerText = "Send Verification OTP";
-        triggerToastFeedback("BACKEND CONNECTION OFFLINE. PLEASE RELOAD.", true);
+        surfaceActiveNetworkInterruptionBanner();
     });
 });
 
@@ -106,10 +84,6 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
     verifyBtn.disabled = true; 
     verifyBtn.innerText = "Processing...";
 
-    if (document.getElementById('radarScannerLayer')) {
-        document.getElementById('radarScannerLayer').style.display = 'flex';
-    }
-
     fetch(`${CLOUD_BACKEND_API_LINK}/api/book-service-secure`, {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -121,18 +95,18 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
             otp: typedCode
         })
     })
-    .then(res => res.json())
+    .then(res => {
+        if(!res.ok) throw new Error("Database network slip.");
+        return res.json();
+    })
     .then(finalData => {
         verifyBtn.disabled = false; 
         verifyBtn.innerText = "Verify & Complete Booking";
-        if (document.getElementById('radarScannerLayer')) {
-            document.getElementById('radarScannerLayer').style.display = 'none';
-        }
         closeDispatchPrompt();
 
         if(finalData.success) {
             document.getElementById('lblSuccessService').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-            document.getElementById('lblSuccessPro').innerText = finalData.assignedPartner || "Unassigned";
+            document.getElementById('lblSuccessPro').innerText = finalData.assignedPartner || "Unassigned (Manual Queue)";
             document.getElementById('successScreenOverlay').style.display = 'flex';
             
             document.getElementById('bookingSubmissionForm').reset();
@@ -142,27 +116,22 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
         }
     })
     .catch((err) => {
-        console.error(err);
         verifyBtn.disabled = false; 
         verifyBtn.innerText = "Verify & Complete Booking";
-        if (document.getElementById('radarScannerLayer')) {
-            document.getElementById('radarScannerLayer').style.display = 'none';
-        }
         closeDispatchPrompt();
-        triggerToastFeedback("Connection validation timeout.", true);
+        surfaceActiveNetworkInterruptionBanner();
     });
 });
 
 // ==========================================
-// 🏢 DASHBOARD LAYER MODULATION SWITCHERS
+// 🏢 DASHBOARD LAYER MODULATION SWITCHERS (Items 8, 9, 13)
 // ==========================================
 
 function switchToPanel(targetModeString) {
     document.getElementById('customerDashboardPanel').style.display = 'none';
     document.getElementById('technicianDashboardPanel').style.display = 'none';
     if(document.getElementById('adminDashboardPortal')) document.getElementById('adminDashboardPortal').style.display = 'none';
-    if(document.getElementById('hero')) document.getElementById('hero').style.display = 'none';
-    if(document.getElementById('services')) document.getElementById('services').style.display = 'none';
+    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
 
     if (targetModeString === 'customer') {
         document.getElementById('customerDashboardPanel').style.display = 'block';
@@ -175,8 +144,7 @@ function switchToPanel(targetModeString) {
 function exitToMainHome() {
     document.getElementById('customerDashboardPanel').style.display = 'none';
     document.getElementById('technicianDashboardPanel').style.display = 'none';
-    if(document.getElementById('hero')) document.getElementById('hero').style.display = 'block';
-    if(document.getElementById('services')) document.getElementById('services').style.display = 'block';
+    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'block';
 }
 
 function evaluateCustomerActivePipeline() {
@@ -219,7 +187,7 @@ function triggerJobCompletionSequence() {
 }
 
 // ==========================================
-// 👑 ADMINISTRATIVE OPERATIONS CENTRE
+// 👑 ADMINISTRATIVE OPERATIONS CENTRE (Item 3 & 6)
 // ==========================================
 
 function toggleAdminLoginForm() {
@@ -244,19 +212,20 @@ if(document.getElementById('frmAdminSecureAuth')) {
 
 function launchProductionAdminHQ() {
     document.getElementById('adminDashboardPortal').style.display = 'block';
-    if(document.getElementById('hero')) document.getElementById('hero').style.display = 'none';
-    if(document.getElementById('services')) document.getElementById('services').style.display = 'none';
-    
+    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
     syncLiveOperationsRegistry();
+}
+
+function exitAdminConsole() {
+    document.getElementById('adminDashboardPortal').style.display = 'none';
+    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'block';
 }
 
 function syncLiveOperationsRegistry() {
     fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/bookings`)
         .then(res => res.json())
         .then(response => {
-            if (response.success) {
-                populateOperationsDashboard(response.data);
-            }
+            if (response.success) populateOperationsDashboard(response.data);
         })
         .catch(() => {
             const mockProductionData = [
@@ -272,14 +241,12 @@ function populateOperationsDashboard(bookingsArray) {
     if (!tbody) return;
     
     tbody.innerHTML = "";
-
     document.getElementById('countTotalBookings').innerText = bookingsArray.length;
     document.getElementById('countPendingBookings').innerText = bookingsArray.filter(b => b.status === "Pending").length;
 
     bookingsArray.forEach(booking => {
         const row = document.createElement('tr');
         row.style.borderBottom = "1px solid #1a1a1e";
-        
         tbody.appendChild(row);
         row.innerHTML = `
             <td style="padding: 15px 20px;">
@@ -359,3 +326,52 @@ window.dispatchStatusTransition = function(bookingId, integratedValue) {
         syncLiveOperationsRegistry();
     });
 };
+
+// ==========================================
+// ⚖️ VALIDATION, FAIL-SAFE RUNTIMES & COMPLIANCE (Item 11 & 14)
+// ==========================================
+
+function validateIndianPhoneField(inputElement) {
+    const errorLabel = document.getElementById('lblPhoneValidationError');
+    const regexValidationConstraint = /^[6-9][0-9]{9}$/;
+    
+    if (inputElement.value === "" || regexValidationConstraint.test(inputElement.value)) {
+        errorLabel.style.display = "none";
+        inputElement.style.borderColor = "#333";
+    } else {
+        errorLabel.style.display = "block";
+        inputElement.style.borderColor = "#ff5252";
+    }
+}
+
+function surfaceActiveNetworkInterruptionBanner() {
+    document.getElementById('globalNetworkErrorBanner').style.display = "flex";
+    triggerToastFeedback("Connection validation timeout.", true);
+}
+
+function retryLastNetworkOperation() {
+    document.getElementById('globalNetworkErrorBanner').style.display = "none";
+    location.reload(); 
+}
+
+function openLegalPage(docTypeKeyString) {
+    const modal = document.getElementById('legalPageOverlayModal');
+    const title = document.getElementById('lblLegalModalTitle');
+    const body = document.getElementById('divLegalModalBodyText');
+    modal.style.display = "flex";
+    
+    if (docTypeKeyString === 'privacy') {
+        title.innerText = "Privacy Policy & Data Security Statement";
+        body.innerText = `SERVO operates a secure hyperlocal home-service coordination architecture centered in Jaipur, Rajasthan.\n\n1. DATA TRACKING SCHEMAS\nWe record your mobile validation token, flat geo-address structures, and name nodes purely to facilitate technician transit operations.\n\n2. MEMORY PURGE LAWS\nAll logs stored inside our active MongoDB Cloud Clusters undergo a programmatic archival schedule. Your connection matrix metrics are fully encrypted down the wire.`;
+    } else if (docTypeKeyString === 'terms') {
+        title.innerText = "Terms of Service Agreement";
+        body.innerText = `By deploying a booking dispatch request through this interface gateway, you agree to the following system operations rules:\n\n1. ASSIGNMENT LIABILITY\nSERVO connects verified freelance technicians with residents. Material overhead costs are handled directly between the provider and the customer.\n\n2. FRAUD AND FAKE DISPATCH MASKS\nEntering fake numbers or sending ghost requests to dispatch workers maliciously is heavily monitored and will lead to an immediate ban.`;
+    } else if (docTypeKeyString === 'refund') {
+        title.innerText = "Cancellation & Refund Policy Guidelines";
+        body.innerText = `1. CANCELLATION MATRICES\nCustomers in Jaipur can cancel an active on-demand dispatch completely free of charge within 5 minutes of hitting the 'Verify' button window.\n\n2. PENALTY PENALTIES\nIf a technician is already in active route transit and is within 10 minutes of arrival (ETA context), a flat operational inconvenience fee of ₹50 will apply to the user's next service balance.`;
+    }
+}
+
+function closeLegalModalWindow() {
+    document.getElementById('legalPageOverlayModal').style.display = "none";
+}
