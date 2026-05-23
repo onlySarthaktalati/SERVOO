@@ -16,19 +16,155 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: #000; color: #fff; overflow-x: hidden; }
-        header { padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #111; }
-        .logo { font-size: 1.5rem; font-weight: 800; letter-spacing: -1px; }
-        .logo span { color: #00e5ff; }
-        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; padding: 40px 20px; max-width: 1200px; margin: 0 auto; }
-        .service-card { background: #0b0b0c; border: 1px solid #1c1c1e; padding: 30px; border-radius: 12px; }
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
-        .modal-box { background: #121214; border: 1px solid #222; padding: 30px; border-radius: 16px; max-width: 450px; width: 100%; position: relative; }
-        .custom-toast-bubble { position: fixed; bottom: 30px; right: 30px; background: #111; border: 1px solid #00e676; color: #fff; padding: 15px 25px; border-radius: 8px; font-weight: 600; z-index: 99999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .error-toast { border-color: #ff1744; }
-        .metric-card-box { background: #121214; padding: 20px; border-radius: 8px; border: 1px solid #1a1a1e; }
-        .pricing-tier-tag { font-size: 0.75rem; background: #222; padding: 2px 6px; border-radius: 4px; color: #aaa; margin-left: 8px; font-weight: 600; }
+       * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+}
+
+body { 
+    background: #09090b; 
+    color: #fafafa; 
+    overflow-x: hidden; 
+    /* Premium Grid Overlay Graphic Background Matrix */
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+}
+
+header { 
+    padding: 20px 40px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    border-bottom: 1px solid #18181b;
+    background: rgba(9, 9, 11, 0.8);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo { 
+    font-size: 1.6rem; 
+    font-weight: 800; 
+    letter-spacing: -1.5px; 
+    color: #fff;
+}
+.logo span { color: #00e5ff; }
+
+.hero-section { 
+    padding: 100px 20px 60px 20px; 
+    text-align: center; 
+    max-width: 800px; 
+    margin: 0 auto; 
+}
+
+.hero-section h1 { 
+    font-size: 4rem; 
+    font-weight: 800; 
+    line-height: 1.05; 
+    margin-bottom: 25px; 
+    letter-spacing: -2.5px;
+    background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.services-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+    gap: 25px; 
+    padding: 40px 20px; 
+    max-width: 1200px; 
+    margin: 0 auto; 
+}
+
+.service-card { 
+    background: #121214; 
+    border: 1px solid #1c1c1e; 
+    padding: 35px; 
+    border-radius: 16px; 
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover { 
+    border-color: #00e5ff;
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 229, 255, 0.05);
+}
+
+/* Glassmorphism Overlay Modals */
+.modal-overlay { 
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background: rgba(5, 5, 5, 0.85); 
+    z-index: 999; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 20px; 
+    backdrop-filter: blur(8px);
+}
+
+.modal-box { 
+    background: #121214; 
+    border: 1px solid #27272a; 
+    padding: 40px 30px; 
+    border-radius: 20px; 
+    max-width: 460px; 
+    width: 100%; 
+    position: relative; 
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+}
+
+/* Premium Toast Alerts */
+.custom-toast-bubble { 
+    position: fixed; 
+    bottom: 30px; 
+    right: 30px; 
+    background: #18181b; 
+    border: 1px solid #00e676; 
+    color: #fff; 
+    padding: 16px 28px; 
+    border-radius: 12px; 
+    font-weight: 600; 
+    z-index: 99999; 
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.error-toast { border-color: #ff1744; }
+
+.metric-card-box { 
+    background: #121214; 
+    padding: 25px; 
+    border-radius: 12px; 
+    border: 1px solid #27272a; 
+}
+
+.pricing-tier-tag { 
+    font-size: 0.75rem; 
+    background: rgba(0, 229, 255, 0.08); 
+    padding: 4px 8px; 
+    border-radius: 6px; 
+    color: #00e5ff; 
+    margin-left: 10px; 
+    font-weight: 700; 
+    text-transform: uppercase;
+    border: 1px solid rgba(0, 229, 255, 0.2);
+}
+
+@keyframes slideInUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
     </style>
 </head>
 <body>

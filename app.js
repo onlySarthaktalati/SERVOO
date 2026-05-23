@@ -107,6 +107,25 @@ function switchToPanel(targetModeString) {
     } else if (targetModeString === 'technician') {
         document.getElementById('technicianDashboardPanel').style.display = 'block';
     }
+    // Find your switchToPanel function inside app.js and make sure it handles map invalidation like this:
+function switchToPanel(targetModeString) {
+    document.getElementById('customerDashboardPanel').style.display = 'none';
+    document.getElementById('technicianDashboardPanel').style.display = 'none';
+    if(document.getElementById('adminDashboardPortal')) document.getElementById('adminDashboardPortal').style.display = 'none';
+    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
+
+    if (targetModeString === 'customer') {
+        document.getElementById('customerDashboardPanel').style.display = 'block';
+        evaluateCustomerActivePipeline();
+    } else if (targetModeString === 'technician') {
+        document.getElementById('technicianDashboardPanel').style.display = 'block';
+    }
+
+    // 🔥 DYNAMIC GRAPHICS FIX: Forces Leaflet map tiles to refresh their dimensions instantly!
+    setTimeout(() => {
+        mainLandingLeafletMap.invalidateSize();
+    }, 250);
+}
 }
 
 function exitToMainHome() {
