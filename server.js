@@ -6,12 +6,16 @@ const rateLimit = require('express-rate-limit');
 
 const app = express();
 
-// 🔓 GLOBAL CORS PERMISSIONS CROSS-ORIGIN CONFIGURATION
+// 🔓 COMPLETE OMNI-DIRECTIONAL CORS PERMISSIONS (REPLACE YOUR OLD CODES WITH THIS)
 app.use(cors({
-    origin: '*',
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    origin: '*', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
+    credentials: true
 }));
+
+// Handle preflight OPTIONS requests explicitly so Chrome doesn't panic
+app.options('*', cors());
 
 app.use(express.json());
 
