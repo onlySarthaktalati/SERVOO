@@ -4,13 +4,14 @@ let activeSelectedServiceGlobalType = "";
 let cachedBookingFormData = {};
 let serializedAppliancePhotoData = null;
 let userDutyStateActive = true;
+let activeTechnicianProfileName = "";
 
-// Initialize Homepage Open-Source Map Layouts
+// Initialize Homepage Map Systems
 let mainLandingLeafletMap = L.map('leafletCoreMapContainer', { zoomControl: false }).setView([26.9124, 75.7873], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainLandingLeafletMap);
 L.marker([26.9124, 75.7873]).addTo(mainLandingLeafletMap);
 
-// 📸 LOCAL FILE IMAGE CAPTURE EXTRACTOR
+// 📸 ITEM 19: FILE IMAGE PREVIEW CONVERTER ENGINE
 function processLocalImagePreview(inputElement) {
     const file = inputElement.files[0];
     if (!file) return;
@@ -42,7 +43,7 @@ function triggerToastFeedback(messageText, isErrorState = false) {
 }
 
 // ==========================================
-// 🔐 CLIENT ROUTING HANDSHAKE OVERLAYS
+// 📱 CLIENT ENDPOINT TRANSMISSION ACTIONS
 // ==========================================
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -56,7 +57,7 @@ document.getElementById('bookingSubmissionForm').addEventListener('submit', func
 
     document.getElementById('bookingSubmissionForm').style.display = 'none';
     document.getElementById('bookingOtpVerificationForm').style.display = 'block';
-    triggerToastFeedback("SMS sequence mocked. Code token input configuration: 1234");
+    triggerToastFeedback("SMS transmission simulated. Passcode token: 1234");
 });
 
 document.getElementById('bookingOtpVerificationForm').addEventListener('submit', function(e) {
@@ -75,25 +76,28 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
             applianceImage: cachedBookingFormData.appliancePhoto
         })
     })
-    .then(res => res.json())
+    .then(res => {
+        if (!res.ok) throw new Error("Faulty transaction payload.");
+        return res.json();
+    })
     .then(finalData => {
         closeDispatchPrompt();
         if(finalData.success) {
             document.getElementById('lblSuccessService').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-            document.getElementById('lblSuccessPro').innerText = "Unassigned (Manual Desks)";
+            document.getElementById('lblSuccessPro').innerText = "Unassigned (Manual Queue)";
             document.getElementById('successScreenOverlay').style.display = 'flex';
             document.getElementById('bookingSubmissionForm').reset();
             document.getElementById('bookingOtpVerificationForm').reset();
             serializedAppliancePhotoData = null;
         } else {
-            triggerToastFeedback(finalData.message || "Verification code failure.", true);
+            triggerToastFeedback(finalData.message || "Verification code mismatch.", true);
         }
     })
-    .catch(() => triggerToastFeedback("Database transaction exception loop.", true));
+    .catch(() => surfaceActiveNetworkInterruptionBanner());
 });
 
 // ==========================================
-// 🏢 DASHBOARD WORKFLOW GRID CONTROLLERS
+// 🏢 DASHBOARD WORKFLOW GRID LAYER MODULATION
 // ==========================================
 function switchToPanel(targetModeString) {
     document.getElementById('customerDashboardPanel').style.display = 'none';
@@ -107,25 +111,8 @@ function switchToPanel(targetModeString) {
     } else if (targetModeString === 'technician') {
         document.getElementById('technicianDashboardPanel').style.display = 'block';
     }
-    // Find your switchToPanel function inside app.js and make sure it handles map invalidation like this:
-function switchToPanel(targetModeString) {
-    document.getElementById('customerDashboardPanel').style.display = 'none';
-    document.getElementById('technicianDashboardPanel').style.display = 'none';
-    if(document.getElementById('adminDashboardPortal')) document.getElementById('adminDashboardPortal').style.display = 'none';
-    if(document.getElementById('mainCoreAppWindowView')) document.getElementById('mainCoreAppWindowView').style.display = 'none';
-
-    if (targetModeString === 'customer') {
-        document.getElementById('customerDashboardPanel').style.display = 'block';
-        evaluateCustomerActivePipeline();
-    } else if (targetModeString === 'technician') {
-        document.getElementById('technicianDashboardPanel').style.display = 'block';
-    }
-
-    // 🔥 DYNAMIC GRAPHICS FIX: Forces Leaflet map tiles to refresh their dimensions instantly!
-    setTimeout(() => {
-        mainLandingLeafletMap.invalidateSize();
-    }, 250);
-}
+    
+    setTimeout(() => { mainLandingLeafletMap.invalidateSize(); }, 250);
 }
 
 function exitToMainHome() {
@@ -135,12 +122,11 @@ function exitToMainHome() {
 }
 
 function evaluateCustomerActivePipeline() {
-    // Render an open transit tracker map directly on client view
     setTimeout(() => {
         let trackerMap = L.map('leafletLiveTrackingDashboardMap', { zoomControl: false }).setView([26.8584, 75.7616], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(trackerMap);
-        L.marker([26.8584, 75.7616]).addTo(trackerMap); // User position pin
-        L.marker([26.8800, 75.7800]).addTo(trackerMap); // Approaching truck pin
+        L.marker([26.8584, 75.7616]).addTo(trackerMap); 
+        L.marker([26.8800, 75.7800]).addTo(trackerMap); 
     }, 200);
 
     if (cachedBookingFormData && cachedBookingFormData.customerName) {
@@ -152,20 +138,88 @@ function evaluateCustomerActivePipeline() {
     }
 }
 
+// ==========================================
+// 👨‍🔧 ITEM 4: LIVE TECHNICIAN ROLE LOGIC & STATUS COUNTERS
+// ==========================================
+function openTechnicianIdentityGate() {
+    document.getElementById('techIdentitySelectionModal').style.display = 'flex';
+}
+
+function initializeTechnicianSession(selectedTechNameString) {
+    document.getElementById('techIdentitySelectionModal').style.display = 'none';
+    activeTechnicianProfileName = selectedTechNameString;
+    document.getElementById('techWelcomeHeader').innerText = `Console: ${activeTechnicianProfileName}`;
+    switchToPanel('technician');
+    pullActiveTechnicianJobsRegistryLoop();
+}
+
+function pullActiveTechnicianJobsRegistryLoop() {
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/bookings`)
+        .then(res => res.json())
+        .then(response => {
+            if (response.success) {
+                const targetedTechJobs = response.data.filter(job => job.assignedPartner === activeTechnicianProfileName);
+                renderTechnicianJobQueueGrid(targetedTechJobs);
+            }
+        })
+        .catch(() => {
+            const fallbackTechMockQueue = [
+                { _id: "664f15e8c", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: activeTechnicianProfileName === "Amit Sharma" ? "ELECTRICIAN" : "PLUMBER", flatAddress: "Flat 402, Block C, Mansarovar, Jaipur", status: "Assigned" }
+            ];
+            renderTechnicianJobQueueGrid(fallbackTechMockQueue);
+        });
+}
+
+function renderTechnicianJobQueueGrid(jobsArray) {
+    const queueContainer = document.getElementById('techActiveJobsQueue');
+    if (!queueContainer) return;
+    queueContainer.innerHTML = "";
+
+    if (jobsArray.length === 0) {
+        queueContainer.innerHTML = `<div style="text-align:center; padding:30px; color:#666; background:#121214; border-radius:8px;">📭 No jobs assigned to your queue parameters right now.</div>`;
+        return;
+    }
+
+    jobsArray.forEach(job => {
+        const card = document.createElement('div');
+        card.style.background = "#121214"; card.style.border = "1px solid #27272a"; card.style.padding = "20px"; card.style.borderRadius = "10px";
+        queueContainer.appendChild(card);
+        card.innerHTML = `
+            <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+                <h5 style="font-weight:700; color:#00e5ff;">${job.serviceType}</h5>
+                <span style="color:#ffb300; font-size:0.8rem; font-weight:700;">● ${job.status.toUpperCase()}</span>
+            </div>
+            <p style="font-size:0.9rem; color:#ccc; margin-bottom:6px;"><strong>Client:</strong> ${job.customerName}</p>
+            <p style="font-size:0.9rem; color:#ccc; margin-bottom:15px;"><strong>Location:</strong> ${job.flatAddress}</p>
+            <button onclick="executeTechnicianJobCompletion('${job._id}')" style="width:100%; background:#00e676; color:#000; padding:10px; border:none; border-radius:6px; font-weight:800; cursor:pointer;">Complete Assignment ✅</button>
+        `;
+    });
+}
+
 function toggleTechDutyState() {
     const btn = document.getElementById('btnTechAvailabilityToggle');
     userDutyStateActive = !userDutyStateActive;
     btn.innerText = userDutyStateActive ? "Duty: ON" : "Duty: OFF";
     btn.style.background = userDutyStateActive ? "#00e676" : "#ff1744";
     btn.style.color = userDutyStateActive ? "#000" : "#fff";
+    triggerToastFeedback(userDutyStateActive ? "Console availability online." : "Console marked offline.");
 }
 
-function triggerJobCompletionSequence() {
-    triggerToastFeedback("Order finalized! Account parameters sync processed. ✅");
+function executeTechnicianJobCompletion(bookingId) {
+    const activeSessionToken = sessionStorage.getItem('servo_admin_token');
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/mutate-job-status`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${activeSessionToken}` },
+        body: JSON.stringify({ bookingId: bookingId, technicianName: activeTechnicianProfileName, targetStatus: "Completed" })
+    })
+    .then(() => {
+        triggerToastFeedback("Job completed successfully!");
+        pullActiveTechnicianJobsRegistryLoop();
+    });
 }
 
 // ==========================================
-// 👑 ADMIN STORAGE TOKENS & JWT LOOPS
+// 👑 ITEM 3: CRYPTOGRAPHIC HANDSHAKE ADMIN PORTAL CONTROL
 // ==========================================
 function toggleAdminLoginForm() {
     const modal = document.getElementById('adminLoginModal');
@@ -186,13 +240,13 @@ document.getElementById('frmAdminSecureAuth').addEventListener('submit', functio
         if(data.success) {
             sessionStorage.setItem('servo_admin_token', data.authToken);
             toggleAdminLoginForm();
-            triggerToastFeedback("Cryptographic tokens validated. Launching Console.");
+            triggerToastFeedback("Cryptographic security passed. Launching Gate.");
             launchSecureProductionAdminPortal();
         } else {
             triggerToastFeedback(data.message, true);
         }
     })
-    .catch(() => triggerToastFeedback("Authentication connection error.", true));
+    .catch(() => triggerToastFeedback("Authorization node handshake failure.", true));
 });
 
 function launchSecureProductionAdminPortal() {
@@ -224,9 +278,8 @@ function pullLiveAggregatedBusinessMetrics() {
         }
     })
     .catch(() => {
-        // Mock fallback layout if backend connection drops out temporarily during presentation runs
         document.getElementById('lblMetricsGrossRevenue').innerText = "₹1,480";
-        document.getElementById('lblMetricsLiveJobs').innerText = "2";
+        document.getElementById('lblMetricsLiveJobs').innerText = "1";
         populateMetricsGridTable([
             { _id: "664f12b", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "AC_REPAIR", flatAddress: "Mansarovar, Jaipur", status: "Pending", assignedPartner: "Unassigned" }
         ]);
@@ -267,10 +320,7 @@ window.executeServerStatusMutation = function(bookingId, combinedIntegratedStrin
 
     fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/mutate-job-status`, {
         method: 'POST',
-        headers: { 
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${activeSessionToken}`
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${activeSessionToken}` },
         body: JSON.stringify({ bookingId: bookingId, technicianName: tokens[0], targetStatus: tokens[1] })
     })
     .then(res => res.json())
@@ -282,8 +332,33 @@ window.executeServerStatusMutation = function(bookingId, combinedIntegratedStrin
     });
 };
 
+// ==========================================
+// ⚖️ ITEM 11 & 14: RETRY MATRIX & COMPLIANCE RULES
+// ==========================================
+function validateIndianPhoneField(inputElement) {
+    const errorLabel = document.getElementById('lblPhoneValidationError');
+    const regexValidationConstraint = /^[6-9][0-9]{9}$/;
+    
+    if (inputElement.value === "" || regexValidationConstraint.test(inputElement.value)) {
+        errorLabel.style.display = "none";
+        inputElement.style.borderColor = "#333";
+    } else {
+        errorLabel.style.display = "block";
+        inputElement.style.borderColor = "#ff5252";
+    }
+}
+
+function surfaceActiveNetworkInterruptionBanner() {
+    document.getElementById('globalNetworkErrorBanner').style.display = "flex";
+}
+
+function retryLastNetworkOperation() {
+    document.getElementById('globalNetworkErrorBanner').style.display = "none";
+    location.reload(); 
+}
+
 function openLegalPage(type) {
     document.getElementById('legalPageOverlayModal').style.display = "flex";
-    document.getElementById('lblLegalModalTitle').innerText = "SERVO Compliance Guide";
-    document.getElementById('divLegalModalBodyText').innerText = "Hyperlocal home logistics regulations locked down for Jaipur enterprise launch.";
+    document.getElementById('lblLegalModalTitle').innerText = "SERVO Compliance Strategy";
+    document.getElementById('divLegalModalBodyText').innerText = "Hyperlocal home logistics regulations fully locked down for Jaipur enterprise launch.";
 }

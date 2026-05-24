@@ -16,158 +16,177 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
-       * { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Plus Jakarta Sans', sans-serif; 
-}
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+        }
 
-body { 
-    background: #09090b; 
-    color: #fafafa; 
-    overflow-x: hidden; 
-    /* Premium Grid Overlay Graphic Background Matrix */
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 30px 30px;
-}
+        body { 
+            background: #09090b; 
+            color: #fafafa; 
+            overflow-x: hidden; 
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
 
-header { 
-    padding: 20px 40px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid #18181b;
-    background: rgba(9, 9, 11, 0.8);
-    backdrop-filter: blur(12px);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
+        header { 
+            padding: 20px 40px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #18181b;
+            background: rgba(9, 9, 11, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
 
-.logo { 
-    font-size: 1.6rem; 
-    font-weight: 800; 
-    letter-spacing: -1.5px; 
-    color: #fff;
-}
-.logo span { color: #00e5ff; }
+        .logo { 
+            font-size: 1.6rem; 
+            font-weight: 800; 
+            letter-spacing: -1.5px; 
+            color: #fff;
+        }
+        .logo span { color: #00e5ff; }
 
-.hero-section { 
-    padding: 100px 20px 60px 20px; 
-    text-align: center; 
-    max-width: 800px; 
-    margin: 0 auto; 
-}
+        .hero-section { 
+            padding: 100px 20px 60px 20px; 
+            text-align: center; 
+            max-width: 800px; 
+            margin: 0 auto; 
+        }
 
-.hero-section h1 { 
-    font-size: 4rem; 
-    font-weight: 800; 
-    line-height: 1.05; 
-    margin-bottom: 25px; 
-    letter-spacing: -2.5px;
-    background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
+        .hero-section h1 { 
+            font-size: 4rem; 
+            font-weight: 800; 
+            line-height: 1.05; 
+            margin-bottom: 25px; 
+            letter-spacing: -2.5px;
+            background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
 
-.services-grid { 
-    display: grid; 
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-    gap: 25px; 
-    padding: 40px 20px; 
-    max-width: 1200px; 
-    margin: 0 auto; 
-}
+        .services-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
+            gap: 25px; 
+            padding: 40px 20px; 
+            max-width: 1200px; 
+            margin: 0 auto; 
+        }
 
-.service-card { 
-    background: #121214; 
-    border: 1px solid #1c1c1e; 
-    padding: 35px; 
-    border-radius: 16px; 
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    position: relative;
-    overflow: hidden;
-}
+        .service-card { 
+            background: #121214; 
+            border: 1px solid #1c1c1e; 
+            padding: 35px; 
+            border-radius: 16px; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
 
-.service-card:hover { 
-    border-color: #00e5ff;
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 229, 255, 0.05);
-}
+        .service-card:hover { 
+            border-color: #00e5ff;
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 229, 255, 0.05);
+        }
 
-/* Glassmorphism Overlay Modals */
-.modal-overlay { 
-    display: none; 
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: rgba(5, 5, 5, 0.85); 
-    z-index: 999; 
-    justify-content: center; 
-    align-items: center; 
-    padding: 20px; 
-    backdrop-filter: blur(8px);
-}
+        .modal-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(5, 5, 5, 0.85); 
+            z-index: 999; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px; 
+            backdrop-filter: blur(8px);
+        }
 
-.modal-box { 
-    background: #121214; 
-    border: 1px solid #27272a; 
-    padding: 40px 30px; 
-    border-radius: 20px; 
-    max-width: 460px; 
-    width: 100%; 
-    position: relative; 
-    box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-}
+        .modal-box { 
+            background: #121214; 
+            border: 1px solid #27272a; 
+            padding: 40px 30px; 
+            border-radius: 20px; 
+            max-width: 460px; 
+            width: 100%; 
+            position: relative; 
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
 
-/* Premium Toast Alerts */
-.custom-toast-bubble { 
-    position: fixed; 
-    bottom: 30px; 
-    right: 30px; 
-    background: #18181b; 
-    border: 1px solid #00e676; 
-    color: #fff; 
-    padding: 16px 28px; 
-    border-radius: 12px; 
-    font-weight: 600; 
-    z-index: 99999; 
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-    animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.error-toast { border-color: #ff1744; }
+        .custom-toast-bubble { 
+            position: fixed; 
+            bottom: 30px; 
+            right: 30px; 
+            background: #18181b; 
+            border: 1px solid #00e676; 
+            color: #fff; 
+            padding: 16px 28px; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            z-index: 99999; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .error-toast { border-color: #ff1744; }
 
-.metric-card-box { 
-    background: #121214; 
-    padding: 25px; 
-    border-radius: 12px; 
-    border: 1px solid #27272a; 
-}
+        .metric-card-box { 
+            background: #121214; 
+            padding: 25px; 
+            border-radius: 12px; 
+            border: 1px solid #27272a; 
+        }
 
-.pricing-tier-tag { 
-    font-size: 0.75rem; 
-    background: rgba(0, 229, 255, 0.08); 
-    padding: 4px 8px; 
-    border-radius: 6px; 
-    color: #00e5ff; 
-    margin-left: 10px; 
-    font-weight: 700; 
-    text-transform: uppercase;
-    border: 1px solid rgba(0, 229, 255, 0.2);
-}
+        .pricing-tier-tag { 
+            font-size: 0.75rem; 
+            background: rgba(0, 229, 255, 0.08); 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            color: #00e5ff; 
+            margin-left: 10px; 
+            font-weight: 700; 
+            text-transform: uppercase;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
 
-@keyframes slideInUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+        .network-retry-banner {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff1744;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            z-index: 100000;
+            box-shadow: 0 4px 20px rgba(255,23,68,0.4);
+            align-items: center;
+            gap: 15px;
+        }
+
+        @keyframes slideInUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="globalNetworkErrorBanner" class="network-retry-banner">
+        <span>⚠️ Connection Dropped. Handshake pipeline interrupted.</span>
+        <button onclick="retryLastNetworkOperation()" style="background: #fff; color: #ff1744; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Retry Now</button>
+    </div>
 
     <div id="mainCoreAppWindowView">
         <header>
@@ -175,9 +194,9 @@ header {
             <div style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa;">📍 Jaipur Operations Unit</div>
         </header>
 
-        <section style="text-align: center; padding: 60px 20px; max-width: 800px; margin: 0 auto;">
-            <h1 style="font-size: 3rem; font-weight: 800; tracking: -1px; line-height: 1.1;">HYPERLOCAL ON-DEMAND<br><span style="color:#00e5ff;">DISPATCH NETWORKS</span></h1>
-            <p style="color:#666; margin-top: 15px; font-size: 1.05rem;">Providing background-verified home logistics structures across all major residential sectors in Jaipur.</p>
+        <section id="hero" class="hero-section">
+            <h1>PREMIUM ON-DEMAND<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
+            <p style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book background-verified experts within 45 minutes.</p>
         </section>
 
         <section id="services" class="services-grid">
@@ -200,6 +219,16 @@ header {
                     <button onclick="openDispatchPrompt('ELECTRICIAN')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
+
+            <div class="service-card">
+                <div style="font-size: 2rem; margin-bottom: 15px;">🚰</div>
+                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Hyperlocal Plumber Core</h3>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Leakage detection, pipeline repair, and tap replacements.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div><span style="font-weight: 700; color: #00e5ff;">₹350</span><span class="pricing-tier-tag">Base Rate</span></div>
+                    <button onclick="openDispatchPrompt('PLUMBER')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
+                </div>
+            </div>
         </section>
 
         <div id="leafletCoreMapContainer" style="height: 300px; width: 100%; background: #111; margin-top: 40px; border-top: 1px solid #1a1a1e;"></div>
@@ -212,7 +241,8 @@ header {
             
             <form id="bookingSubmissionForm">
                 <input type="text" id="bookingCustomerName" placeholder="Your Name" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
-                <input type="tel" id="bookingCustomerPhone" placeholder="10-Digit Mobile Number" required pattern="[6-9][0-9]{9}" maxlength="10" style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
+                <input type="tel" id="bookingCustomerPhone" placeholder="10-Digit Mobile Number" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="validateIndianPhoneField(this)" style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
+                <small id="lblPhoneValidationError" style="color: #ff5252; font-size: 0.75rem; display: none; margin-bottom: 15px; margin-top: -10px;">Must be a valid 10-digit Indian mobile number starting with 6-9.</small>
                 <input type="text" id="bookingFlatAddress" placeholder="Flat Address (e.g. Mansarovar)" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 
                 <div style="margin-bottom: 20px; background: #1a1a1e; border: 1px solid #333; padding: 12px; border-radius: 6px; text-align: center;">
@@ -264,16 +294,27 @@ header {
                             <span style="font-weight: 700; color: #fff;">Amit Sharma</span>
                             <span style="background: #00e676; color: #000; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; text-transform: uppercase;">✓ VERIFIED PRO</span>
                         </div>
-                        <p style="color: #aaa; font-size: 0.8rem; margin-top: 2px;">⭐ 4.9/5 Rating | Jaipur Operations Group</p>
+                        <p style="color: #aaa; font-size: 0.8rem; margin-top: 2px;">⭐ 4.9/5 Rating | Background Checked</p>
                     </div>
                 </div>
 
                 <div style="background: #1a1a1e; padding: 15px; border-radius: 8px; border: 1px solid #222;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 12px; color: #aaa;">
-                        <span>📍 Free Leaflet Transit Simulation Enabled</span>
+                        <span>📍 Dynamic Hyperlocal Grid Mapping Active</span>
                         <span style="color: #ff5252; font-weight: 700;">ETA: ~15 Mins</span>
                     </div>
                     <div id="leafletLiveTrackingDashboardMap" style="height: 220px; width: 100%; border-radius: 6px; background: #222;"></div>
+                </div>
+            </div>
+            
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Booking Records & Invoices</h3>
+            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Dispatch</h5>
+                        <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed • Paid via UPI</p>
+                    </div>
+                    <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
                 </div>
             </div>
         </div>
@@ -283,18 +324,15 @@ header {
         <div style="max-width: 600px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; background: #121214; padding: 15px; border-radius: 10px; border: 1px solid #222;">
                 <div>
-                    <h3 style="font-weight: 800; font-size: 1.2rem;">Console: Amit Sharma</h3>
+                    <h3 id="techWelcomeHeader" style="font-weight: 800; font-size: 1.2rem;">Console: Amit Sharma</h3>
                     <p style="color: #00e676; font-size: 0.8rem; font-weight: 600; margin-top: 2px;">⚡ Earnings Today: ₹1,480</p>
                 </div>
                 <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
             </div>
 
             <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs</h4>
-            <div style="background: #121214; border: 1px solid #333; padding: 20px; border-radius: 10px;">
-                <h5 style="font-size: 1.1rem; font-weight: 700; color: #00e5ff; margin-bottom: 10px;">AC Repair & Diagnostics</h5>
-                <p style="color: #ccc; font-size: 0.9rem; margin-bottom: 15px;"><strong>Client Area:</strong> Mansarovar Sector Hub, Jaipur</p>
-                <button onclick="triggerJobCompletionSequence()" style="width: 100%; background: #00e676; color: #000; border: none; padding: 12px; border-radius: 6px; font-weight: 700; font-size: 0.85rem; cursor: pointer;">Complete Job ✅</button>
-            </div>
+            <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;">
+                </div>
         </div>
     </div>
 
@@ -347,9 +385,45 @@ header {
         </div>
     </div>
 
-    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px;">
-        <button onclick="switchToPanel('customer')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">📱 User View</button>
-        <button onclick="switchToPanel('technician')" style="background: #121214; color: #aaa; border: 1px solid #333; padding: 8px 12px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; font-weight: 600;">👨‍🔧 Pro View</button>
+    <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px; background: rgba(18, 18, 20, 0.8); padding: 6px; border-radius: 8px; border: 1px solid #27272a; backdrop-filter: blur(10px);">
+        <button onclick="switchToPanel('customer')" style="background: #18181b; color: #aaa; border: 1px solid #27272a; padding: 10px 14px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 700;">📱 Client Desk</button>
+        <button onclick="openTechnicianIdentityGate()" style="background: #18181b; color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.2); padding: 10px 14px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 700;">👨‍🔧 Tech Hub</button>
+    </div>
+
+    <div id="techIdentitySelectionModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 400px; text-align: center;">
+            <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">TECHNICIAN HUB PORTAL</h3>
+            <p style="color: #666; font-size: 0.85rem; margin-bottom: 25px;">Select your identity profile to initialize duty session</p>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button onclick="initializeTechnicianSession('Amit Sharma')" style="background: #18181b; color: #fff; border: 1px solid #27272a; padding: 16px; border-radius: 10px; text-align: left; cursor: pointer; display: flex; align-items: center;">
+                    <span style="font-size: 1.5rem; margin-right: 15px;">⚡</span>
+                    <div><div style="font-weight: 700;">Amit Sharma</div><div style="color:#666; font-size:0.75rem;">Electrician</div></div>
+                </button>
+                <button onclick="initializeTechnicianSession('Deepak Kumar')" style="background: #18181b; color: #fff; border: 1px solid #27272a; padding: 16px; border-radius: 10px; text-align: left; cursor: pointer; display: flex; align-items: center;">
+                    <span style="font-size: 1.5rem; margin-right: 15px;">🚰</span>
+                    <div><div style="font-weight: 700;">Deepak Kumar</div><div style="color:#666; font-size:0.75rem;">Plumber</div></div>
+                </button>
+            </div>
+            <button onclick="document.getElementById('techIdentitySelectionModal').style.display='none'" style="margin-top:20px; background:transparent; color:#666; border:none; cursor:pointer; text-decoration:underline;">Close Portal</button>
+        </div>
+    </div>
+
+    <footer style="background: #0b0b0c; border-top: 1px solid #1a1a1e; padding: 40px 20px; color: #555; font-size: 0.8rem; margin-top: 60px;">
+        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px;">
+            <div><h4>SERVO OPERATIONS LOGISTICS INC.</h4><p>© 2026 SERVO India. Fully verified corporate dispatch guidelines.</p></div>
+            <div style="display: flex; gap: 30px;">
+                <a href="#" onclick="openLegalPage('privacy')" style="color: #555; text-decoration: none;">Privacy Policy</a>
+                <a href="#" onclick="openLegalPage('terms')" style="color: #555; text-decoration: none;">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="legalPageOverlayModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px; display: flex; flex-direction: column; max-height: 80vh;">
+            <h3 id="lblLegalModalTitle" style="color: #00e5ff; margin-bottom: 15px;"></h3>
+            <div id="divLegalModalBodyText" style="overflow-y: auto; flex: 1; font-size: 0.85rem; line-height: 1.6; color: #ccc; margin-bottom: 20px; white-space: pre-wrap;"></div>
+            <button onclick="document.getElementById('legalPageOverlayModal').style.display='none'" style="background: #222; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer;">Acknowledge Guidelines</button>
+        </div>
     </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
