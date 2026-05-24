@@ -9,17 +9,92 @@ let activeTechnicianProfileName = "";
 // Initialize Homepage Map Systems
 let mainLandingLeafletMap = L.map('leafletCoreMapContainer', { zoomControl: false }).setView([26.9124, 75.7873], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainLandingLeafletMap);
-L.marker([26.9124, 75.7873]).addTo(mainLandingLeafletMap);
+let mainLandingMarker = L.marker([26.9124, 75.7873]).addTo(mainLandingLeafletMap);
 
 // ==========================================
-// 🔔 ITEM 11: HIGH-FIDELITY INTER-TAB NOTIFICATION SIMULATOR ENGINE (Zero Setup)
+// 🔍 ITEM 12: HYPERLOCAL REGIONAL SEO ROUTER MATRIX ENGINE
+// ==========================================
+const HyperlocalSEODataRegistry = {
+    all: {
+        badge: "📍 Jaipur Zone: All Hubs",
+        title: "PREMIUM ON-DEMAND<br><span style='color: #00e5ff;'>HOME SERVICES</span>",
+        desc: "Experience professional care for your residence. Book background-verified experts within 45 minutes.",
+        seoTitle: "SERVO | Best Electricians, Plumbers & AC Repair in Jaipur",
+        seoDesc: "Get professional background-verified electricians and plumbers in Jaipur at your doorstep within 45 minutes.",
+        coords: [26.9124, 75.7873],
+        zoom: 12
+    },
+    mansarovar: {
+        badge: "📍 Jaipur Zone: Mansarovar Hub Active",
+        title: "ON-DEMAND REPAIRS IN<br><span style='color: #00e5ff;'>MANSAROVAR HUB</span>",
+        desc: "Serving VT Road, Shipra Path, and New Sanganer Road. Local verified technicians dispatched instantly.",
+        seoTitle: "Best AC Repair & Doorstep Electricians in Mansarovar, Jaipur | SERVO",
+        seoDesc: "Need an emergency plumber or electrician in Mansarovar, Jaipur? SERVO dispatches background-verified pros in 45 mins.",
+        coords: [26.8584, 75.7616],
+        zoom: 14
+    },
+    vaishali: {
+        badge: "📍 Jaipur Zone: Vaishali Nagar Hub Active",
+        title: "PREMIUM HANDYMEN IN<br><span style='color: #00e5ff;'>VAISHALI NAGAR</span>",
+        desc: "Dispatched home services across Amrapali Marg, Hanuman Nagar, and Queens Road within minutes.",
+        seoTitle: "Top-Rated Home Appliance Repair & Plumbers in Vaishali Nagar | SERVO",
+        seoDesc: "Verified home services in Vaishali Nagar, Jaipur. Book professional local plumbers and AC repair technicians instantly.",
+        coords: [26.9220, 75.7360],
+        zoom: 14
+    },
+    malviya: {
+        badge: "📍 Jaipur Zone: Malviya Nagar Hub Active",
+        title: "EXPERT HANDYMAN IN<br><span style='color: #00e5ff;'>MALVIYA NAGAR</span>",
+        desc: "Instant doorstep repairs across GT Mall lanes, Apex Circle, and Jawahar Circle neighborhoods.",
+        seoTitle: "Emergency Electrician & 24/7 Plumber in Malviya Nagar, Jaipur | SERVO",
+        seoDesc: "Premium home maintenance services in Malviya Nagar, Jaipur. Background-verified specialists available immediately.",
+        coords: [26.8540, 75.8044],
+        zoom: 14
+    }
+};
+
+function routeHyperlocalSEOContext(hubSlugToken) {
+    const context = HyperlocalSEODataRegistry[hubSlugToken];
+    if (!context) return;
+
+    // 1. Hot-mutate public visual headers
+    document.getElementById('lblCurrentSEOZoneBadge').innerText = context.badge;
+    document.getElementById('dynamicSEOHeroTitle').innerHTML = context.title;
+    document.getElementById('dynamicSEOHeroDesc').innerText = context.desc;
+
+    // 2. Hot-mutate core crawler visibility parameters (Crucial for page tracking)
+    document.getElementById('dynamicAppSEOTitle').innerText = context.seoTitle;
+    document.getElementById('dynamicAppSEODesc').setAttribute('content', context.seoDesc);
+
+    // 3. Update Schema.org local business coordinates on the fly
+    const schemaScriptNode = document.getElementById('servoLocalBusinessSchema');
+    if (schemaScriptNode) {
+        let currentSchema = JSON.parse(schemaScriptNode.innerText);
+        currentSchema.geo.latitude = context.coords[0].toString();
+        currentSchema.geo.longitude = context.coords[1].toString();
+        currentSchema.description = context.seoDesc;
+        schemaScriptNode.innerText = JSON.stringify(currentSchema);
+    }
+
+    // 4. Smooth pan the map frame directly over the searched neighborhood
+    mainLandingLeafletMap.setView(context.coords, context.zoom);
+    mainLandingMarker.setLatLng(context.coords);
+
+    // 5. Shift visual active indicator classes
+    document.querySelectorAll('.location-pill').forEach(pill => pill.classList.remove('active-hub'));
+    const targetedPill = document.getElementById(`pill-hub-${hubSlugToken}`);
+    if (targetedPill) targetedPill.classList.add('active-hub');
+
+    triggerToastFeedback(`Routed to ${hubSlugToken.toUpperCase()} SEO Content Matrix node.`);
+}
+
+// ==========================================
+// 🔔 REAL-TIME INTER-TAB BROADCAMP BROADCASTER
 // ==========================================
 const LocalNotificationPipelineChannel = new BroadcastChannel('servo_push_simulation_matrix_2026');
 
 LocalNotificationPipelineChannel.onmessage = function(event) {
-    const { actionType, title, body, targetedUserPhone } = event.data;
-    
-    // Check if the current view state matches the notification audience targets
+    const { actionType, title, body } = event.data;
     if (actionType === "PUSH_ALERT") {
         triggerToastFeedback(`🔔 NOTIFICATION: ${title}\n${body}`);
     }
@@ -31,11 +106,10 @@ function dispatchMockPushPayload(alertTitle, alertBody) {
         title: alertTitle,
         body: alertBody
     });
-    // Trigger instantly on the sender screen loop too
     triggerToastFeedback(`🔔 NOTIFICATION: ${alertTitle}\n${alertBody}`);
 }
 
-// 📸 ITEM 19: FILE IMAGE BASE64 PROCESSING ENGINE
+// 📸 FILE IMAGE BASE64 UTILITIES
 function processLocalImagePreview(inputElement) {
     const file = inputElement.files[0];
     if (!file) return;
@@ -64,7 +138,7 @@ function triggerToastFeedback(messageText, isErrorState = false) {
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
-// CLIENT BOOKING HANDSHAKE LOOPS
+// CLIENT BOOKING TRANSMISSION ENGINE
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
     cachedBookingFormData = {
@@ -113,9 +187,7 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
     .catch(() => surfaceActiveNetworkInterruptionBanner());
 });
 
-// ==========================================
-// 🏢 PROFILE VIEW SHUTTER CONFIGURATIONS
-// ==========================================
+// DASHBOARD MODULE VIEW OVERLAYS
 function switchToPanel(targetModeString) {
     document.getElementById('customerDashboardPanel').style.display = 'none';
     document.getElementById('technicianDashboardPanel').style.display = 'none';
@@ -152,9 +224,7 @@ function evaluateCustomerActivePipeline() {
     }
 }
 
-// ==========================================
-// 👨‍🔧 PRO INTERFACE CONTROL SYSTEMS
-// ==========================================
+// PROVIDER INTERFACE
 function openTechnicianIdentityGate() { document.getElementById('techIdentitySelectionModal').style.display = 'flex'; }
 
 function initializeTechnicianSession(selectedTechNameString) {
@@ -228,7 +298,7 @@ function executeTechnicianJobCompletion(bookingId) {
 }
 
 // ==========================================
-// 👑 ADMIN STORAGE SESSION ENGINES
+// 👑 ADMINISTRATIVE SESSIONS LOGIC
 // ==========================================
 function toggleAdminLoginForm() {
     const modal = document.getElementById('adminLoginModal');
@@ -323,7 +393,6 @@ window.executeServerStatusMutation = function(bookingId, combinedIntegratedStrin
         body: JSON.stringify({ bookingId: bookingId, technicianName: tokens[0], targetStatus: tokens[1] })
     })
     .then(() => {
-        // Broadcast push dispatch triggers straight down the interface windows
         dispatchMockPushPayload(`👨‍🔧 Status Shift Matrix`, `Ticket parameter modified to: ${tokens[1].replace('_', ' ')}`);
         pullLiveAggregatedBusinessMetrics(); 
     });

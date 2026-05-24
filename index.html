@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>SERVO | Best Electricians, Plumbers & AC Repair in Jaipur</title>
-    <meta name="description" content="Get professional, background-verified electricians, plumbers, and AC repair technicians in Jaipur directly at your doorstep within 45 minutes. Book now!">
-    <meta name="keywords" content="ac repair jaipur, electrician near me, local plumber jaipur, home services jaipur, best electrician mansarovar">
+    <title id="dynamicAppSEOTitle">SERVO | Best Electricians, Plumbers & AC Repair in Jaipur</title>
+    <meta name="description" id="dynamicAppSEODesc" content="Get professional, background-verified electricians, plumbers, and AC repair technicians in Jaipur directly at your doorstep within 45 minutes. Book now!">
+    <meta name="keywords" content="ac repair jaipur, electrician near me, local plumber jaipur, home services jaipur, best electrician mansarovar, vaishali nagar handyman">
     
     <link rel="icon" type="image/x-icon" href="https://servoo-beige.vercel.app/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,6 +14,28 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <script type="application/ld+json" id="servoLocalBusinessSchema">
+    {
+      "@context": "https://schema.org",
+      "@type": "HomeAndConstructionBusiness",
+      "name": "SERVO On-Demand Home Logistics",
+      "description": "Premium On-Demand Electricians, Plumbers & AC Repair Specialists across Jaipur.",
+      "url": "https://servoo-beige.vercel.app",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Jaipur",
+        "addressRegion": "Rajasthan",
+        "addressCountry": "IN"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "26.9124",
+        "longitude": "75.7873"
+      },
+      "priceRange": "INR 290 - INR 2000"
+    }
+    </script>
 
     <style>
         * { 
@@ -55,7 +77,7 @@
         .logo span { color: #00e5ff; }
 
         .hero-section { 
-            padding: 100px 20px 60px 20px; 
+            padding: 80px 20px 40px 20px; 
             text-align: center; 
             max-width: 800px; 
             margin: 0 auto; 
@@ -72,11 +94,40 @@
             -webkit-text-fill-color: transparent;
         }
 
+        /* 📍 HYPERLOCAL SEO HUB PILL STYLES */
+        .seo-location-bar {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        .location-pill {
+            background: #121214;
+            color: #a1a1aa;
+            border: 1px solid #27272a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .location-pill.active-hub {
+            background: rgba(0, 229, 255, 0.1);
+            color: #00e5ff;
+            border-color: #00e5ff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+        }
+
         .services-grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
             gap: 25px; 
-            padding: 40px 20px; 
+            padding: 0 20px 40px 20px; 
             max-width: 1200px; 
             margin: 0 auto; 
         }
@@ -191,13 +242,20 @@
     <div id="mainCoreAppWindowView">
         <header>
             <div class="logo">SERVO<span>.</span></div>
-            <div style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa;">📍 Jaipur Operations Unit</div>
+            <div id="lblCurrentSEOZoneBadge" style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa; font-weight: 700;">📍 Jaipur Zone: All Hubs</div>
         </header>
 
         <section id="hero" class="hero-section">
-            <h1>PREMIUM ON-DEMAND<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
-            <p style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book background-verified experts within 45 minutes.</p>
+            <h1 id="dynamicSEOHeroTitle">PREMIUM ON-DEMAND<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
+            <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book background-verified experts within 45 minutes.</p>
         </section>
+
+        <div class="seo-location-bar">
+            <button class="location-pill active-hub" id="pill-hub-all" onclick="routeHyperlocalSEOContext('all')">全 All Jaipur</button>
+            <button class="location-pill" id="pill-hub-mansarovar" onclick="routeHyperlocalSEOContext('mansarovar')">Mansarovar</button>
+            <button class="location-pill" id="pill-hub-vaishali" onclick="routeHyperlocalSEOContext('vaishali')">Vaishali Nagar</button>
+            <button class="location-pill" id="pill-hub-malviya" onclick="routeHyperlocalSEOContext('malviya')">Malviya Nagar</button>
+        </div>
 
         <section id="services" class="services-grid">
             <div class="service-card">
