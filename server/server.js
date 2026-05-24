@@ -31,7 +31,7 @@ MongoClient.connect(mongoUri)
     })
     .catch(err => console.error("❌ MongoDB Connection Fault:", err));
 
-// ADMINISTRATIVE GATEWAY AUTHENTICATION
+// Change this line to match your frontend API calls exactly!
 app.post('/api/admin/secure-login', async (req, res) => {
     try {
         const { secretPassphrase } = req.body;
