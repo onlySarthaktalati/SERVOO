@@ -260,6 +260,26 @@
                 <div class="metric-card-box" style="border-left: 4px solid #ffb300;">
                     <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Active Ongoing Bookings</p>
                     <h3 id="lblMetricsLiveJobs" style="font-size: 2rem; margin-top: 5px;">0</h3>
+                    <div style="background: #121214; border: 1px solid #27272a; padding: 25px; border-radius: 12px; margin-bottom: 40px; max-width: 500px;">
+    <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #00e5ff;">👨‍🔧 Register Local Technician</h3>
+    <form id="frmRegisterTechNode">
+        <input type="text" id="regTechName" placeholder="Full Name" required style="width: 100%; padding: 10px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 12px;">
+        <input type="tel" id="regTechPhone" placeholder="10-Digit Mobile Number" required maxlength="10" style="width: 100%; padding: 10px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 12px;">
+        
+        <select id="regTechSkill" style="width: 100%; padding: 10px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 12px;">
+            <option value="ELECTRICIAN">Electrician</option>
+            <option value="PLUMBER">Plumber</option>
+        </select>
+        
+        <select id="regTechCity" style="width: 100%; padding: 10px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
+            <option value="jaipur">Jaipur</option>
+            <option value="delhi">Delhi NCR</option>
+            <option value="mumbai">Mumbai</option>
+        </select>
+        
+        <button type="submit" style="background: #00e676; color: #000; border: none; padding: 10px 20px; font-weight: 700; border-radius: 6px; cursor: pointer; width: 100%;">Save to Cloud Database</button>
+    </form>
+    </div>
                 </div>
             </div>
 

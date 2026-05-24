@@ -326,3 +326,33 @@ function validateIndianPhoneField(el) { el.style.borderColor = "#333"; }
 function surfaceActiveNetworkInterruptionBanner() { document.getElementById('globalNetworkErrorBanner').style.display = "flex"; }
 function retryLastNetworkOperation() { location.reload(); }
 document.addEventListener("DOMContentLoaded", () => { executeCityMarketplaceShift(); });
+// ADD TO THE BOTTOM OF APP.JS
+document.getElementById('frmRegisterTechNode').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const activeSessionToken = sessionStorage.getItem('servo_admin_token');
+    
+    const payload = {
+        techName: document.getElementById('regTechName').value,
+        techPhone: document.getElementById('regTechPhone').value,
+        techSkill: document.getElementById('regTechSkill').value,
+        techCity: document.getElementById('regTechCity').value
+    };
+
+    fetch(`${CLOUD_BACKEND_API_LINK}/api/admin/register-technician`, {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${activeSessionToken}`
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.success) {
+            triggerToastFeedback("🎉 Pro Saved Successfully into MongoDB permanent cloud logs!");
+            document.getElementById('frmRegisterTechNode').reset();
+        } else {
+            triggerToastFeedback(data.message, true);
+        }
+    });
+});
