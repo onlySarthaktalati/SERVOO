@@ -21,16 +21,13 @@
             background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
         }
-
         header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #18181b; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -1px; color: #fff; cursor: pointer; }
         .logo span { color: #00e5ff; }
         
-        /* 📞 CRISP MINIMAL HEADER SUPPORT CONTROLS */
         .header-actions-group { display: flex; align-items: center; gap: 20px; }
         .header-support-links { display: flex; gap: 15px; font-size: 0.8rem; font-weight: 600; color: #a1a1aa; }
         .header-support-links a { color: #fafafa; text-decoration: none; border-bottom: 1px dashed #444; padding-bottom: 2px; }
-        .header-support-links a:hover { color: #00e5ff; border-color: #00e5ff; }
 
         .hero-section { padding: 100px 20px 40px 20px; text-align: center; max-width: 800px; margin: 0 auto; }
         .hero-section h1 { font-size: 4rem; font-weight: 800; line-height: 1.05; margin-bottom: 25px; letter-spacing: -2.5px; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -98,7 +95,7 @@
 
         <section id="hero" class="hero-section">
             <h1 id="dynamicSEOHeroTitle">PREMIUM DOORSTEP<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
-            <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px; margin-bottom: 35px;">Experience professional care for your home. Book background-verified experts within 45 minutes.</p>
+            <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px; margin-bottom: 30px;">Experience professional care for your home. Book background-verified experts within 45 minutes.</p>
             
             <div class="trust-stats-strip">
                 <div class="stat-item">
@@ -150,11 +147,6 @@
                     <p style="font-size: 0.9rem; color: #d4d4d8; line-height: 1.5;">"Dispatched an electrician to my flat in Mansarovar within 30 minutes. Fixed a fused inverter line instantly. Highly recommend!"</p>
                     <div style="font-weight: 700; margin-top: 15px; font-size: 0.85rem; color: #fff;">— Sarthak J.</div>
                 </div>
-                <div class="review-card">
-                    <div style="color: #ffb300; margin-bottom: 10px;">★★★★★</div>
-                    <p style="font-size: 0.9rem; color: #d4d4d8; line-height: 1.5;">"Super easy process. Sent an AC mechanic who cleaned the filters perfectly and charged exactly the base rate shown. Paid via UPI."</p>
-                    <div style="font-weight: 700; margin-top: 15px; font-size: 0.85rem; color: #fff;">— Priya R.</div>
-                </div>
             </div>
         </section>
     </div>
@@ -177,7 +169,6 @@
                 </div>
                 
                 <p style="font-size: 0.75rem; color: #71717a; text-align: center; margin-bottom: 15px;">💸 Cash / UPI accepted after your job is completed.</p>
-                
                 <button type="submit" id="btnInitiateHandshake" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; font-weight: 700; border-radius: 6px; cursor: pointer;">Send Verification OTP</button>
             </form>
 
@@ -236,15 +227,7 @@
             </div>
             
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Bookings & Invoices</h3>
-            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-                <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Service</h5>
-                        <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed • Paid via UPI</p>
-                    </div>
-                    <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
-                </div>
-            </div>
+            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
     </div>
 
@@ -326,9 +309,7 @@
     </div>
 
     <footer style="background: #0b0b0c; border-top: 1px solid #1a1a1e; padding: 40px 20px; color: #555; font-size: 0.8rem; margin-top: 60px;">
-        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px;">
-            <div><h4>SERVO HOME SERVICES PRIVATE LTD</h4><p>© 2026 SERVO India. Background-checked doorstep technicians.</p></div>
-        </div>
+        <div style="max-width: 1100px; margin: 0 auto;"><h4>SERVO HOME SERVICES PRIVATE LTD</h4><p>© 2026 SERVO India.</p></div>
     </footer>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
