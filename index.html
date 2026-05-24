@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title id="dynamicAppSEOTitle">SERVO | Best Electricians, Plumbers & AC Repair in Jaipur</title>
-    <meta name="description" id="dynamicAppSEODesc" content="Get professional, background-verified electricians, plumbers, and AC repair technicians in Jaipur directly at your doorstep within 45 minutes. Book now!">
-    <meta name="keywords" content="ac repair jaipur, electrician near me, local plumber jaipur, home services jaipur, best electrician mansarovar, vaishali nagar handyman">
+    <title id="dynamicAppSEOTitle">SERVO | Premium Doorstep Electricians, Plumbers & AC Repair Specialists</title>
+    <meta name="description" id="dynamicAppSEODesc" content="Get professional, background-verified home logistics repair experts directly at your doorstep within 45 minutes. Select your city to see rates and book pros.">
     
     <link rel="icon" type="image/x-icon" href="https://servoo-beige.vercel.app/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,216 +19,44 @@
       "@context": "https://schema.org",
       "@type": "HomeAndConstructionBusiness",
       "name": "SERVO On-Demand Home Logistics",
-      "description": "Premium On-Demand Electricians, Plumbers & AC Repair Specialists across Jaipur.",
+      "description": "Premium On-Demand Electricians, Plumbers & AC Repair Specialists across India's top hubs.",
       "url": "https://servoo-beige.vercel.app",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Jaipur",
-        "addressRegion": "Rajasthan",
-        "addressCountry": "IN"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": "26.9124",
-        "longitude": "75.7873"
-      },
       "priceRange": "INR 290 - INR 2000"
     }
     </script>
 
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         body { 
-            background: #09090b; 
-            color: #fafafa; 
-            overflow-x: hidden; 
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background: #09090b; color: #fafafa; overflow-x: hidden; 
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
         }
-
-        header { 
-            padding: 20px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #18181b;
-            background: rgba(9, 9, 11, 0.8);
-            backdrop-filter: blur(12px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .logo { 
-            font-size: 1.6rem; 
-            font-weight: 800; 
-            letter-spacing: -1.5px; 
-            color: #fff;
-        }
+        header { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #18181b; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -1.5px; color: #fff; cursor: pointer; }
         .logo span { color: #00e5ff; }
-
-        .hero-section { 
-            padding: 80px 20px 40px 20px; 
-            text-align: center; 
-            max-width: 800px; 
-            margin: 0 auto; 
-        }
-
-        .hero-section h1 { 
-            font-size: 4rem; 
-            font-weight: 800; 
-            line-height: 1.05; 
-            margin-bottom: 25px; 
-            letter-spacing: -2.5px;
-            background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* 📍 HYPERLOCAL SEO HUB PILL STYLES */
-        .seo-location-bar {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-bottom: 40px;
-            padding: 0 20px;
-        }
-
-        .location-pill {
-            background: #121214;
-            color: #a1a1aa;
-            border: 1px solid #27272a;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .location-pill.active-hub {
-            background: rgba(0, 229, 255, 0.1);
-            color: #00e5ff;
-            border-color: #00e5ff;
-            box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
-        }
-
-        .services-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); 
-            gap: 25px; 
-            padding: 0 20px 40px 20px; 
-            max-width: 1200px; 
-            margin: 0 auto; 
-        }
-
-        .service-card { 
-            background: #121214; 
-            border: 1px solid #1c1c1e; 
-            padding: 35px; 
-            border-radius: 16px; 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .service-card:hover { 
-            border-color: #00e5ff;
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 229, 255, 0.05);
-        }
-
-        .modal-overlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(5, 5, 5, 0.85); 
-            z-index: 999; 
-            justify-content: center; 
-            align-items: center; 
-            padding: 20px; 
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-box { 
-            background: #121214; 
-            border: 1px solid #27272a; 
-            padding: 40px 30px; 
-            border-radius: 20px; 
-            max-width: 460px; 
-            width: 100%; 
-            position: relative; 
-            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
-        }
-
-        .custom-toast-bubble { 
-            position: fixed; 
-            bottom: 30px; 
-            right: 30px; 
-            background: #18181b; 
-            border: 1px solid #00e676; 
-            color: #fff; 
-            padding: 16px 28px; 
-            border-radius: 12px; 
-            font-weight: 600; 
-            z-index: 99999; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: slideInUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .hero-section { padding: 80px 20px 40px 20px; text-align: center; max-width: 800px; margin: 0 auto; }
+        .hero-section h1 { font-size: 4rem; font-weight: 800; line-height: 1.05; margin-bottom: 25px; letter-spacing: -2.5px; background: linear-gradient(180deg, #fff 0%, #a1a1aa 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .seo-location-bar { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 40px; padding: 0 20px; }
+        .location-pill { background: #121214; color: #a1a1aa; border: 1px solid #27272a; padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .location-pill.active-hub { background: rgba(0, 229, 255, 0.1); color: #00e5ff; border-color: #00e5ff; box-shadow: 0 0 15px rgba(0, 229, 255, 0.15); }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; padding: 0 20px 40px 20px; max-width: 1200px; margin: 0 auto; }
+        .service-card { background: #121214; border: 1px solid #1c1c1e; padding: 35px; border-radius: 16px; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
+        .service-card:hover { border-color: #00e5ff; transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0, 229, 255, 0.05); }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 5, 0.85); z-index: 999; justify-content: center; align-items: center; padding: 20px; backdrop-filter: blur(8px); }
+        .modal-box { background: #121214; border: 1px solid #27272a; padding: 40px 30px; border-radius: 20px; max-width: 460px; width: 100%; position: relative; box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+        .custom-toast-bubble { position: fixed; bottom: 30px; right: 30px; background: #18181b; border: 1px solid #00e676; color: #fff; padding: 16px 28px; border-radius: 12px; font-weight: 600; z-index: 99999; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: slideInUp 0.3s ease; }
         .error-toast { border-color: #ff1744; }
+        .metric-card-box { background: #121214; padding: 25px; border-radius: 12px; border: 1px solid #27272a; }
+        .pricing-tier-tag { font-size: 0.75rem; background: rgba(0, 229, 255, 0.08); padding: 4px 8px; border-radius: 6px; color: #00e5ff; margin-left: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(0, 229, 255, 0.2); }
+        .network-retry-banner { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff1744; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 700; z-index: 100000; align-items: center; gap: 15px; }
+        
+        /* 🏙️ CITY SELECTION EXCLUSIVE GRID DESIGNS */
+        .city-grid-btn { background: #18181b; color: #fff; border: 1px solid #27272a; padding: 20px; border-radius: 12px; text-align: left; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; }
+        .city-grid-btn:hover { border-color: #00e5ff; background: rgba(0,229,255,0.02); }
+        .city-grid-btn span { font-size: 0.8rem; background: #27272a; padding: 4px 8px; border-radius: 4px; color: #aaa; }
 
-        .metric-card-box { 
-            background: #121214; 
-            padding: 25px; 
-            border-radius: 12px; 
-            border: 1px solid #27272a; 
-        }
-
-        .pricing-tier-tag { 
-            font-size: 0.75rem; 
-            background: rgba(0, 229, 255, 0.08); 
-            padding: 4px 8px; 
-            border-radius: 6px; 
-            color: #00e5ff; 
-            margin-left: 10px; 
-            font-weight: 700; 
-            text-transform: uppercase;
-            border: 1px solid rgba(0, 229, 255, 0.2);
-        }
-
-        .network-retry-banner {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #ff1744;
-            color: #fff;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
-            z-index: 100000;
-            box-shadow: 0 4px 20px rgba(255,23,68,0.4);
-            align-items: center;
-            gap: 15px;
-        }
-
-        @keyframes slideInUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
+        @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -239,10 +66,25 @@
         <button onclick="retryLastNetworkOperation()" style="background: #fff; color: #ff1744; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Retry Now</button>
     </div>
 
+    <div id="servoGlobalCityGatekeeperModal" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #050505; z-index: 999999; justify-content: center; align-items: center; padding: 20px;">
+        <div style="max-width: 500px; width: 100%; text-align: center;">
+            <div style="font-size: 2.5rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 10px;">SERVO<span>.</span></div>
+            <p style="color: #a1a1aa; font-size: 1.05rem; margin-bottom: 35px;">Select your marketplace zone to load verified local specialists</p>
+            <div style="display: flex; flex-direction: column; gap: 14px;">
+                <button class="city-grid-btn" onclick="bootstrapMarketplaceZone('jaipur')">🌸 Jaipur <span>Rajasthan</span></button>
+                <button class="city-grid-btn" onclick="bootstrapMarketplaceZone('delhi')">🏛️ Delhi NCR <span>National Capital</span></button>
+                <button class="city-grid-btn" onclick="bootstrapMarketplaceZone('mumbai')">🌊 Mumbai <span>Maharashtra</span></button>
+            </div>
+        </div>
+    </div>
+
     <div id="mainCoreAppWindowView">
         <header>
-            <div class="logo">SERVO<span>.</span></div>
-            <div id="lblCurrentSEOZoneBadge" style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa; font-weight: 700;">📍 Jaipur Zone: All Hubs</div>
+            <div class="logo" onclick="location.reload()">SERVO<span>.</span></div>
+            <div style="display: flex; gap: 15px; align-items: center;">
+                <button onclick="document.getElementById('servoGlobalCityGatekeeperModal').style.display='flex'" style="background: #18181b; color: #00e5ff; border: 1px solid #27272a; padding: 6px 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.8rem;">Change City 🔄</button>
+                <div id="lblCurrentSEOZoneBadge" style="font-size: 0.85rem; background: #111; padding: 6px 12px; border-radius: 20px; border: 1px solid #222; color: #aaa; font-weight: 700;">📍 Loading Cluster...</div>
+            </div>
         </header>
 
         <section id="hero" class="hero-section">
@@ -250,20 +92,15 @@
             <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book background-verified experts within 45 minutes.</p>
         </section>
 
-        <div class="seo-location-bar">
-            <button class="location-pill active-hub" id="pill-hub-all" onclick="routeHyperlocalSEOContext('all')">全 All Jaipur</button>
-            <button class="location-pill" id="pill-hub-mansarovar" onclick="routeHyperlocalSEOContext('mansarovar')">Mansarovar</button>
-            <button class="location-pill" id="pill-hub-vaishali" onclick="routeHyperlocalSEOContext('vaishali')">Vaishali Nagar</button>
-            <button class="location-pill" id="pill-hub-malviya" onclick="routeHyperlocalSEOContext('malviya')">Malviya Nagar</button>
-        </div>
+        <div class="seo-location-bar" id="divSubZonePillContainer"></div>
 
         <section id="services" class="services-grid">
             <div class="service-card">
                 <div style="font-size: 2rem; margin-bottom: 15px;">❄️</div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">AC Repair & Servicing</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Jaipur cooling diagnostics specialists. Jet cleaning and chemical servicing.</p>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Complete system cooling checkup diagnostics, jet washing and filter replacements.</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div><span style="font-weight: 700; color: #00e5ff;">₹450</span><span class="pricing-tier-tag">Base Rate</span></div>
+                    <div><span id="lblPriceAc" style="font-weight: 700; color: #00e5ff;">₹450</span><span class="pricing-tier-tag">Base</span></div>
                     <button onclick="openDispatchPrompt('AC_REPAIR')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
@@ -271,20 +108,10 @@
             <div class="service-card">
                 <div style="font-size: 2rem; margin-bottom: 15px;">⚡</div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Emergency Electrician</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Short-circuit diagnosis, inverter configurations, socket replacements.</p>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Short-circuit diagnosis, socket overhaul fixes, and inverter setups.</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div><span style="font-weight: 700; color: #00e5ff;">₹290</span><span class="pricing-tier-tag">Base Rate</span></div>
+                    <div><span id="lblPriceElec" style="font-weight: 700; color: #00e5ff;">₹290</span><span class="pricing-tier-tag">Base</span></div>
                     <button onclick="openDispatchPrompt('ELECTRICIAN')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
-                </div>
-            </div>
-
-            <div class="service-card">
-                <div style="font-size: 2rem; margin-bottom: 15px;">🚰</div>
-                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Hyperlocal Plumber Core</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Leakage detection, pipeline repair, and tap replacements.</p>
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div><span style="font-weight: 700; color: #00e5ff;">₹350</span><span class="pricing-tier-tag">Base Rate</span></div>
-                    <button onclick="openDispatchPrompt('PLUMBER')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
                 </div>
             </div>
         </section>
@@ -301,7 +128,7 @@
                 <input type="text" id="bookingCustomerName" placeholder="Your Name" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 <input type="tel" id="bookingCustomerPhone" placeholder="10-Digit Mobile Number" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="validateIndianPhoneField(this)" style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 <small id="lblPhoneValidationError" style="color: #ff5252; font-size: 0.75rem; display: none; margin-bottom: 15px; margin-top: -10px;">Must be a valid 10-digit Indian mobile number starting with 6-9.</small>
-                <input type="text" id="bookingFlatAddress" placeholder="Flat Address (e.g. Mansarovar)" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
+                <input type="text" id="bookingFlatAddress" placeholder="Full Address Matrix" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 
                 <div style="margin-bottom: 20px; background: #1a1a1e; border: 1px solid #333; padding: 12px; border-radius: 6px; text-align: center;">
                     <label style="color: #aaa; font-size: 0.8rem; display: block; margin-bottom: 8px;">📷 Upload Broken Appliance Photo</label>
@@ -364,17 +191,6 @@
                     <div id="leafletLiveTrackingDashboardMap" style="height: 220px; width: 100%; border-radius: 6px; background: #222;"></div>
                 </div>
             </div>
-            
-            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Booking Records & Invoices</h3>
-            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
-                <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Dispatch</h5>
-                        <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed • Paid via UPI</p>
-                    </div>
-                    <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -387,8 +203,7 @@
                 </div>
                 <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
             </div>
-
-            <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs</h4>
+            <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs Hub</h4>
             <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
     </div>
@@ -417,8 +232,8 @@
                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr style="background: #1a1a1e; color: #aaa; font-size: 0.8rem; text-transform: uppercase;">
-                                <th style="padding: 15px 20px;">Customer Matrix</th>
-                                <th style="padding: 15px 20px;">Service Vector</th>
+                                <th style="padding: 15px 20px;">Customer</th>
+                                <th style="padding: 15px 20px;">Service Node</th>
                                 <th style="padding: 15px 20px;">Address Parameter</th>
                                 <th style="padding: 15px 20px;">Live Status State</th>
                                 <th style="padding: 15px 20px; text-align: right;">Authorization Dispatch</th>
@@ -450,36 +265,8 @@
     <div id="techIdentitySelectionModal" class="modal-overlay">
         <div class="modal-box" style="max-width: 400px; text-align: center;">
             <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">TECHNICIAN HUB PORTAL</h3>
-            <p style="color: #666; font-size: 0.85rem; margin-bottom: 25px;">Select your identity profile to initialize duty session</p>
-            <div style="display: flex; flex-direction: column; gap: 12px;">
-                <button onclick="initializeTechnicianSession('Amit Sharma')" style="background: #18181b; color: #fff; border: 1px solid #27272a; padding: 16px; border-radius: 10px; text-align: left; cursor: pointer; display: flex; align-items: center;">
-                    <span style="font-size: 1.5rem; margin-right: 15px;">⚡</span>
-                    <div><div style="font-weight: 700;">Amit Sharma</div><div style="color:#666; font-size:0.75rem;">Electrician</div></div>
-                </button>
-                <button onclick="initializeTechnicianSession('Deepak Kumar')" style="background: #18181b; color: #fff; border: 1px solid #27272a; padding: 16px; border-radius: 10px; text-align: left; cursor: pointer; display: flex; align-items: center;">
-                    <span style="font-size: 1.5rem; margin-right: 15px;">🚰</span>
-                    <div><div style="font-weight: 700;">Deepak Kumar</div><div style="color:#666; font-size:0.75rem;">Plumber</div></div>
-                </button>
-            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;" id="divTechSelectorList"></div>
             <button onclick="document.getElementById('techIdentitySelectionModal').style.display='none'" style="margin-top:20px; background:transparent; color:#666; border:none; cursor:pointer; text-decoration:underline;">Close Portal</button>
-        </div>
-    </div>
-
-    <footer style="background: #0b0b0c; border-top: 1px solid #1a1a1e; padding: 40px 20px; color: #555; font-size: 0.8rem; margin-top: 60px;">
-        <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px;">
-            <div><h4>SERVO OPERATIONS LOGISTICS INC.</h4><p>© 2026 SERVO India. Fully verified corporate dispatch guidelines.</p></div>
-            <div style="display: flex; gap: 30px;">
-                <a href="#" onclick="openLegalPage()" style="color: #555; text-decoration: none;">Privacy Policy</a>
-                <a href="#" onclick="openLegalPage()" style="color: #555; text-decoration: none;">Terms of Service</a>
-            </div>
-        </div>
-    </footer>
-
-    <div id="legalPageOverlayModal" class="modal-overlay">
-        <div class="modal-box" style="max-width: 600px; display: flex; flex-direction: column; max-height: 80vh;">
-            <h3 id="lblLegalModalTitle" style="color: #00e5ff; margin-bottom: 15px;">SERVO Strategy Agreement</h3>
-            <div id="divLegalModalBodyText" style="overflow-y: auto; flex: 1; font-size: 0.85rem; line-height: 1.6; color: #ccc; margin-bottom: 20px; white-space: pre-wrap;">Hyperlocal home logistics regulations fully locked down for Jaipur enterprise launch portfolio.</div>
-            <button onclick="document.getElementById('legalPageOverlayModal').style.display='none'" style="background: #222; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer;">Acknowledge Guidelines</button>
         </div>
     </div>
 
