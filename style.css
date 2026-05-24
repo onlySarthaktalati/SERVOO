@@ -202,4 +202,4 @@ header.sys-navbar {
     .hero-stats-row { justify-content: center; gap: 25px; }
     .hero-right-visual { display: none; }
     .pipeline-flow-wrapper { grid-template-columns: 1fr; }
-}
+} 
