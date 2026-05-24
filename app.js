@@ -7,7 +7,7 @@ let userDutyStateActive = true;
 let activeTechnicianProfileName = "";
 let selectedHubCityToken = "jaipur";
 
-// Initialize Leaflet Mapping Modules
+// Initialize Map Engine Views
 let mainLandingLeafletMap = L.map('leafletCoreMapContainer', { zoomControl: false }).setView([26.9124, 75.7873], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainLandingLeafletMap);
 let mainLandingMarker = L.marker([26.9124, 75.7873]).addTo(mainLandingLeafletMap);
@@ -42,25 +42,31 @@ const StateWiseMarketplaceDatabase = {
     }
 };
 
+// 👨‍🔧 HIGH-TRUST PRO PROFILE PICTURE MAPPING
+const TechnicianAvatarAssetDatabase = {
+    "Amit Sharma": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=100&h=100&q=80",
+    "Deepak Kumar": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=100&h=100&q=80",
+    "Rajesh Kumar": "https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&w=100&h=100&q=80",
+    "Suresh Pal": "https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=100&h=100&q=80",
+    "Milind Gade": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80",
+    "Chetan Shinde": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&h=100&q=80"
+};
+
 function executeCityMarketplaceShift() {
     selectedHubCityToken = document.getElementById('ddlCitySelectorNode').value;
     const context = StateWiseMarketplaceDatabase[selectedHubCityToken];
     if (!context) return;
 
-    // 1. Swap pricing configurations labels inside frontend grids
     document.getElementById('lblPriceAc').innerText = context.acPrice;
     document.getElementById('lblPriceElec').innerText = context.elecPrice;
 
-    // 2. Adjust browser title metadata structures cleanly
     document.getElementById('lblCurrentSEOZoneBadge').innerText = context.name;
     document.getElementById('dynamicAppSEOTitle').innerText = context.seoTitle;
     document.getElementById('dynamicAppSEODesc').setAttribute('content', context.seoDesc);
 
-    // 3. Update Leaflet center map pin references
     mainLandingLeafletMap.setView(context.coords, 12);
     mainLandingMarker.setLatLng(context.coords);
 
-    // 4. Reset localized area sub-zone pills
     const pillContainer = document.getElementById('divSubZonePillContainer');
     pillContainer.innerHTML = "";
     context.subZones.forEach((zone, idx) => {
@@ -75,7 +81,6 @@ function executeCityMarketplaceShift() {
         pillContainer.appendChild(pill);
     });
 
-    // 5. Update technician routing lists options parameters
     const techSelectContainer = document.getElementById('divTechSelectorList');
     techSelectContainer.innerHTML = "";
     context.technicians.forEach(techName => {
@@ -91,16 +96,29 @@ function executeCityMarketplaceShift() {
 }
 
 // ==========================================
-// 🔔 SIMULATION COMMUNICATION PIPE HANDLERS
+// 🔔 SIMULATION COMMUNICATION HANDLERS
 // ==========================================
 const LocalNotificationPipelineChannel = new BroadcastChannel('servo_push_simulation_matrix_2026');
 LocalNotificationPipelineChannel.onmessage = function(event) {
     if (event.data.actionType === "PUSH_ALERT") {
         triggerToastFeedback(`🔔 NOTIFICATION: ${event.data.title}\n${event.data.body}`);
+        
+        // Dynamic payload update to inject specific verified avatars into active panels
+        if (event.data.assignedTechName && document.getElementById('lblCustTrackedTechName')) {
+            document.getElementById('lblCustTrackedTechName').innerText = event.data.assignedTechName;
+            const targetAvatarUrl = TechnicianAvatarAssetDatabase[event.data.assignedTechName] || "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=100&h=100&q=80";
+            document.getElementById('imgCustTrackedTechAvatar').src = targetAvatarUrl;
+        }
     }
 };
-function dispatchMockPushPayload(alertTitle, alertBody) {
-    LocalNotificationPipelineChannel.postMessage({ actionType: "PUSH_ALERT", title: alertTitle, body: alertBody });
+
+function dispatchMockPushPayload(alertTitle, alertBody, techName = null) {
+    LocalNotificationPipelineChannel.postMessage({ 
+        actionType: "PUSH_ALERT", 
+        title: alertTitle, 
+        body: alertBody,
+        assignedTechName: techName 
+    });
     triggerToastFeedback(`🔔 NOTIFICATION: ${alertTitle}\n${alertBody}`);
 }
 
@@ -129,7 +147,7 @@ function triggerToastFeedback(messageText, isErrorState = false) {
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
-// FORM SUBMISSIONS LOOP LOGICS
+// FORM SUBMISSIONS
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
     cachedBookingFormData = {
@@ -164,7 +182,6 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
         closeDispatchPrompt();
         if(finalData.success) {
             document.getElementById('lblSuccessService').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-            document.getElementById('lblSuccessPro').innerText = "Pending Allocation";
             document.getElementById('successScreenOverlay').style.display = 'flex';
             document.getElementById('bookingSubmissionForm').reset();
             document.getElementById('bookingOtpVerificationForm').reset();
@@ -231,7 +248,7 @@ function pullActiveTechnicianJobsRegistryLoop() {
             }
         })
         .catch(() => {
-            renderTechnicianJobQueueGrid([{ _id: "664f15e8c", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "ELECTRICIAN", flatAddress: "Hub Operational Complex Limits Area", status: "Assigned" }]);
+            renderTechnicianJobQueueGrid([{ _id: "664f15e8c", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "ELECTRICIAN", flatAddress: "Hub Operational Area limits", status: "Assigned" }]);
         });
 }
 
@@ -366,7 +383,7 @@ window.executeServerStatusMutation = function(bookingId, combinedIntegratedStrin
         body: JSON.stringify({ bookingId: bookingId, technicianName: tokens[0], targetStatus: tokens[1] })
     })
     .then(() => {
-        dispatchMockPushPayload(`👨‍🔧 Status Updated`, `Booking changed to: ${tokens[1]}`);
+        dispatchMockPushPayload(`👨‍🔧 Technician Assigned`, `Your booking status updated to ${tokens[1]}.`, tokens[0]);
         pullLiveAggregatedBusinessMetrics(); 
     });
 };
