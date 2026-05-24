@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <title id="dynamicAppSEOTitle">SERVO | Premium Doorstep Electricians, Plumbers & AC Repair Specialists</title>
-    <meta name="description" id="dynamicAppSEODesc" content="Get professional, background-verified home logistics repair experts directly at your doorstep within 45 minutes. Select your state and city to view real-time rates.">
+    <meta name="description" id="dynamicAppSEODesc" content="Get professional, background-verified home repair experts directly at your doorstep within 45 minutes. Select your city to see local rates and book pros.">
     
     <link rel="icon" type="image/x-icon" href="https://servoo-beige.vercel.app/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,8 +18,8 @@
     {
       "@context": "https://schema.org",
       "@type": "HomeAndConstructionBusiness",
-      "name": "SERVO On-Demand Home Logistics",
-      "description": "Premium On-Demand Electricians, Plumbers & AC Repair Specialists across India's state-wise hubs.",
+      "name": "SERVO On-Demand Home Services",
+      "description": "Premium On-Demand Electricians, Plumbers & AC Repair Specialists across India's top hubs.",
       "url": "https://servoo-beige.vercel.app",
       "priceRange": "INR 290 - INR 2000"
     }
@@ -51,9 +51,9 @@
         .pricing-tier-tag { font-size: 0.75rem; background: rgba(0, 229, 255, 0.08); padding: 4px 8px; border-radius: 6px; color: #00e5ff; margin-left: 10px; font-weight: 700; text-transform: uppercase; border: 1px solid rgba(0, 229, 255, 0.2); }
         .network-retry-banner { display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #ff1744; color: #fff; padding: 12px 24px; border-radius: 8px; font-weight: 700; z-index: 100000; align-items: center; gap: 15px; }
         
-        /* 🗺️ STATE & CITY HEADER DROPDOWN FIELDS */
-        .location-select-container { display: flex; gap: 8px; background: #121214; padding: 6px 12px; border-radius: 8px; border: 1px solid #27272a; }
-        .nav-dropdown { background: transparent; color: #fff; border: none; font-size: 0.85rem; font-weight: 600; outline: none; cursor: pointer; max-width: 140px; }
+        /* 🏙️ HEADER LOCATION DROP-DOWN */
+        .location-select-container { display: flex; gap: 8px; background: #121214; padding: 8px 16px; border-radius: 8px; border: 1px solid #27272a; align-items: center; }
+        .nav-dropdown { background: transparent; color: #fff; border: none; font-size: 0.85rem; font-weight: 700; outline: none; cursor: pointer; }
         .nav-dropdown option { background: #121214; color: #fff; }
 
         @keyframes slideInUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
@@ -62,8 +62,8 @@
 <body>
 
     <div id="globalNetworkErrorBanner" class="network-retry-banner">
-        <span>⚠️ Connection Dropped. Handshake pipeline interrupted.</span>
-        <button onclick="retryLastNetworkOperation()" style="background: #fff; color: #ff1744; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Retry Now</button>
+        <span>⚠️ Connection dropped. Please check your internet.</span>
+        <button onclick="retryLastNetworkOperation()" style="background: #fff; color: #ff1744; border: none; padding: 6px 12px; font-weight: 700; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Retry</button>
     </div>
 
     <div id="mainCoreAppWindowView">
@@ -71,18 +71,19 @@
             <div class="logo" onclick="location.reload()">SERVO<span>.</span></div>
             
             <div class="location-select-container">
-                <span style="font-size: 1rem; display: flex; align-items: center;">📍</span>
-                <select id="ddlStateSelectorNode" onchange="populateCitiesDropdownBasedOnState()" class="nav-dropdown">
-                    </select>
-                <span style="color: #27272a; font-weight: 400;">|</span>
+                <span>📍</span>
                 <select id="ddlCitySelectorNode" onchange="executeCityMarketplaceShift()" class="nav-dropdown">
-                    </select>
+                    <option value="jaipur">Jaipur Hub</option>
+                    <option value="delhi">Delhi NCR Hub</option>
+                    <option value="mumbai">Mumbai Hub</option>
+                </select>
+                <span id="lblCurrentSEOZoneBadge" style="font-size: 0.75rem; color: #666; margin-left: 5px; font-weight: 600;">All Areas</span>
             </div>
         </header>
 
         <section id="hero" class="hero-section">
-            <h1 id="dynamicSEOHeroTitle">PREMIUM ON-DEMAND<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
-            <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your residence. Book background-verified experts within 45 minutes.</p>
+            <h1 id="dynamicSEOHeroTitle">PREMIUM DOORSTEP<br><span style="color: #00e5ff;">HOME SERVICES</span></h1>
+            <p id="dynamicSEOHeroDesc" style="color: #666; font-size: 1.1rem; margin-top: 15px;">Experience professional care for your home. Book background-verified experts within 45 minutes.</p>
         </section>
 
         <div class="seo-location-bar" id="divSubZonePillContainer"></div>
@@ -91,7 +92,7 @@
             <div class="service-card">
                 <div style="font-size: 2rem; margin-bottom: 15px;">❄️</div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">AC Repair & Servicing</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Complete cooling checkup diagnostics, premium jet cleaning, and filter adjustments.</p>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Complete cooling diagnostics, premium jet cleaning, and gas top-ups.</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div><span id="lblPriceAc" style="font-weight: 700; color: #00e5ff;">₹450</span><span class="pricing-tier-tag">Base</span></div>
                     <button onclick="openDispatchPrompt('AC_REPAIR')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
@@ -101,7 +102,7 @@
             <div class="service-card">
                 <div style="font-size: 2rem; margin-bottom: 15px;">⚡</div>
                 <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 5px;">Emergency Electrician</h3>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Short-circuit debugging tracking, modular board fixes, and appliance setups.</p>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 15px;">Short-circuit fixes, modular switchboard repairs, and inverter setups.</p>
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div><span id="lblPriceElec" style="font-weight: 700; color: #00e5ff;">₹290</span><span class="pricing-tier-tag">Base</span></div>
                     <button onclick="openDispatchPrompt('ELECTRICIAN')" style="background: #fff; color: #000; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 700; cursor: pointer;">Book Now</button>
@@ -120,11 +121,11 @@
             <form id="bookingSubmissionForm">
                 <input type="text" id="bookingCustomerName" placeholder="Your Name" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 <input type="tel" id="bookingCustomerPhone" placeholder="10-Digit Mobile Number" required pattern="[6-9][0-9]{9}" maxlength="10" oninput="validateIndianPhoneField(this)" style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
-                <small id="lblPhoneValidationError" style="color: #ff5252; font-size: 0.75rem; display: none; margin-bottom: 15px; margin-top: -10px;">Must be a valid 10-digit Indian mobile number starting with 6-9.</small>
-                <input type="text" id="bookingFlatAddress" placeholder="Full Home Address Parameter" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
+                <small id="lblPhoneValidationError" style="color: #ff5252; font-size: 0.75rem; display: none; margin-bottom: 15px; margin-top: -10px;">Must be a valid 10-digit mobile number starting with 6-9.</small>
+                <input type="text" id="bookingFlatAddress" placeholder="Full Home Address" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; margin-bottom: 15px;">
                 
                 <div style="margin-bottom: 20px; background: #1a1a1e; border: 1px solid #333; padding: 12px; border-radius: 6px; text-align: center;">
-                    <label style="color: #aaa; font-size: 0.8rem; display: block; margin-bottom: 8px;">📷 Upload Broken Appliance Photo</label>
+                    <label style="color: #aaa; font-size: 0.8rem; display: block; margin-bottom: 8px;">📷 Upload Photo of the Issue (Optional)</label>
                     <input type="file" id="fileApplianceIssueCapture" accept="image/*" onchange="processLocalImagePreview(this)" style="font-size: 0.8rem; color: #666;">
                     <div id="imgApplianceUploadPreviewContainer" style="display: none; margin-top: 10px;"><img id="imgLiveApplianceSource" src="" style="max-height: 80px; border-radius: 4px; border: 1px solid #00e5ff;"></div>
                 </div>
@@ -133,9 +134,9 @@
             </form>
 
             <form id="bookingOtpVerificationForm" style="display: none; text-align: center;">
-                <p style="color: #aaa; margin-bottom: 15px; font-size: 0.9rem;">Enter 4-Digit Code:</p>
+                <p style="color: #aaa; margin-bottom: 15px; font-size: 0.9rem;">Enter the 4-digit code sent to your mobile phone:</p>
                 <input type="text" id="bookingVerifiedOtpInput" placeholder="••••" maxlength="4" required style="width: 100px; padding: 12px; background: #1a1a1e; border: 1px solid #333; border-radius: 6px; color: #fff; text-align: center; letter-spacing: 4px; font-size: 1.2rem; margin-bottom: 20px;">
-                <button type="submit" id="btnVerifyOtp" style="width: 100%; padding: 12px; background: #00e676; color: #000; border: none; font-weight: 700; border-radius: 6px; cursor: pointer;">Verify & Complete Booking</button>
+                <button type="submit" id="btnVerifyOtp" style="width: 100%; padding: 12px; background: #00e676; color: #000; border: none; font-weight: 700; border-radius: 6px; cursor: pointer;">Verify & Confirm Booking</button>
             </form>
         </div>
     </div>
@@ -144,22 +145,22 @@
         <div class="modal-box" style="text-align: center; max-width: 380px;">
             <div style="font-size: 3rem; margin-bottom: 15px;">🎉</div>
             <h3 style="font-size: 1.5rem; font-weight: 800; color: #00e676; margin-bottom: 10px;">Booking Confirmed!</h3>
-            <p style="color: #aaa; font-size: 0.9rem; line-height: 1.4; margin-bottom: 20px;">Your transaction vector has cleared. Service category <strong id="lblSuccessService" style="color:#fff;"></strong> assigned to specialist partner <strong id="lblSuccessPro" style="color:#00e5ff;"></strong>.</p>
-            <button onclick="document.getElementById('successScreenOverlay').style.display='none'" style="width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Dismiss Panel</button>
+            <p style="color: #aaa; font-size: 0.9rem; line-height: 1.4; margin-bottom: 20px;">Your request has been saved. <span id="lblSuccessService" style="color:#fff; font-weight: 600;"></span> assigned to professional partner <strong id="lblSuccessPro" style="color:#00e5ff;"></strong>.</p>
+            <button onclick="document.getElementById('successScreenOverlay').style.display='none'" style="width:100%; padding:12px; background:#222; color:#fff; border:none; border-radius:6px; font-weight:700; cursor:pointer;">Dismiss</button>
         </div>
     </div>
 
     <div id="customerDashboardPanel" style="display: none; padding: 30px 15px; background: #0b0b0c; min-height: 100vh; color: #fff;">
         <div style="max-width: 800px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-                <h2 style="font-size: 1.5rem; font-weight: 800;">Your <span style="color: #00e5ff;">SERVO Profile</span></h2>
+                <h2 style="font-size: 1.5rem; font-weight: 800;">Your <span style="color: #00e5ff;">Profile Dashboard</span></h2>
                 <button onclick="exitToMainHome()" style="background: #1a1a1e; color: #fff; border: 1px solid #333; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer;">Home</button>
             </div>
 
             <div id="activeBookingCard" style="background: #121214; border: 1px solid #00e5ff; padding: 20px; border-radius: 12px; margin-bottom: 30px; display: none;">
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
                     <div>
-                        <span style="background: rgba(0, 229, 255, 0.1); color: #00e5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Active Pipeline Tracker</span>
+                        <span style="background: rgba(0, 229, 255, 0.1); color: #00e5ff; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Current Booking</span>
                         <h4 id="custActiveServiceType" style="font-size: 1.25rem; margin-top: 8px; font-weight: 700;">AC Repair Assignment</h4>
                     </div>
                     <div id="custActiveStatusBadge" style="color: #ffb300; font-weight: 700; font-size: 0.9rem; text-transform: uppercase;">● ASSIGNED</div>
@@ -178,10 +179,21 @@
 
                 <div style="background: #1a1a1e; padding: 15px; border-radius: 8px; border: 1px solid #222;">
                     <div style="display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 12px; color: #aaa;">
-                        <span>📍 Dynamic Hyperlocal Grid Mapping Active</span>
+                        <span>🗺️ Live Tracking</span>
                         <span style="color: #ff5252; font-weight: 700;">ETA: ~15 Mins</span>
                     </div>
                     <div id="leafletLiveTrackingDashboardMap" style="height: 220px; width: 100%; border-radius: 6px; background: #222;"></div>
+                </div>
+            </div>
+            
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 15px; color: #aaa;">Past Bookings & Invoices</h3>
+            <div id="customerPastBookingsContainer" style="display: flex; flex-direction: column; gap: 15px;">
+                <div style="background: #121214; border: 1px solid #222; padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h5 style="font-weight: 700; font-size: 0.95rem;">Premium Plumbing Service</h5>
+                        <p style="color: #666; font-size: 0.8rem; margin-top: 4px;">Completed • Paid via UPI</p>
+                    </div>
+                    <button style="background: #1a1a1e; color: #00e5ff; border: 1px solid #333; padding: 6px 12px; border-radius: 4px; font-size: 0.8rem; font-weight: 600;">View Invoice 🧾</button>
                 </div>
             </div>
         </div>
@@ -196,7 +208,7 @@
                 </div>
                 <button id="btnTechAvailabilityToggle" onclick="toggleTechDutyState()" style="background: #00e676; color: #000; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.8rem; cursor: pointer; text-transform: uppercase;">Duty: ON</button>
             </div>
-            <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Assigned Operational Jobs Hub</h4>
+            <h4 style="font-size: 1rem; color: #aaa; margin-bottom: 15px; font-weight: 700;">Your Assigned Jobs</h4>
             <div id="techActiveJobsQueue" style="display: flex; flex-direction: column; gap: 15px;"></div>
         </div>
     </div>
@@ -204,32 +216,32 @@
     <div id="adminDashboardPortal" style="display: none; padding: 40px 20px; background: #0b0b0c; min-height: 100vh; color: #fff;">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #222; padding-bottom: 20px;">
-                <h1 style="font-size: 1.8rem; font-weight: 800;">SERVO <span style="color: #00e5ff;">ENTERPRISE COMMAND GATE</span></h1>
-                <button onclick="exitAdminConsole()" style="background: #222; color: #fff; border: 1px solid #333; padding: 10px 20px; font-weight: 600; cursor: pointer; border-radius: 4px;">Exit HQ</button>
+                <h1 style="font-size: 1.8rem; font-weight: 800;">SERVO <span style="color: #00e5ff;">MANAGEMENT DESK</span></h1>
+                <button onclick="exitAdminConsole()" style="background: #222; color: #fff; border: 1px solid #333; padding: 10px 20px; font-weight: 600; cursor: pointer; border-radius: 4px;">Exit Desk</button>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 40px;">
                 <div class="metric-card-box" style="border-left: 4px solid #00e5ff;">
-                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Aggregated Gross Revenue</p>
+                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Total Sales Revenue</p>
                     <h3 id="lblMetricsGrossRevenue" style="font-size: 2rem; margin-top: 5px; color: #00e676;">₹0</h3>
                 </div>
                 <div class="metric-card-box" style="border-left: 4px solid #ffb300;">
-                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Active En-Route Pipelines</p>
+                    <p style="color: #666; font-size: 0.8rem; text-transform: uppercase;">Active Ongoing Bookings</p>
                     <h3 id="lblMetricsLiveJobs" style="font-size: 2rem; margin-top: 5px;">0</h3>
                 </div>
             </div>
 
             <div style="background: #121214; border: 1px solid #222; border-radius: 8px; overflow: hidden;">
-                <div style="padding: 20px; border-bottom: 1px solid #222;"><h2 style="font-size: 1.1rem; font-weight: 700;">Secure Central Dispatch Management Desk</h2></div>
+                <div style="padding: 20px; border-bottom: 1px solid #222;"><h2 style="font-size: 1.1rem; font-weight: 700;">Booking Dashboard</h2></div>
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; text-align: left;">
                         <thead>
                             <tr style="background: #1a1a1e; color: #aaa; font-size: 0.8rem; text-transform: uppercase;">
-                                <th style="padding: 15px 20px;">Customer</th>
-                                <th style="padding: 15px 20px;">Service Node</th>
-                                <th style="padding: 15px 20px;">Address Parameter</th>
-                                <th style="padding: 15px 20px;">Live Status State</th>
-                                <th style="padding: 15px 20px; text-align: right;">Authorization Dispatch</th>
+                                <th style="padding: 15px 20px;">Customer Details</th>
+                                <th style="padding: 15px 20px;">Service Type</th>
+                                <th style="padding: 15px 20px;">Address</th>
+                                <th style="padding: 15px 20px;">Booking Status</th>
+                                <th style="padding: 15px 20px; text-align: right;">Assign Technician</th>
                             </tr>
                         </thead>
                         <tbody id="adminLiveBookingTableBody"></tbody>
@@ -239,35 +251,48 @@
         </div>
     </div>
 
-    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"><button onclick="toggleAdminLoginForm()" style="background: rgba(18,18,20,0.85); color: #aaa; border: 1px solid #333; padding: 10px 15px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; backdrop-filter: blur(10px);">🔒 Staff HQ Login</button></div>
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;"><button onclick="toggleAdminLoginForm()" style="background: rgba(18,18,20,0.85); color: #aaa; border: 1px solid #333; padding: 10px 15px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; backdrop-filter: blur(10px);">🔒 Staff Login</button></div>
     <div id="adminLoginModal" class="modal-overlay">
         <div class="modal-box" style="text-align: center;">
-            <h3 style="font-weight:700; margin-bottom: 10px;">SERVO CORE AUTH PRIVILEGES</h3>
+            <h3 style="font-weight:700; margin-bottom: 10px;">SERVO SECURE PORTAL AUTH</h3>
             <form id="frmAdminSecureAuth">
                 <input type="password" id="txtAdminSecretPassphrase" placeholder="••••••••" required style="width: 100%; padding: 12px; background: #1a1a1e; border: 1px solid #333; text-align: center; color: #fff; margin-bottom: 20px; letter-spacing: 4px;">
-                <button type="submit" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; font-weight: 700; border-radius: 4px; cursor: pointer;">Authenticate Gate</button>
+                <button type="submit" style="width: 100%; padding: 12px; background: #00e5ff; color: #000; border: none; font-weight: 700; border-radius: 4px; cursor: pointer;">Login</button>
             </form>
         </div>
     </div>
 
     <div style="position: fixed; bottom: 20px; left: 20px; z-index: 9999; display: flex; gap: 10px; background: rgba(18, 18, 20, 0.8); padding: 6px; border-radius: 8px; border: 1px solid #27272a; backdrop-filter: blur(10px);">
-        <button onclick="switchToPanel('customer')" style="background: #18181b; color: #aaa; border: 1px solid #27272a; padding: 10px 14px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 700;">📱 Client Desk</button>
+        <button onclick="switchToPanel('customer')" style="background: #18181b; color: #aaa; border: 1px solid #27272a; padding: 10px 14px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 700;">📱 Customer View</button>
         <button onclick="openTechnicianIdentityGate()" style="background: #18181b; color: #00e5ff; border: 1px solid rgba(0, 229, 255, 0.2); padding: 10px 14px; font-size: 0.75rem; border-radius: 6px; cursor: pointer; font-weight: 700;">👨‍🔧 Tech Hub</button>
     </div>
 
     <div id="techIdentitySelectionModal" class="modal-overlay">
         <div class="modal-box" style="max-width: 400px; text-align: center;">
-            <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">TECHNICIAN HUB PORTAL</h3>
+            <h3 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;">TECHNICIAN SIGN-IN</h3>
+            <p style="color: #666; font-size: 0.85rem; margin-bottom: 25px;">Select your name to initialize your active daily work shifts</p>
             <div style="display: flex; flex-direction: column; gap: 12px;" id="divTechSelectorList"></div>
-            <button onclick="document.getElementById('techIdentitySelectionModal').style.display='none'" style="margin-top:20px; background:transparent; color:#666; border:none; cursor:pointer; text-decoration:underline;">Close Portal</button>
+            <button onclick="document.getElementById('techIdentitySelectionModal').style.display='none'" style="margin-top:20px; background:transparent; color:#666; border:none; cursor:pointer; text-decoration:underline;">Cancel</button>
         </div>
     </div>
 
     <footer style="background: #0b0b0c; border-top: 1px solid #1a1a1e; padding: 40px 20px; color: #555; font-size: 0.8rem; margin-top: 60px;">
         <div style="max-width: 1100px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px;">
-            <div><h4>SERVO OPERATIONS LOGISTICS INC.</h4><p>© 2026 SERVO India. Fully verified multi-state corporate packaging guidelines.</p></div>
+            <div><h4>SERVO HOME SERVICES PRIVATE LTD</h4><p>© 2026 SERVO India. Background-checked doorstep technicians.</p></div>
+            <div style="display: flex; gap: 30px;">
+                <a href="#" onclick="openLegalPage()" style="color: #555; text-decoration: none;">Privacy Policy</a>
+                <a href="#" onclick="openLegalPage()" style="color: #555; text-decoration: none;">Terms of Service</a>
+            </div>
         </div>
     </footer>
+
+    <div id="legalPageOverlayModal" class="modal-overlay">
+        <div class="modal-box" style="max-width: 600px; display: flex; flex-direction: column; max-height: 80vh;">
+            <h3 id="lblLegalModalTitle" style="color: #00e5ff; margin-bottom: 15px;">User Terms Policy Guidelines</h3>
+            <div id="divLegalModalBodyText" style="overflow-y: auto; flex: 1; font-size: 0.85rem; line-height: 1.6; color: #ccc; margin-bottom: 20px; white-space: pre-wrap;">All structural customer home data metrics are fully confidential under Indian data privacy acts.</div>
+            <button onclick="document.getElementById('legalPageOverlayModal').style.display='none'" style="background: #222; color: #fff; border: 1px solid #333; padding: 12px; border-radius: 6px; cursor: pointer;">Close Policy</button>
+        </div>
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="app.js"></script>
