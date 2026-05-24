@@ -5,108 +5,140 @@ let cachedBookingFormData = {};
 let serializedAppliancePhotoData = null;
 let userDutyStateActive = true;
 let activeTechnicianProfileName = "";
-let selectedMarketplaceCityToken = "jaipur"; // Default Fallback
 
-// Initialize Master Map System Variables
+// Initialize Leaflet Mapping Layers
 let mainLandingLeafletMap = L.map('leafletCoreMapContainer', { zoomControl: false }).setView([26.9124, 75.7873], 12);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mainLandingLeafletMap);
 let mainLandingMarker = L.marker([26.9124, 75.7873]).addTo(mainLandingLeafletMap);
 
 // ==========================================
-// 🌍 MULTI-CITY LOGISTICS REGISTRY ENGINES (Item 12 Pivot)
+// 🗺️ STATE-WISE GEOGRAPHICAL DATA MATRIX SYSTEM (Item 12 Upgrade)
 // ==========================================
-const GlobalCityMarketplaceMatrix = {
-    jaipur: {
-        name: "Jaipur Hub",
-        coords: [26.9124, 75.7873],
-        acPrice: "₹450", elecPrice: "₹290",
-        seoTitle: "SERVO | Best Electricians, Plumbers & AC Repair in Jaipur",
-        seoDesc: "Get premium background-verified technicians in Jaipur directly at your doorstep within 45 minutes.",
-        subZones: ['All Hubs', 'Mansarovar', 'Vaishali Nagar', 'Malviya Nagar'],
-        technicians: [
-            { name: "Amit Sharma", role: "Electrician" },
-            { name: "Deepak Kumar", role: "Plumber" }
-        ]
+const StateWiseMarketplaceDatabase = {
+    "Rajasthan": {
+        "Jaipur": {
+            coords: [26.9124, 75.7873], acPrice: "₹450", elecPrice: "₹290",
+            seoTitle: "SERVO | Top AC Repair & Doorstep Electricians in Jaipur",
+            seoDesc: "Verified home repairs in Jaipur city. Book professional mechanics across Mansarovar, Vaishali, and Malviya Nagar.",
+            subZones: ['All Jaipur', 'Mansarovar Hub', 'Vaishali Nagar', 'Malviya Nagar Area'],
+            technicians: ["Amit Sharma", "Deepak Kumar"]
+        },
+        "Jodhpur": {
+            coords: [26.2389, 73.0243], acPrice: "₹420", elecPrice: "₹250",
+            seoTitle: "Emergency Plumbers & Electrician Services in Jodhpur | SERVO",
+            seoDesc: "Hyperlocal on-demand repairs in Jodhpur. Get top background-verified home fix specialists in 45 minutes.",
+            subZones: ['All Jodhpur', 'Sardarpura Sector', 'Shastri Nagar Grid', 'Ratanada Circle'],
+            technicians: ["Gopal Singh", "Karan Bhati"]
+        }
     },
-    delhi: {
-        name: "Delhi NCR Hub",
-        coords: [28.6139, 77.2090],
-        acPrice: "₹590", elecPrice: "₹350", // Higher dynamic Tier Pricing rules for Metros
-        seoTitle: "Emergency Electricians & AC Repair in Delhi NCR | SERVO",
-        seoDesc: "Professional doorstep home repairs across Delhi, Gurgaon, and Noida in 45 minutes flat.",
-        subZones: ['All Hubs', 'Connaught Place', 'Gurgaon Sec-45', 'Noida Phase-2'],
-        technicians: [
-            { name: "Rajesh Kumar", role: "Electrician" },
-            { name: "Suresh Pal", role: "Plumber" }
-        ]
+    "Delhi NCR": {
+        "New Delhi": {
+            coords: [28.6139, 77.2090], acPrice: "₹590", elecPrice: "₹350",
+            seoTitle: "24/7 Handyman & AC Repair Specialists New Delhi | SERVO",
+            seoDesc: "Premium home maintenance services in New Delhi. On-demand doorstep mechanics dispatched instantly.",
+            subZones: ['All Delhi Central', 'Connaught Place Sec', 'Saket Hub Node', 'Dwarka Sector Grid'],
+            technicians: ["Rajesh Kumar", "Suresh Pal"]
+        },
+        "Gurgaon": {
+            coords: [28.4595, 77.0266], acPrice: "₹650", elecPrice: "₹390",
+            seoTitle: "Verified Doorstep Electricians & Plumbers in Gurgaon | SERVO",
+            seoDesc: "Corporate home operations repair grids across Gurgaon Cyber City and residential complexes.",
+            subZones: ['All Gurgaon', 'DLF Phase 3', 'Sohna Road Local', 'Sector 56 Matrix'],
+            technicians: ["Vikas Yadav", "Rohan Mehta"]
+        }
     },
-    mumbai: {
-        name: "Mumbai Central Hub",
-        coords: [19.0760, 72.8777],
-        acPrice: "₹650", elecPrice: "₹390",
-        seoTitle: "Premium On-Demand Plumbers & Home Repair Mumbai | SERVO",
-        seoDesc: "Top background-verified home maintenance specialists across Mumbai Metro zones.",
-        subZones: ['All Hubs', 'Andheri West', 'Bandra Local', 'Colaba Matrix'],
-        technicians: [
-            { name: "Milind Gade", role: "Electrician" },
-            { name: "Chetan Shinde", role: "Plumber" }
-        ]
+    "Maharashtra": {
+        "Mumbai": {
+            coords: [19.0760, 72.8777], acPrice: "₹690", elecPrice: "₹420",
+            seoTitle: "Best Home Repair Services & Appliance Fixed Mumbai | SERVO",
+            seoDesc: "Background-checked home mechanics operating across Mumbai Metro zones for instant deployment.",
+            subZones: ['All Mumbai Central', 'Andheri West Lanes', 'Bandra Matrix Link', 'Colaba Portal Core'],
+            technicians: ["Milind Gade", "Chetan Shinde"]
+        }
     }
 };
 
-function bootstrapMarketplaceZone(citySlugKey) {
-    selectedMarketplaceCityToken = citySlugKey;
-    const cityConfig = GlobalCityMarketplaceMatrix[citySlugKey];
-    if (!cityConfig) return;
+// INITIALIZE DROP-DOWNS AUTO-POPULATION ON WEB BOOT
+document.addEventListener("DOMContentLoaded", () => {
+    const stateDropdown = document.getElementById('ddlStateSelectorNode');
+    stateDropdown.innerHTML = "";
+    
+    // Add corporate options lists
+    Object.keys(StateWiseMarketplaceDatabase).forEach(stateName => {
+        const option = document.createElement('option');
+        option.value = stateName; option.innerText = stateName;
+        stateDropdown.appendChild(option);
+    });
 
-    // 1. Clear Gatekeeper View Overlay
-    document.getElementById('servoGlobalCityGatekeeperModal').style.display = 'none';
+    populateCitiesDropdownBasedOnState(); // Cascade initialization down to city dropdown
+});
 
-    // 2. Adjust pricing metrics labels based on city Tier arrays
-    document.getElementById('lblPriceAc').innerText = cityConfig.acPrice;
-    document.getElementById('lblPriceElec').innerText = cityConfig.elecPrice;
+function populateCitiesDropdownBasedOnState() {
+    const selectedState = document.getElementById('ddlStateSelectorNode').value;
+    const cityDropdown = document.getElementById('ddlCitySelectorNode');
+    cityDropdown.innerHTML = "";
 
-    // 3. Mutate header status badges and crawler parameters
-    document.getElementById('lblCurrentSEOZoneBadge').innerText = `📍 ${cityConfig.name}: All Hubs`;
-    document.getElementById('dynamicAppSEOTitle').innerText = cityConfig.seoTitle;
-    document.getElementById('dynamicAppSEODesc').setAttribute('content', cityConfig.seoDesc);
+    const availableCitiesList = Object.keys(StateWiseMarketplaceDatabase[selectedState]);
+    availableCitiesList.forEach(cityName => {
+        const option = document.createElement('option');
+        option.value = cityName; option.innerText = cityName;
+        cityDropdown.appendChild(option);
+    });
 
-    // 4. Center-pan mapping matrices over target city limits
-    mainLandingLeafletMap.setView(cityConfig.coords, 12);
-    mainLandingMarker.setLatLng(cityConfig.coords);
+    executeCityMarketplaceShift(); // Commit configuration mapping immediately
+}
 
-    // 5. Build neighborhood sub-zone sub-pills dynamically
+function executeCityMarketplaceShift() {
+    const selectedState = document.getElementById('ddlStateSelectorNode').value;
+    const selectedCity = document.getElementById('ddlCitySelectorNode').value;
+    
+    const context = StateWiseMarketplaceDatabase[selectedState][selectedCity];
+    if (!context) return;
+
+    // 1. Swap active pricing nodes instantly down the tier list
+    document.getElementById('lblPriceAc').innerText = context.acPrice;
+    document.getElementById('lblPriceElec').innerText = context.elecPrice;
+
+    // 2. Adjust corporate text loops and local crawling tokens
+    document.getElementById('dynamicAppSEOTitle').innerText = context.seoTitle;
+    document.getElementById('dynamicAppSEODesc').setAttribute('content', context.seoDesc);
+
+    // 3. Pan coordinates bounds instantly to center over newly matched city parameters
+    mainLandingLeafletMap.setView(context.coords, 12);
+    mainLandingMarker.setLatLng(context.coords);
+
+    // 4. Reset sub-pilled neighborhood sub-sectors configurations dynamically
     const pillContainer = document.getElementById('divSubZonePillContainer');
     pillContainer.innerHTML = "";
-    cityConfig.subZones.forEach((zone, idx) => {
+    context.subZones.forEach((zone, idx) => {
         const pill = document.createElement('button');
         pill.className = `location-pill ${idx === 0 ? 'active-hub' : ''}`;
         pill.innerText = zone;
         pill.onclick = () => {
             document.querySelectorAll('.location-pill').forEach(p => p.classList.remove('active-hub'));
             pill.classList.add('active-hub');
-            document.getElementById('lblCurrentSEOZoneBadge').innerText = `📍 ${cityConfig.name}: ${zone}`;
+            triggerToastFeedback(`Sub-zone mapped: ${zone}`);
         };
         pillContainer.appendChild(pill);
     });
 
-    // 6. Bind technician authorization select options dynamically to avoid profile cross leaks
+    // 5. Update technician routing permissions exclusively for this city boundary layer
     const techSelectContainer = document.getElementById('divTechSelectorList');
     techSelectContainer.innerHTML = "";
-    cityConfig.technicians.forEach(tech => {
+    context.technicians.forEach(techName => {
         const btn = document.createElement('button');
-        btn.className = "city-grid-btn";
-        btn.style.background = "#18181b"; btn.style.padding = "14px";
-        btn.innerHTML = `<div><strong>${tech.name}</strong> <p style="font-size:0.7rem; color:#666;">${tech.role}</p></div> <span>Select</span>`;
-        btn.onclick = () => initializeTechnicianSession(tech.name);
+        btn.style.background = "#18181b"; btn.style.padding = "14px"; btn.className = "location-pill";
+        btn.style.width = "100%"; btn.style.textAlign = "left"; btn.style.color = "#fff";
+        btn.innerHTML = `<strong>${techName}</strong> <span style="float:right; color:#666;">➔</span>`;
+        btn.onclick = () => initializeTechnicianSession(techName);
         techSelectContainer.appendChild(btn);
     });
 
-    triggerToastFeedback(`Marketplace re-routed to: ${cityConfig.name}`);
+    triggerToastFeedback(`System configured for: ${selectedCity}, ${selectedState}`);
 }
 
 // ==========================================
-// 🔔 SIMULATION COMMUNICATIONS PIPE BROADCAMPERS
+// 🔔 BROADCAST CHANNELS PUSH ALERTS SIMULATION
 // ==========================================
 const LocalNotificationPipelineChannel = new BroadcastChannel('servo_push_simulation_matrix_2026');
 LocalNotificationPipelineChannel.onmessage = function(event) {
@@ -119,10 +151,8 @@ function dispatchMockPushPayload(alertTitle, alertBody) {
     triggerToastFeedback(`🔔 NOTIFICATION: ${alertTitle}\n${alertBody}`);
 }
 
-// 📸 APPLIANCE PHOTOS PROCESSING CORDS
 function processLocalImagePreview(inputElement) {
-    const file = inputElement.files[0];
-    if (!file) return;
+    const file = inputElement.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = function(e) {
         serializedAppliancePhotoData = e.target.result;
@@ -146,14 +176,15 @@ function triggerToastFeedback(messageText, isErrorState = false) {
     setTimeout(() => { bubble.remove(); }, 4000);
 }
 
-// CLIENT TRANSMISSION DISPATCH TRIGGER BINDINGS
+// SECURE FORM HANDSHAKES SUBMISSIONS
 document.getElementById('bookingSubmissionForm').addEventListener('submit', function(e) {
     e.preventDefault();
+    const cityStr = document.getElementById('ddlCitySelectorNode').value;
     cachedBookingFormData = {
         customerName: document.getElementById('bookingCustomerName').value,
         customerPhone: document.getElementById('bookingCustomerPhone').value,
         serviceType: activeSelectedServiceGlobalType,
-        flatAddress: document.getElementById('bookingFlatAddress').value + ` (${selectedMarketplaceCityToken.toUpperCase()})`,
+        flatAddress: document.getElementById('bookingFlatAddress').value + ` (${cityStr.toUpperCase()})`,
         appliancePhoto: serializedAppliancePhotoData
     };
     document.getElementById('bookingSubmissionForm').style.display = 'none';
@@ -181,13 +212,12 @@ document.getElementById('bookingOtpVerificationForm').addEventListener('submit',
         closeDispatchPrompt();
         if(finalData.success) {
             document.getElementById('lblSuccessService').innerText = cachedBookingFormData.serviceType.replace('_', ' ');
-            document.getElementById('lblSuccessPro').innerText = "Unassigned (Pending HQ Allocation)";
+            document.getElementById('lblSuccessPro').innerText = "Unassigned (HQ Central)";
             document.getElementById('successScreenOverlay').style.display = 'flex';
             document.getElementById('bookingSubmissionForm').reset();
             document.getElementById('bookingOtpVerificationForm').reset();
             serializedAppliancePhotoData = null;
-            
-            dispatchMockPushPayload("📍 Request Transmitted", `Your repair ticket has landed on the ${selectedMarketplaceCityToken.toUpperCase()} central cluster.`);
+            dispatchMockPushPayload("📍 Request Logged", "Ticket allocated on state server registries.");
         }
     })
     .catch(() => surfaceActiveNetworkInterruptionBanner());
@@ -215,10 +245,13 @@ function exitToMainHome() {
 
 function evaluateCustomerActivePipeline() {
     setTimeout(() => {
-        let currentCityCoords = GlobalCityMarketplaceMatrix[selectedMarketplaceCityToken].coords;
-        let trackerMap = L.map('leafletLiveTrackingDashboardMap', { zoomControl: false }).setView(currentCityCoords, 13);
+        const cityStr = document.getElementById('ddlCitySelectorNode').value;
+        const stateStr = document.getElementById('ddlStateSelectorNode').value;
+        let activeCoords = StateWiseMarketplaceDatabase[stateStr][cityStr].coords;
+        
+        let trackerMap = L.map('leafletLiveTrackingDashboardMap', { zoomControl: false }).setView(activeCoords, 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(trackerMap);
-        L.marker(currentCityCoords).addTo(trackerMap); 
+        L.marker(activeCoords).addTo(trackerMap); 
     }, 200);
     if (cachedBookingFormData && cachedBookingFormData.customerName) {
         document.getElementById('activeBookingCard').style.display = 'block';
@@ -249,10 +282,7 @@ function pullActiveTechnicianJobsRegistryLoop() {
             }
         })
         .catch(() => {
-            const fallbackTechMockQueue = [
-                { _id: "664f15e8c", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "ELECTRICIAN", flatAddress: "Hub Sector Complex Area", status: "Assigned" }
-            ];
-            renderTechnicianJobQueueGrid(fallbackTechMockQueue);
+            renderTechnicianJobQueueGrid([{ _id: "664f15e8c", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "ELECTRICIAN", flatAddress: "Central Cluster Complex Sector Area", status: "Assigned" }]);
         });
 }
 
@@ -295,7 +325,7 @@ function executeTechnicianJobCompletion(bookingId) {
         body: JSON.stringify({ bookingId: bookingId, technicianName: activeTechnicianProfileName, targetStatus: "Completed" })
     })
     .then(() => {
-        dispatchMockPushPayload("✅ Service Finalized", `${activeTechnicianProfileName} has signed off the active ticket.`);
+        dispatchMockPushPayload("✅ Service Finalized", `${activeTechnicianProfileName} has signed off your active ticket.`);
         pullActiveTechnicianJobsRegistryLoop();
     });
 }
@@ -350,7 +380,7 @@ function pullLiveAggregatedBusinessMetrics() {
     .catch(() => {
         document.getElementById('lblMetricsGrossRevenue').innerText = "₹1,480";
         document.getElementById('lblMetricsLiveJobs').innerText = "1";
-        populateMetricsGridTable([{ _id: "664f12b", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "AC_REPAIR", flatAddress: "Mansarovar Grid Sector", status: "Pending", assignedPartner: "Unassigned" }]);
+        populateMetricsGridTable([{ _id: "664f12b", customerName: "Sarthak Jain", customerPhone: "9257809277", serviceType: "AC_REPAIR", flatAddress: "Mansarovar Central Matrix Hub", status: "Pending", assignedPartner: "Unassigned" }]);
     });
 }
 
@@ -402,4 +432,3 @@ function validateIndianPhoneField(inputElement) {
 }
 function surfaceActiveNetworkInterruptionBanner() { document.getElementById('globalNetworkErrorBanner').style.display = "flex"; }
 function retryLastNetworkOperation() { location.reload(); }
-function openLegalPage() { document.getElementById('legalPageOverlayModal').style.display = "flex"; }
