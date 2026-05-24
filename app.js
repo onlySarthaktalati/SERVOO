@@ -42,7 +42,6 @@ const StateWiseMarketplaceDatabase = {
     }
 };
 
-// 👨‍🔧 HIGH-TRUST PRO PROFILE PICTURE MAPPING
 const TechnicianAvatarAssetDatabase = {
     "Amit Sharma": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=100&h=100&q=80",
     "Deepak Kumar": "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&w=100&h=100&q=80",
@@ -103,7 +102,6 @@ LocalNotificationPipelineChannel.onmessage = function(event) {
     if (event.data.actionType === "PUSH_ALERT") {
         triggerToastFeedback(`🔔 NOTIFICATION: ${event.data.title}\n${event.data.body}`);
         
-        // Dynamic payload update to inject specific verified avatars into active panels
         if (event.data.assignedTechName && document.getElementById('lblCustTrackedTechName')) {
             document.getElementById('lblCustTrackedTechName').innerText = event.data.assignedTechName;
             const targetAvatarUrl = TechnicianAvatarAssetDatabase[event.data.assignedTechName] || "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&w=100&h=100&q=80";
