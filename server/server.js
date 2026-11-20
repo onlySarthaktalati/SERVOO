@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { ObjectId } = require('mongodb');
 const { connectToDatabasePermanentCluster, getDatabaseInstance } = require('./config/db');
 
 const app = express();
@@ -11,167 +12,319 @@ app.use(express.json());
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET || "SERVO_CORE_SECRET_2026";
 
+// 🛡️ ADMIN JWT VERIFICATION MIDDLEWARE
+function verifyAdminToken(req, res, next) {
+    const authHeader = req.headers['authorization'];
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(403).json({ success: false, message: "Admin clearance token missing." });
+    }
+    try {
+        const token = authHeader.split(' ')[1];
+        const decoded = jwt.verify(token, JWT_SECRET_KEY);
+        if (decoded.role !== 'admin') throw new Error("Invalid role");
+        next();
+    } catch (err) {
+        return res.status(401).json({ success: false, message: "Admin session expired. Please log in again." });
+    }
+}
+
 // ==========================================
-// 🏢 FEATURE 1: ADMIN CONTROL LOG-IN DIRECT BYPASS
+// 🏢 1. ADMIN PLATFORM CLEARANCE
 // ==========================================
 app.post('/api/admin/secure-login', async (req, res) => {
     try {
         const { secretPassphrase } = req.body;
-        
-        // Direct match check to prevent any cryptographic salt mismatches
-        if (secretPassphrase !== "jaipur2026") {
-            return res.status(401).json({ success: false, message: "Clearance Denied." });
+        if (!secretPassphrase || secretPassphrase.trim() !== "jaipur2026") {
+            return res.status(401).json({ success: false, message: "Clearance Mismatch." });
         }
-        
         const token = jwt.sign({ role: 'admin' }, JWT_SECRET_KEY, { expiresIn: '12h' });
         return res.json({ success: true, authToken: token });
-    } catch (e) { return res.status(500).json({ success: false }); }
+    } catch (e) {
+        return res.status(500).json({ success: false, message: "Internal server gate exception." });
+    }
 });
 
 // ==========================================
-// 👨‍🔧 FEATURE 2: SAVE TECHNICIAN PROFILE (ADMIN CREATION)
+// 👨‍🔧 2. TECHNICIAN REGISTRATION (ADMIN ONLY)
 // ==========================================
-app.post('/api/technicians/auth/register', async (req, res) => {
+app.post('/api/technicians/auth/register', verifyAdminToken, async (req, res) => {
     try {
         const db = getDatabaseInstance();
         const { name, phone, password, skill, city } = req.body;
 
-        const existingTech = await db.collection('technicians').findOne({ phone: phone.trim() });
-        if (existingTech) return res.status(400).json({ success: false, message: "Phone number already registered." });
+        if (!name || !phone || !password || !skill) {
+            return res.status(400).json({ success: false, message: "All partner parameters required." });
+        }
 
-        // Salt and hash the technician password for real driver-side production authentication
+        const formattedPhone = phone.trim();
+        const existingTech = await db.collection('technicians').findOne({ phone: formattedPhone });
+        if (existingTech) {
+            return res.status(400).json({ success: false, message: "This mobile number is already registered." });
+        }
+
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const newTech = {
             name: name.trim(),
-            phone: phone.trim(),
+            phone: formattedPhone,
             password: hashedPassword,
             skill: skill.toUpperCase(),
-            city: city.toLowerCase(),
+            city: city ? city.toLowerCase() : "jaipur",
             createdAt: new Date().toISOString()
         };
 
         await db.collection('technicians').insertOne(newTech);
-        return res.status(201).json({ success: true, message: "Technician profile saved successfully!" });
-    } catch (err) { return res.status(500).json({ success: false, message: "Database registry write fault." }); }
+        return res.status(201).json({ success: true, message: "Technician credentials stored safely." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Database registry write failure." });
+    }
 });
 
 // ==========================================
-// 🔑 FEATURE 3: TECHNICIAN GATEWAY LOGIN VERIFICATION
+// 🔑 3. TECHNICIAN JWT LOGIN
 // ==========================================
 app.post('/api/technicians/auth/login', async (req, res) => {
     try {
         const db = getDatabaseInstance();
         const { phone, password } = req.body;
 
-        const tech = await db.collection('technicians').findOne({ phone: phone.trim() });
-        if (!tech) return res.status(444).json({ success: false, message: "Account profile not found." });
+        if (!phone || !password) {
+            return res.status(400).json({ success: false, message: "Missing login parameters." });
+        }
 
-        // Cross-evaluate input text against the saved bcrypt hash string document
+        const tech = await db.collection('technicians').findOne({ phone: phone.trim() });
+        if (!tech) return res.status(404).json({ success: false, message: "Account profile not found." });
+
         const isMatch = await bcrypt.compare(password, tech.password);
         if (!isMatch) return res.status(401).json({ success: false, message: "Invalid credentials match." });
 
-        // Generate the true active driver identity session token
         const techToken = jwt.sign(
-            { techId: tech._id, phone: tech.phone, name: tech.name },
+            { techId: tech._id.toString(), phone: tech.phone, name: tech.name },
             JWT_SECRET_KEY,
-            { expiresIn: '24h' }
+            { expiresIn: '30d' }
         );
 
         return res.json({
             success: true,
             techToken: techToken,
-            profile: { name: tech.name, phone: tech.phone, skill: tech.skill }
+            profile: { id: tech._id.toString(), name: tech.name, phone: tech.phone, skill: tech.skill }
         });
-    } catch (err) { return res.status(500).json({ success: false, message: "Auth validation sequence exception." }); }
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Authentication engine error." });
+    }
 });
 
 // ==========================================
-// 📥 FEATURE 4: INTAKE STORE DISPATCH TICKET
+// 📥 4. CUSTOMER BOOKING + GPS + ARRIVAL PIN
 // ==========================================
 app.post('/api/book-service-secure', async (req, res) => {
     try {
         const db = getDatabaseInstance();
-        const { customerName, customerPhone, serviceType, flatAddress, otp, targetCity } = req.body;
-        if (otp !== "1234") return res.status(400).json({ success: false, message: "OTP validation code failed." });
+        const { customerName, customerPhone, serviceType, flatAddress, otp, targetCity, coords } = req.body;
+
+        if (otp !== "1234") {
+            return res.status(400).json({ success: false, message: "OTP validation failed." });
+        }
+
+        // Generate 4-digit Arrival Verification PIN for customer safety
+        const arrivalPin = Math.floor(1000 + Math.random() * 9000).toString();
+        const baseFee = serviceType.toUpperCase() === 'AC_REPAIR' ? 450 : 290;
 
         const newTicket = {
-            customerName, customerPhone, serviceType, flatAddress,
+            customerName: customerName.trim(),
+            customerPhone: customerPhone.trim(),
+            serviceType: serviceType.toUpperCase(),
+            flatAddress: flatAddress.trim(),
+            coords: coords || null, // { lat, lng } if GPS shared
             cityContext: targetCity || "jaipur",
             status: "Pending",
-            assignedPartner: "Unassigned", // Receives technician assignment mapping
+            arrivalPin: arrivalPin,
+            billingAmount: baseFee,
+            assignedPartnerId: "Unassigned",
+            assignedPartnerName: "Unassigned",
+            assignedPartnerPhone: "",
             timestamp: new Date().toISOString()
         };
 
         const result = await db.collection('bookings').insertOne(newTicket);
-        return res.status(201).json({ success: true, bookingId: result.insertedId });
-    } catch (e) { return res.status(500).json({ success: false }); }
+        return res.status(201).json({
+            success: true,
+            bookingId: result.insertedId.toString(),
+            arrivalPin: arrivalPin
+        });
+    } catch (e) {
+        return res.status(500).json({ success: false, message: "Failed to commit service ticket." });
+    }
 });
 
 // ==========================================
-// 🎛️ FEATURE 5: ASSIGNMENT DISPATCH & CONSOLE METRICS
+// 📍 5. PUBLIC CUSTOMER ORDER TRACKER
 // ==========================================
-app.get('/api/admin/dashboard-metrics', async (req, res) => {
+app.get('/api/bookings/track/:phone', async (req, res) => {
+    try {
+        const db = getDatabaseInstance();
+        const cleanPhone = req.params.phone.trim();
+        const orders = await db.collection('bookings')
+            .find({ customerPhone: cleanPhone })
+            .sort({ timestamp: -1 })
+            .limit(5)
+            .toArray();
+
+        return res.json({ success: true, orders });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Unable to fetch order status." });
+    }
+});
+
+// ==========================================
+// 🎛️ 6. ADMIN METRICS & DISPATCH MUTATIONS
+// ==========================================
+app.get('/api/admin/dashboard-metrics', verifyAdminToken, async (req, res) => {
     try {
         const db = getDatabaseInstance();
         const bookings = await db.collection('bookings').find({}).sort({ timestamp: -1 }).toArray();
-        const technicians = await db.collection('technicians').find({}).toArray();
+        const technicians = await db.collection('technicians').find({}).project({ password: 0 }).toArray();
 
-        // Calculate direct revenue sums based entirely on items flagged Completed
-        const totalCalculatedRevenue = bookings
+        const realRevenueTotal = bookings
             .filter(b => b.status === 'Completed')
-            .reduce((sum, b) => sum + (Number(b.billingAmount) || 350), 0);
+            .reduce((sum, b) => sum + (Number(b.billingAmount) || 290), 0);
 
-        return res.json({ 
-            success: true, 
-            bookingsQueue: bookings, 
+        return res.json({
+            success: true,
+            bookingsQueue: bookings,
             techniciansList: technicians,
-            metrics: { revenueTotal: totalCalculatedRevenue }
+            metrics: { revenueTotal: realRevenueTotal }
         });
-    } catch (err) { return res.status(500).json({ success: false }); }
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Metrics streaming error." });
+    }
 });
 
-app.post('/api/admin/mutate-job-status', async (req, res) => {
+app.post('/api/admin/mutate-job-status', verifyAdminToken, async (req, res) => {
     try {
         const db = getDatabaseInstance();
-        const { bookingId, technicianName, targetStatus } = req.body;
-        const { ObjectId } = require('mongodb');
+        const { bookingId, technicianId, technicianName, technicianPhone, targetStatus } = req.body;
 
-        // Permanently bind technician data to the targeted customer booking
+        if (!bookingId || !targetStatus) {
+            return res.status(400).json({ success: false, message: "Missing target parameters." });
+        }
+
+        const updatePayload = { status: targetStatus };
+        if (technicianName) {
+            updatePayload.assignedPartnerName = technicianName;
+            updatePayload.assignedPartnerId = technicianId || "Direct_Mutation";
+            updatePayload.assignedPartnerPhone = technicianPhone || "";
+        }
+
         await db.collection('bookings').updateOne(
             { _id: new ObjectId(bookingId) },
-            { $set: { assignedPartner: technicianName, status: targetStatus } }
+            { $set: updatePayload }
         );
 
-        return res.json({ success: true, message: "Job dispatcher transaction executed." });
-    } catch (err) { return res.status(500).json({ success: false }); }
+        return res.json({ success: true, message: "Dispatch updated." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Dispatch update failed." });
+    }
 });
 
-// 📱 EXCLUSIVE FIELD WORKER TICKET VIEW STREAM
+// ==========================================
+// 📱 7. TECHNICIAN TICKETS & 3-STEP WORKFLOW
+// ==========================================
 app.get('/api/technicians/jobs/my-tickets', async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
-        if (!authHeader) return res.status(403).json({ success: false, message: "No Authorization Token." });
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(403).json({ success: false, message: "Missing token." });
+        }
 
-        const token = authHeader.split(' ')[1];
-        const decoded = jwt.verify(token, JWT_SECRET_KEY);
-
+        const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET_KEY);
         const db = getDatabaseInstance();
-        
-        // Enforce data boundary: fetch ONLY jobs explicitly matching this user's name parameter string
+
         const personalJobs = await db.collection('bookings')
-            .find({ assignedPartner: decoded.name })
+            .find({ assignedPartnerName: decoded.name })
             .sort({ timestamp: -1 })
             .toArray();
 
         return res.json({ success: true, queue: personalJobs });
-    } catch (err) { return res.status(401).json({ success: false, message: "Session out." }); }
+    } catch (err) {
+        return res.status(401).json({ success: false, message: "Session expired." });
+    }
 });
 
-app.get('/', (req, res) => { res.send('SERVO Multi-Tenant Clean Architecture Online.'); });
+// Step 1: Technician starts travel -> updates customer tracker to "On the Way"
+app.post('/api/technicians/jobs/start-travel', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) return res.status(403).json({ success: false });
+        const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET_KEY);
+
+        const { bookingId } = req.body;
+        const db = getDatabaseInstance();
+
+        await db.collection('bookings').updateOne(
+            { _id: new ObjectId(bookingId), assignedPartnerName: decoded.name },
+            { $set: { status: "On the Way" } }
+        );
+        return res.json({ success: true, message: "Status updated: On the Way!" });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Failed to update travel status." });
+    }
+});
+
+// Step 2: Technician verifies customer's 4-digit Arrival PIN -> "In Progress"
+app.post('/api/technicians/jobs/verify-arrival', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) return res.status(403).json({ success: false });
+        const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET_KEY);
+
+        const { bookingId, enteredPin } = req.body;
+        const db = getDatabaseInstance();
+
+        const job = await db.collection('bookings').findOne({
+            _id: new ObjectId(bookingId),
+            assignedPartnerName: decoded.name
+        });
+
+        if (!job) return res.status(404).json({ success: false, message: "Job not found." });
+        if (job.arrivalPin !== enteredPin.trim()) {
+            return res.status(400).json({ success: false, message: "Incorrect Arrival PIN. Ask customer for their 4-digit code." });
+        }
+
+        await db.collection('bookings').updateOne(
+            { _id: new ObjectId(bookingId) },
+            { $set: { status: "In Progress" } }
+        );
+        return res.json({ success: true, message: "Arrival verified! Job started." });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "PIN verification error." });
+    }
+});
+
+// Step 3: Technician logs final bill (with spare parts) & closes job -> "Completed"
+app.post('/api/technicians/jobs/complete', async (req, res) => {
+    try {
+        const authHeader = req.headers['authorization'];
+        if (!authHeader) return res.status(403).json({ success: false });
+        const decoded = jwt.verify(authHeader.split(' ')[1], JWT_SECRET_KEY);
+
+        const { bookingId, finalAmount } = req.body;
+        const db = getDatabaseInstance();
+
+        await db.collection('bookings').updateOne(
+            { _id: new ObjectId(bookingId), assignedPartnerName: decoded.name },
+            { $set: { status: "Completed", billingAmount: Number(finalAmount) || 290 } }
+        );
+        return res.json({ success: true, message: "Job closed & revenue logged!" });
+    } catch (err) {
+        return res.status(500).json({ success: false, message: "Failed to close ticket." });
+    }
+});
+
+app.get('/', (req, res) => { res.send('SERVO Production Kernel Online. Engine Grade Stable.'); });
 
 const PORT = process.env.PORT || 3000;
 connectToDatabasePermanentCluster().then(() => {
-    app.listen(PORT, '0.0.0.0', () => { console.log(`>>> SERVO MULTI-TENANT CONSOLIDATED SERVER ON PORT ${PORT} <<<`); });
+    app.listen(PORT, '0.0.0.0', () => { console.log(`>>> SERVO KERNEL LIVE ON PORT ${PORT} <<<`); });
 });
